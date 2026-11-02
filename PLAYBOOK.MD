@@ -9,6 +9,7 @@
 - 운영 기준: [공식 참가 가이드][contest-guide]의 8개 세부 문서, [FAQ][contest-faq], [참가·출품 유의사항][contest-cautions]을 함께 확인했다. 기획 방향은 대화에서, 참가·제출 조건은 공식 자료에서 가져온다.
 - 목적: 공모전 기획, MVP 개발, 차량 SDK 검증, 시연 제작의 공통 기준
 - 실행 과제: [TASKLIST.MD](TASKLIST.MD)에 추가 아이디어, 담당 역할, 선행 조건과 완료 기준을 관리한다. 신규 제안은 채택 전까지 기존 MVP 범위를 자동으로 늘리지 않는다.
+- 검토용 시안: [모션·개인 영수증 미리보기](docs/previews/README.md). 가상 예시이며 실제 차량 앱·SDK·송금 연동 구현과 구분한다.
 - 현재 상태: 프로젝트 폴더에는 구현 코드가 없다. 이 문서는 개발 계획이며, SDK 실행이나 송금 연동을 완료했다는 증빙이 아니다.
 - 읽는 법: **대화 기반 방향**은 참조 대화의 내용을 정리한 것이고, **구현 기본안**은 실행을 위해 이 문서에서 구체화한 제안이다. 공식 문서 확인과 실제 환경 검증은 구분한다.
 
@@ -82,13 +83,17 @@ MVP는 자동 출금, 송금 완료 자동 판정, 톨비 자동 수집, 좌석 
 
 | 정보 | 공식 문서의 근거 | 제품에서의 역할 | 실제 환경에서 확인할 것 |
 | --- | --- | --- | --- |
-| 누적 주행거리 | Odometer, `getCurrentDistanceDriven()` | 구간 거리 산정의 필수 입력 | 반환 타입·단위·정밀도, Capability, 실패와 재연결 |
+| 누적 주행거리 | Odometer, `getCurrentDistanceDriven()` · 공식 명세는 `Float?`, km | 구간 거리 산정의 필수 입력 | 차량별 지원·실제 정밀도, Capability, 실패와 재연결 |
 | 좌석 점유 | Seat, `getCurrentSeatOccupancy()` | 탑승자 확인 보조 | 좌석별 지원 범위, 이벤트 수신, 권한 |
-| 연비 | Fuel 도메인 | 추정 비용 모델의 선택 입력 | 평균/순간 연비의 의미, 단위, 유효 범위 |
+| 연비 | Fuel의 `getCurrentFuelEconomy()`·`getCumulativeFuelEconomy()` · `Float?`, L/100km | 추정 비용 모델의 선택 입력 | 운행 세션·누적 기간과 동행 구간의 일치 여부, 값의 유효성·차량별 지원 |
 | 위치·경로 | FusedLocation, NaviHelper | 후속 구간명·경유지 표시 | SDK 제공 상태와 사용 조건 |
 | 통행료 관련 | Toll 도메인은 ETCS 안내 음량 등을 다룬다. | MVP는 통행료 수동 입력 | 실제 결제 금액 조회는 확인되지 않았으므로 자동 수집을 약속하지 않는다. |
 
 근거: [Vehicle SDK 소개][pleos-vehicle], [Odometer API][pleos-odometer], [Seat API][pleos-seat]. API 문서의 존재가 모든 차량에서의 지원을 보장하지는 않는다. 상세 함수 서명과 반환 단위는 사용할 SDK에서 다시 확인한다.
+
+2026-11-02에 공식 상세 명세를 확인한 Fuel 항목은 다음과 같다. `getCurrentFuelEconomy()`는 현재 운행 세션, `getCumulativeFuelEconomy()`는 차량의 누적 운행 기간에 대한 연비이며 단위는 모두 **L/100km**다. `getInstantaneousFuelEconomy()`는 순간 연비이고, `getFuelPercent()`는 `Int?` 형태의 잔량 비율(%)이다. [현재 연비][pleos-fuel-current], [누적 연비][pleos-fuel-cumulative], [순간 연비][pleos-fuel-instant], [잔량 비율][pleos-fuel-percent]
+
+확인한 공개 Fuel 목록에서는 **이번 동행·임의 구간의 소비 연료량(L), 유가(원/L), 실제 주유 결제 내역**을 직접 반환하는 API는 찾지 못했다. 따라서 이 정보까지 SDK가 자동 제공한다고 설명하지 않는다. 연비 측정 기간이 동행과 다를 수 있고 잔량 비율은 소비량 계량값과 다르므로, 현재 설계에서는 유류비를 추정값으로 제공한다. [Fuel API 목록][pleos-fuel]
 
 프로젝트·SDK 신청 가이드는 Vehicle State와 NaviHelper를 신청 없이 사용 가능한 항목으로, FusedLocation 등을 준비 중인 항목으로 안내한다. **위치 SDK 사용을 P0의 전제 조건으로 두지 않는다.** 실제 작업 시 포털에 표시되는 상태를 기록한다. [프로젝트 생성 및 SDK 사용 신청][pleos-project]
 
@@ -115,6 +120,52 @@ MVP는 자동 출금, 송금 완료 자동 판정, 톨비 자동 수집, 좌석 
 8. **수취 확인:** 운전자가 외부 앱에서 입금을 확인한 뒤 탄만큼에서 수취 확인을 기록한다.
 
 같은 시점에 여러 사람이 타거나 내리면 하나의 거리 스냅샷으로 기존 구간을 닫고 새 명단을 적용한다. 중간 합류와 재탑승도 같은 방식으로 처리한다.
+
+### 출발 전 정산 규칙 · 설명 모션그래픽
+
+사용자 지정 방향은 정산 규칙을 화면의 모션그래픽으로 설명하는 것이다. **함께 탄 구간은 함께 나누고, 내린 뒤 구간은 남은 사람이 나눈다**는 원리를 약 10초의 예시로 보여준다. 동일한 캐릭터를 안내자로 사용할 수 있다.
+
+| 시간 · 구성 기본안 | 움직임 | 화면에서 이해할 규칙 |
+| --- | --- | --- |
+| 0–2초 | 운전자 D와 동승자 A·B가 차량에 합류 | 이번 예시는 운전자 포함, 세 명이 분담 |
+| 2–4초 | 차량이 첫 10km 구간을 이동하고 비용이 세 사람에게 배분 | 1,500원을 세 명이 나눠 각 500원 |
+| 4–6초 | A가 중간 지점에서 내려 정지하고 차량에는 D·B가 남음 | A는 여기까지 탄 구간만 부담 |
+| 6–8초 | 차량이 다음 10km 구간을 이동하고 D·B에게만 비용이 배분 | 다음 1,500원은 두 명이 나눠 각 750원 |
+| 8–10초 | 최종 부담액과 이번 동행의 실제 설정을 정지 화면으로 표시 | 예시 D 1,250원 / A 500원 / B 1,250원, 이어서 현재 규칙 확인 |
+
+예시 금액은 §6과 같은 연비·유가의 가상 데이터다. 설명 장면에는 ‘예시’를 표시하고 실제 동행 금액과 구분한다. 운전자 제외로 설정하면 분담 대상과 예시 결과도 일치시킨다. 예시 뒤에는 이번 동행의 운전자 포함 여부·연비·유가·추가 비용 원칙을 확인할 수 있게 한다.
+
+차량에서는 주차 상태, 동승자는 QR 참여 후 모바일에서 볼 수 있다. 처음에는 설명을 제공하고 이후에는 요약과 ‘다시 보기’를 기본으로 한다. 재생 중에도 건너뛰고 규칙을 확인할 수 있으며, 영상 시청을 동의 기록으로 취급하지 않는다. 규칙을 바꾸면 최신 요약을 바로 표시하고 재생을 반복 강제하지 않는다.
+
+움직임은 차량·탑승자·비용 배분의 관계를 설명하는 데 사용한다. 읽는 금액은 구간 확정 장면에서 정지시킨다. 주행 제한 전환 시 재생을 중단하고, 동작 줄이기 환경에서는 구간별 정지 그림과 최종 규칙을 제공한다. 상용 화면의 모션 시간은 사용성 확인 후 조정하며, 현재는 기획과 검토용 예시다.
+
+### 차량 앱의 뷰포트와 동승자 모바일
+
+공식 자료 확인 결과, 차량 패널 전체와 탄만큼에 배정되는 앱 창은 다르다. Driving view는 고정 영역이고 앱 영역에는 최대 두 앱이 표시된다. 따라서 차량용은 **넓은 확장 창과 다른 앱 옆의 좁은 창**을 모두 설계한다. [앱 구조 및 동작 모델][pleos-window-model], [디스플레이 구성][pleos-display-layout]
+
+| 공식 창 정책 | 확인 내용 |
+| --- | --- |
+| Connect-S | 앱 1개는 2:0 확장, 앱 2개는 1:1 분할. 두 앱의 창은 일반적으로 portrait 형태다. |
+| Connect-W | 2:1 또는 1:2 분할을 제공하므로 두 앱을 표시해도 넓은 쪽은 가로형일 수 있다. |
+| 창 변경 | 사용자가 창 위치·크기를 바꿀 수 있다. 실제 배정 영역에 맞춰 화면을 다시 구성하고 진행 중 동행 상태를 유지한다. |
+
+정책 근거: [Window Policy][pleos-window-policy]. 설계 기준은 음악의 재생 여부가 아니라 **현재 탄만큼 앱 창의 크기**다. 음악 앱과 탄만큼을 함께 표시하는 상태도 검증한다. 앱의 확장 화면은 Driving view·상태 표시줄·GNB까지 차지하는 차량 전체 화면을 의미하지 않는다.
+
+공식 폼 팩터 테스트 가이드의 화면에는 다음 가상 앱 화면 예시가 있다. **테스트 프리셋의 예시이며 모든 양산 차량의 고정 뷰포트 규격으로 간주하지 않는다.** 패널 해상도(px), 밀도(DPI), 앱 레이아웃 단위(dp)를 구분하고 실제 앱 창·시스템 영역·인셋을 측정한다. [폼 팩터 테스트 가이드][pleos-form-factor]
+
+| 가이드의 가상 화면 예시 | 표시된 앱 테스트 크기 |
+| --- | --- |
+| Connect-S 12.9인치 · Portrait | 628 × 855dp |
+| Connect-S 14.6인치 · Landscape | 1360 × 948dp |
+| Connect-S 17인치 · Portrait | 840 × 1184dp |
+
+탄만큼의 화면 역할은 다음처럼 나눈다. 좁은 차량 창을 휴대폰 화면과 같은 크기·입력 조건으로 취급하지 않는다.
+
+| 화면 | 구성 기본안 |
+| --- | --- |
+| 차량 · 넓은 창 | 왼쪽에 구간·탑승자, 오른쪽에 분담 요약·정산 공유 QR. 설명 모션그래픽도 가로 공간에 맞춰 재배치 |
+| 차량 · 좁은 창 | 동행 상태·탑승자·핵심 확인 버튼을 우선하고 상세 계산은 필요 시 펼침. 음악 앱과 병행해도 주요 조작 유지 |
+| 동승자 · 모바일 웹 | QR 참여, 개인 영수증, 카카오페이·토스 송금 선택. 기존 동행 티켓·여정 노트 시안은 이 화면의 검토안 |
 
 ### 주행 제한
 
@@ -147,6 +198,17 @@ Pleos는 플랫폼의 `CarUxRestrictions`에 따라 UX 제한을 반영하도록
 동승자의 송금액(원) = 해당 동승자의 개인 부담액
 ```
 
+위 연비 수식은 사용자 입력을 km/L로 받는 경우다. SDK의 L/100km 값을 사용하면 다음처럼 계산한다. 두 단위를 혼용하지 않는다.
+
+```text
+추정 유류비(원) = 구간 거리(km) × 연비(L/100km) / 100 × 유가(원/L)
+연비(km/L) = 100 / 연비(L/100km)  // 유효한 양수 값일 때
+```
+
+추정에 필요한 최소 입력은 거리·적용할 연비·유가다. 거리는 SDK에서 읽고, 연비는 검증된 SDK 값 또는 운전자가 확인한 기준값, 유가는 수동 입력을 기본으로 한다. 유종·단가·기준일·출처를 기록하고 동행의 적용 기준을 공유한다. 외부 유가 정보 연동은 별도 검증 후 추가한다.
+
+정차 시 읽은 순간 연비를 전체 구간에 적용하거나, 누적 연비의 전후 차이를 소비 연료량으로 쓰지 않는다. 잔량 %의 차이로 소비량을 추정하려면 탱크 용량·측정 정밀도·중간 주유 여부 등이 추가로 필요하므로 MVP 정산 근거로 사용하지 않는다. 주유 영수증의 구매량·결제액도 이번 동행의 소비량·비용과 자동으로 같아지는 것은 아니다. 구간 소비량을 실측한 것처럼 ‘정확한 실지출 자동 계산’으로 표현하지 않는다.
+
 운전자의 개인 부담액은 비용 분담을 설명하는 값이며, 운전자 자신에게 보낼 송금액을 만들지 않는다. 유류비는 **추정**, 직접 입력한 톨비·주차비는 **입력 비용**으로 표시한다. 순간 연비나 연료 게이지 변화만으로 실제 지출을 확정하지 않는다.
 
 추가 비용은 입력 단계에서 적용 구간 또는 대상자를 정한다. 여러 구간에 걸친 비용은 적용 구간의 거리에 비례해 배정하고 배정 결과를 보여준다. 대상 구간의 총거리가 0이면 사용자가 배분 대상을 직접 확인하도록 한다. 동일 비용을 전체 비용과 구간 비용에 중복 합산하지 않는다.
@@ -176,6 +238,19 @@ Pleos는 플랫폼의 `CarUxRestrictions`에 따라 UX 제한을 반영하도록
 같은 예시에서 운전자를 제외하면 A는 750원, B는 2,250원을 부담한다. 두 방식 모두 구현 검증의 기준값으로 사용한다.
 
 위 수식과 예시는 플랫폼 수수료가 0원인 MVP 기준이다. 유료화 시에도 공동 운행비의 구간 배분은 유지하고, 플랫폼 수수료와 운전자 실수령액을 별도 항목으로 계산·표시한다. §12의 차감 예시는 운전자 수령 예정 정산금에서 수수료를 빼는 모델이며, 수수료 부담 주체는 유료화 전에 확정한다.
+
+### ‘왜 이 금액인가요?’ 개인 영수증 디자인
+
+사용자 지정 방향은 개인 영수증을 감각적인 화면으로 보여주는 것이다. **내가 보낼 금액 → 내가 탄 구간 → 함께 나눈 사람 → 계산 근거**를 연결하고, 자세한 원가·계산식은 필요할 때 펼쳐 본다. 금액은 정지된 상태에서 바로 읽을 수 있게 한다.
+
+| 검토 시안 | 시각 방향 | 정보 구조 |
+| --- | --- | --- |
+| 동행 티켓 · 추천 검토안 | 웜 화이트 티켓, 딥 틸 타이포그래피, 민트색 탑승 구간, 절취선 형태의 구분 | 500원 → 전체 20km 중 내 10km → 운전자 포함 3명 → 1,500원 ÷ 3명 |
+| 여정 노트 | 여백이 넓은 편집형 구성과 세로 구간 기록 | 함께한 20km 중 내 10km → 탑승 구간 500원·하차 후 구간 0원 → 보낼 금액 500원 |
+
+두 안은 **동승자 모바일 웹** 정산표의 검토용 방향이며 최종 선택은 아직 하지 않았다. 차량 본체 화면은 §5의 확장·분할 창 기준으로 별도 설계한다. 브랜드 색상은 §2를 따른다. 실제 앱에서는 현재 정산 버전·데이터 출처·운전자 포함 여부를 표시하고, 유류비의 추정 여부와 통행료·주차비·수수료를 구분한다. 운전자 수수료를 동승자의 부담으로 잘못 표시하지 않는다.
+
+송금 수단은 영수증 확인 후 카카오페이·토스로 선택하며, 미검증 수단의 처리 기준은 §7을 따른다. 광고는 영수증 본문과 분리된 하단 또는 넓은 화면의 옆 영역에 배치한다. 작은 화면·긴 별칭·여러 탑승 구간에서도 금액·단위·버튼이 잘리지 않아야 한다. 검토용 시안의 송금 동작은 실제 이체와 구분한다.
 
 ## 7. 정산 수단 · 카카오페이·토스페이와 QR
 
@@ -538,12 +613,21 @@ Virtual Console은 Odometer를 1km 단위로 설정하고 좌석별 점유, 기�
 [pleos-vehicle]: https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/Vehicle/intro
 [pleos-dependency]: https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/Vehicle/project-setup
 [pleos-permissions]: https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/Vehicle/vehicle-permission
-[pleos-odometer]: https://document.pleos.ai/api-reference/connect-sdk-pleos/Vehicle/vehicle/ai.pleos.playground.vehicle.api/odometer/get-current-distance-driven
+[pleos-odometer]: https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/Vehicle/vehicle/ai.pleos.playground.vehicle.api/odometer/get-current-distance-driven
+[pleos-fuel]: https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/Vehicle/vehicle/ai.pleos.playground.vehicle.api/fuel/entry
+[pleos-fuel-current]: https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/Vehicle/vehicle/ai.pleos.playground.vehicle.api/fuel/get-current-fuel-economy
+[pleos-fuel-cumulative]: https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/Vehicle/vehicle/ai.pleos.playground.vehicle.api/fuel/get-cumulative-fuel-economy
+[pleos-fuel-instant]: https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/Vehicle/vehicle/ai.pleos.playground.vehicle.api/fuel/get-instantaneous-fuel-economy
+[pleos-fuel-percent]: https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/Vehicle/vehicle/ai.pleos.playground.vehicle.api/fuel/get-fuel-percent
 [pleos-seat]: https://document.pleos.ai/en/api-reference/connect-sdk-pleos/Vehicle/vehicle/ai.pleos.playground.vehicle.api/seat/get-current-seat-occupancy
 [pleos-driving]: https://document.pleos.ai/docs/pleos-only/vehicle-app-developer-guide/driving-restriction-development-guide
 [pleos-driving-policy]: https://document.pleos.ai/docs/pleos-only/vehicle-app-planning-guide/driving-restiction-policy
 [pleos-driving-safety]: https://document.pleos.ai/docs/pleos-only/vehicle-app-planning-guide/driver-distraction-guideline
 [pleos-console]: https://document.pleos.ai/docs/pleos-only/app-test-guide/virtual-console-guide
+[pleos-window-model]: https://document.pleos.ai/docs/pleos-only/vehicle-app-planning-guide/app-structure-screen-model
+[pleos-display-layout]: https://document.pleos.ai/docs/connect/guide/docs-design/getting-started/layout
+[pleos-window-policy]: https://document.pleos.ai/docs/connect/guide/docs-design/getting-started/window
+[pleos-form-factor]: https://document.pleos.ai/docs/pleos-only/app-test-guide/form-factor-test-guide
 [kakao-types]: https://developers.kakaopay.com/forum/t/faq/222
 [kakao-amount]: https://developers.kakaopay.com/forum/t/url/450
 [kakao-status]: https://developers.kakaopay.com/forum/t/api/1037

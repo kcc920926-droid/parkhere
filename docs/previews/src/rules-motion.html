@@ -1,0 +1,187 @@
+<style>
+  #tanman-rules-motion { display: grid; gap: calc(var(--font-size-base) * 1.25); }
+  #tanman-rules-motion .tm-heading { display: grid; gap: calc(var(--font-size-base) * .3); padding-right: 90px; }
+  #tanman-rules-motion .tm-road { position: relative; height: 106px; margin: 0 20px; }
+  #tanman-rules-motion .tm-line { position: absolute; top: 66px; left: 0; right: 0; height: 6px; background: var(--muted); border-radius: 3px; }
+  #tanman-rules-motion .tm-fill { position: absolute; top: 66px; width: 50%; height: 6px; background: var(--viz-series-1); transform: scaleX(0); transform-origin: left; }
+  #tanman-rules-motion .tm-fill-second { left: 50%; }
+  #tanman-rules-motion .tm-marker { position: absolute; top: 62px; width: 14px; height: 14px; background: var(--foreground); border-radius: 50%; transform: translateX(-50%); }
+  #tanman-rules-motion .tm-distance { position: absolute; top: 84px; transform: translateX(-50%); white-space: nowrap; color: var(--muted-foreground); }
+  #tanman-rules-motion .tm-car { position: absolute; top: 8px; left: -20px; width: 40px; display: grid; justify-items: center; gap: 4px; color: var(--foreground); }
+  #tanman-rules-motion .tm-car svg { width: 32px; height: 32px; }
+  #tanman-rules-motion .tm-phase { min-height: 2.6em; display: flex; align-items: center; justify-content: center; text-align: center; }
+  #tanman-rules-motion .tm-people { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(var(--font-size-base) * 1.25); }
+  #tanman-rules-motion .tm-person { display: grid; gap: calc(var(--font-size-base) * .5); }
+  #tanman-rules-motion .tm-name { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5em; }
+  #tanman-rules-motion .tm-note { color: var(--muted-foreground); }
+  #tanman-rules-motion .tm-cost { font-weight: 500; }
+  #tanman-rules-motion .tm-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  #tanman-rules-motion .tm-example { margin-left: auto; }
+  @media (max-width: 420px) {
+    #tanman-rules-motion .tm-people { gap: 8px; }
+    #tanman-rules-motion .tm-example { margin-left: 0; flex-basis: 100%; }
+  }
+</style>
+<div id="tanman-rules-motion">
+  <div class="tm-heading">
+    <h3>탄 만큼, 함께 나눠요.</h3>
+    <span class="text-small tm-note">운전자 포함 · 20km 동행 예시</span>
+  </div>
+  <div class="tm-road" role="img" aria-label="0km에서 세 명 출발, 10km에서 A 하차, 20km에서 D와 B 도착">
+    <div class="tm-line"></div>
+    <div class="tm-fill tm-fill-first"></div>
+    <div class="tm-fill tm-fill-second"></div>
+    <div class="tm-marker" style="left:0%"></div>
+    <div class="tm-marker" style="left:50%"></div>
+    <div class="tm-marker" style="left:100%"></div>
+    <span class="tm-distance text-small" style="left:0%">0km</span>
+    <span class="tm-distance text-small" style="left:50%">10km · A 하차</span>
+    <span class="tm-distance text-small" style="left:100%">20km</span>
+    <div class="tm-car" aria-hidden="true">
+      <span class="tm-count text-small">3명</span>
+      <i data-lucide="car-front"></i>
+    </div>
+  </div>
+  <div class="tm-phase" aria-live="polite">운전자 D와 동승자 A·B, 함께 출발</div>
+  <div class="tm-people">
+    <div class="tm-person" data-person="d">
+      <div class="tm-name"><span>D</span><span class="text-small tm-note">운전자</span></div>
+      <span class="tm-cost tabular-nums">0원</span>
+      <span class="tm-person-note text-small tm-note">함께 출발</span>
+    </div>
+    <div class="tm-person" data-person="a">
+      <div class="tm-name"><span>A</span><span class="text-small tm-note">동승자</span></div>
+      <span class="tm-cost tabular-nums">0원</span>
+      <span class="tm-person-note text-small tm-note">함께 출발</span>
+    </div>
+    <div class="tm-person" data-person="b">
+      <div class="tm-name"><span>B</span><span class="text-small tm-note">동승자</span></div>
+      <span class="tm-cost tabular-nums">0원</span>
+      <span class="tm-person-note text-small tm-note">함께 출발</span>
+    </div>
+  </div>
+  <div class="tm-controls">
+    <button class="btn btn-primary tm-play" type="button">10초로 보기</button>
+    <button class="btn tm-skip" type="button">요약 보기</button>
+    <span class="tm-example text-small tm-note">예시 · 1km당 추정 비용 150원</span>
+  </div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('tanman-rules-motion');
+  const road = root.querySelector('.tm-road');
+  const car = root.querySelector('.tm-car');
+  const first = root.querySelector('.tm-fill-first');
+  const second = root.querySelector('.tm-fill-second');
+  const phase = root.querySelector('.tm-phase');
+  const count = root.querySelector('.tm-count');
+  const play = root.querySelector('.tm-play');
+  const skip = root.querySelector('.tm-skip');
+  const people = ['d', 'a', 'b'].map(id => root.querySelector(`[data-person="${id}"]`));
+  const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const easeMove = 'cubic-bezier(0.77, 0, 0.175, 1)';
+  const easeOut = 'cubic-bezier(0.23, 1, 0.32, 1)';
+  const phases = [
+    '운전자 D와 동승자 A·B, 함께 출발',
+    '첫 10km · 세 명이 함께 분담',
+    'A 하차 · A는 여기까지 500원',
+    '다음 10km · D와 B만 분담',
+    '탄 구간만큼 나눠요. 총비용 3,000원'
+  ];
+  let current = 0;
+  let running = false;
+  let timers = [];
+  let animations = [];
+  function clearMotion() {
+    animations.forEach(animation => animation.cancel());
+    animations = [];
+  }
+  function save(finished) {
+    const host = window.openai;
+    if (host && typeof host.setWidgetState === 'function') {
+      host.setWidgetState({
+        modelContent: { concept: '정산 규칙 설명 모션', driverIncluded: true, exampleDistanceKm: 20 },
+        privateContent: { finished }
+      }).catch(() => {});
+    }
+  }
+  function draw(stage, animate = false) {
+    clearMotion();
+    current = stage;
+    const width = road.getBoundingClientRect().width;
+    const progress = stage >= 4 ? 1 : stage >= 2 ? .5 : 0;
+    car.style.transform = `translateX(${width * progress}px)`;
+    first.style.transform = `scaleX(${stage >= 2 ? 1 : 0})`;
+    second.style.transform = `scaleX(${stage >= 4 ? 1 : 0})`;
+    count.textContent = stage >= 2 ? '2명' : '3명';
+    phase.textContent = phases[stage];
+    const amounts = stage >= 4 ? [1250, 500, 1250] : stage >= 2 ? [500, 500, 500] : [0, 0, 0];
+    people.forEach((person, i) => {
+      person.querySelector('.tm-cost').textContent = `${amounts[i].toLocaleString('ko-KR')}원`;
+      person.querySelector('.tm-person-note').textContent = stage >= 4 ? (i === 1 ? '10km · 하차' : '20km · 도착') : stage >= 2 ? (i === 1 ? '10km · 하차' : '다음 구간 동승') : '함께 출발';
+      person.style.opacity = '1';
+    });
+    if (animate && !preference.matches && (stage === 1 || stage === 3)) {
+      const start = stage === 1 ? 0 : .5;
+      const end = stage === 1 ? .5 : 1;
+      animations.push(car.animate([
+        { transform: `translateX(${width * start}px)` },
+        { transform: `translateX(${width * end}px)` }
+      ], { duration: 2000, easing: easeMove, fill: 'forwards' }));
+      animations.push((stage === 1 ? first : second).animate([
+        { transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }
+      ], { duration: 2000, easing: easeMove, fill: 'forwards' }));
+    } else if (animate && stage === 2 && !preference.matches) {
+      animations.push(people[1].querySelector('.tm-name').animate([
+        { transform: 'translateY(0)', opacity: 1 },
+        { transform: 'translateY(8px)', opacity: .6 },
+        { transform: 'translateY(0)', opacity: 1 }
+      ], { duration: 250, easing: easeOut }));
+    }
+  }
+  function stop() {
+    timers.forEach(timer => clearTimeout(timer));
+    timers = [];
+    clearMotion();
+    running = false;
+    play.disabled = false;
+    play.textContent = '다시 보기';
+    skip.textContent = '요약 보기';
+  }
+  function finish() {
+    stop();
+    draw(4);
+    save(true);
+  }
+  play.addEventListener('click', () => {
+    stop();
+    running = true;
+    play.disabled = true;
+    play.textContent = '설명 재생 중';
+    skip.textContent = '건너뛰기';
+    draw(0);
+    save(false);
+    for (let stage = 1; stage <= 4; stage += 1) {
+      timers.push(setTimeout(() => draw(stage, true), stage * 2000));
+    }
+    timers.push(setTimeout(finish, 10000));
+  });
+  skip.addEventListener('click', finish);
+  const observer = new ResizeObserver(() => {
+    if (running) finish();
+    else draw(current);
+  });
+  observer.observe(road);
+  preference.addEventListener('change', () => { if (running) finish(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && running) finish(); });
+  window.addEventListener('openai:set_globals', event => {
+    const state = event.detail && event.detail.globals && event.detail.globals.widgetState;
+    if (state && !running) draw(state.privateContent && state.privateContent.finished ? 4 : 0);
+  });
+  const initial = window.openai && window.openai.widgetState;
+  if (initial && initial.privateContent && initial.privateContent.finished) {
+    draw(4);
+    play.textContent = '다시 보기';
+  } else draw(0);
+})();
+</script>

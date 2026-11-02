@@ -1,0 +1,223 @@
+<style>
+  #tanman-personal-receipt > section { min-height: 880px; padding: 20px 8px 28px; }
+  #tanman-personal-receipt .tr-app {
+    --tr-bg: light-dark(#f6f5f0, #102326);
+    --tr-paper: light-dark(#fffefa, #1b3032);
+    --tr-ink: light-dark(#142d31, #eff8f3);
+    --tr-muted: light-dark(#60736c, #acbeb6);
+    --tr-line: light-dark(#e0e6dd, #38504d);
+    --tr-soft: light-dark(#e7eee5, #28413b);
+    --tr-green: #62e1b7;
+    --tr-deep: light-dark(#164b3e, #b7edd6);
+    --tr-shadow: light-dark(#142d3112, #00000025);
+    width: min(100%, 410px); min-height: 792px; margin: 0 auto; padding: 25px;
+    box-sizing: border-box; border-radius: 30px; background: var(--tr-bg); color: var(--tr-ink);
+    box-shadow: 0 12px 46px var(--tr-shadow); font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #tanman-personal-receipt .tr-app *, #tanman-personal-receipt .tr-app *::before, #tanman-personal-receipt .tr-app *::after { box-sizing: border-box; }
+  #tanman-personal-receipt .tr-app h2, #tanman-personal-receipt .tr-app h3, #tanman-personal-receipt .tr-app p { margin: 0; }
+  #tanman-personal-receipt .tr-app [hidden] { display: none !important; }
+  #tanman-personal-receipt .tr-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 23px; }
+  #tanman-personal-receipt .tr-wordmark { font-size: 12px; font-weight: 600; letter-spacing: .13em; }
+  #tanman-personal-receipt .tr-meta { font-size: 11px; color: var(--tr-muted); }
+  #tanman-personal-receipt .tr-status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; }
+  #tanman-personal-receipt .tr-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--tr-deep); }
+  #tanman-personal-receipt .tr-paper { position: relative; overflow: hidden; background: var(--tr-paper); border-radius: 23px; }
+  #tanman-personal-receipt .tr-ticket-head { padding: 24px 24px 20px; }
+  #tanman-personal-receipt .tr-overline { font-size: 11px; font-weight: 500; letter-spacing: .12em; color: var(--tr-muted); }
+  #tanman-personal-receipt .tr-title { margin-top: 6px !important; font-size: 21px; font-weight: 500; letter-spacing: -.05em; }
+  #tanman-personal-receipt .tr-label { margin-top: 21px !important; font-size: 12px; color: var(--tr-muted); }
+  #tanman-personal-receipt .tr-amount { margin-top: 0 !important; font-size: 58px; font-weight: 600; line-height: 1.15; letter-spacing: -.065em; font-variant-numeric: tabular-nums; }
+  #tanman-personal-receipt .tr-amount small { margin-left: 5px; font-size: 20px; font-weight: 400; letter-spacing: -.04em; }
+  #tanman-personal-receipt .tr-caption { margin-top: 7px !important; font-size: 12px; color: var(--tr-muted); }
+  #tanman-personal-receipt .tr-route { margin: 23px 0 0; padding: 0 4px; }
+  #tanman-personal-receipt .tr-route-labels { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--tr-muted); }
+  #tanman-personal-receipt .tr-route-bar { height: 6px; margin: 10px 0; position: relative; background: var(--tr-soft); border-radius: 8px; }
+  #tanman-personal-receipt .tr-route-bar::before { content: ''; display: block; width: 50%; height: 100%; background: var(--tr-green); border-radius: 8px; }
+  #tanman-personal-receipt .tr-route-stop { position: absolute; top: -4px; left: calc(50% - 7px); width: 14px; height: 14px; background: var(--tr-ink); border: 4px solid var(--tr-paper); border-radius: 50%; }
+  #tanman-personal-receipt .tr-route-under { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  #tanman-personal-receipt .tr-route-under strong { font-size: 13px; font-weight: 500; color: var(--tr-deep); }
+  #tanman-personal-receipt .tr-tear { position: relative; border-top: 1px dashed var(--tr-line); margin: 0 16px; }
+  #tanman-personal-receipt .tr-tear::before, #tanman-personal-receipt .tr-tear::after { content: ''; position: absolute; width: 20px; height: 20px; top: -10px; background: var(--tr-bg); border-radius: 50%; }
+  #tanman-personal-receipt .tr-tear::before { left: -26px; }
+  #tanman-personal-receipt .tr-tear::after { right: -26px; }
+  #tanman-personal-receipt .tr-ticket-bottom { padding: 18px 24px 20px; }
+  #tanman-personal-receipt .tr-explain { min-height: 136px; }
+  #tanman-personal-receipt .tr-explain-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+  #tanman-personal-receipt .tr-explain-header h3 { font-size: 13px; font-weight: 500; }
+  #tanman-personal-receipt .tr-link { padding: 8px 0 8px 8px; min-height: 36px; background: none; border: 0; color: var(--tr-deep); font: inherit; font-size: 11px; }
+  #tanman-personal-receipt .tr-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 7px; }
+  #tanman-personal-receipt .tr-fact { display: grid; gap: 4px; }
+  #tanman-personal-receipt .tr-fact span { font-size: 11px; color: var(--tr-muted); }
+  #tanman-personal-receipt .tr-fact strong { font-size: 21px; font-weight: 500; letter-spacing: -.04em; }
+  #tanman-personal-receipt .tr-detail-row, #tanman-personal-receipt .tr-footer-row { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; padding: 3px 0; }
+  #tanman-personal-receipt .tr-detail-row span:first-child { color: var(--tr-muted); }
+  #tanman-personal-receipt .tr-total { margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--tr-line); font-weight: 500; }
+  #tanman-personal-receipt .tr-footer-row { color: var(--tr-muted); font-size: 11px; }
+  #tanman-personal-receipt .tr-fee-note { display: flex; flex-wrap: wrap; gap: 5px 9px; padding-top: 8px; font-size: 11px; color: var(--tr-muted); }
+  #tanman-personal-receipt .tr-pay { margin-top: 21px; }
+  #tanman-personal-receipt .tr-wallets { display: flex; gap: 8px; margin: 8px 0 10px; }
+  #tanman-personal-receipt .tr-wallet { flex: 1; min-height: 44px; padding: 9px 12px; border: 1px solid var(--tr-line); border-radius: 12px; background: var(--tr-paper); color: var(--tr-ink); font: inherit; font-size: 12px; }
+  #tanman-personal-receipt .tr-wallet[aria-pressed="true"] { background: var(--tr-soft); border-color: var(--tr-deep); }
+  #tanman-personal-receipt .tr-action { width: 100%; min-height: 50px; border: 0; border-radius: 15px; background: var(--tr-green); color: #142d31; font: inherit; font-weight: 500; font-size: 14px; transition: transform 120ms cubic-bezier(0.23,1,0.32,1); }
+  #tanman-personal-receipt .tr-app button:active { transform: scale(.97); }
+  #tanman-personal-receipt .tr-sponsor { margin-top: 15px; display: flex; align-items: center; gap: 12px; padding: 13px 15px; border-radius: 14px; background: var(--tr-soft); }
+  #tanman-personal-receipt .tr-sponsor i { flex: none; }
+  #tanman-personal-receipt .tr-sponsor strong { font-size: 12px; font-weight: 500; }
+  #tanman-personal-receipt .tr-sponsor span { display: block; margin-top: 2px; font-size: 11px; color: var(--tr-muted); }
+  #tanman-personal-receipt .tr-sponsor svg { width: 22px; height: 22px; flex: none; }
+  #tanman-personal-receipt .tr-preview-note { margin: 13px auto 0; text-align: center; font-size: 11px; color: var(--tr-muted); }
+  #tanman-personal-receipt .tr-note { padding-top: 7px; }
+  #tanman-personal-receipt .tr-note-title { font-size: 32px; line-height: 1.3; letter-spacing: -.07em; font-weight: 500; }
+  #tanman-personal-receipt .tr-note-title em { font-style: normal; color: var(--tr-deep); }
+  #tanman-personal-receipt .tr-note-sub { font-size: 12px; color: var(--tr-muted); margin-top: 9px !important; }
+  #tanman-personal-receipt .tr-timeline { position: relative; margin: 26px 0 22px 7px; padding-left: 24px; }
+  #tanman-personal-receipt .tr-timeline::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 10px; width: 2px; background: var(--tr-line); }
+  #tanman-personal-receipt .tr-leg { position: relative; padding-bottom: 20px; }
+  #tanman-personal-receipt .tr-leg:last-child { padding-bottom: 0; }
+  #tanman-personal-receipt .tr-leg::before { content: ''; position: absolute; top: 6px; left: -28px; width: 10px; height: 10px; border-radius: 50%; background: var(--tr-deep); }
+  #tanman-personal-receipt .tr-leg:last-child::before { background: var(--tr-line); }
+  #tanman-personal-receipt .tr-leg-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 14px; font-weight: 500; }
+  #tanman-personal-receipt .tr-leg-detail { font-size: 12px; color: var(--tr-muted); margin-top: 5px !important; }
+  #tanman-personal-receipt .tr-leg-tag { display: inline-block; font-size: 11px; background: var(--tr-soft); border-radius: 7px; padding: 3px 6px; margin-top: 7px; }
+  #tanman-personal-receipt .tr-note-money { padding: 20px; background: var(--tr-paper); border-radius: 20px; }
+  #tanman-personal-receipt .tr-note-amount { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  #tanman-personal-receipt .tr-note-amount strong { font-size: 38px; letter-spacing: -.06em; font-weight: 500; }
+  #tanman-personal-receipt .tr-note-money .tr-explain { min-height: 110px; }
+  #tanman-personal-receipt .tr-note-money .tr-explain-header { margin-top: 9px; }
+  #tanman-personal-receipt .tr-guide { padding-top: 18px; }
+  #tanman-personal-receipt .tr-back { background: none; border: 0; color: var(--tr-ink); font: inherit; min-height: 44px; padding: 0; display: inline-flex; align-items: center; gap: 8px; }
+  #tanman-personal-receipt .tr-guide h2 { margin-top: 28px; font-size: 28px; font-weight: 500; letter-spacing: -.04em; }
+  #tanman-personal-receipt .tr-guide-total { font-size: 54px; letter-spacing: -.05em; margin: 24px 0 !important; }
+  #tanman-personal-receipt .tr-guide-box { padding: 20px; border-radius: 18px; background: var(--tr-paper); margin: 20px 0; }
+  #tanman-personal-receipt .tr-guide-note { font-size: 12px; color: var(--tr-muted); margin: 22px 0 !important; }
+  @media (hover: hover) and (pointer: fine) { #tanman-personal-receipt .tr-action:hover { opacity: .9; } }
+  @media (prefers-reduced-motion: reduce) { #tanman-personal-receipt .tr-action { transition: none; } #tanman-personal-receipt .tr-app button:active { transform: none; } }
+  @media (max-width: 420px) {
+    #tanman-personal-receipt > section { min-height: 900px; padding: 12px 0 24px; }
+    #tanman-personal-receipt .tr-app { padding: 20px; border-radius: 24px; min-height: 810px; }
+    #tanman-personal-receipt .tr-ticket-head { padding: 20px 18px; }
+    #tanman-personal-receipt .tr-ticket-bottom { padding: 17px 18px 20px; }
+    #tanman-personal-receipt .tr-note-title { font-size: 29px; }
+  }
+</style>
+<div id="tanman-personal-receipt" class="viz-carousel viz-dotted-background" aria-label="탄만큼 개인 영수증 디자인" data-previous-label="이전 시안" data-next-label="다음 시안">
+  <section data-variant="동행 티켓" aria-label="동행 티켓형 영수증">
+    <div class="tr-app" data-receipt="ticket" aria-label="동행 티켓 디자인">
+      <div class="tr-main">
+        <div class="tr-top"><span class="tr-wordmark">TANMAN.KM</span><span class="tr-status">운행 종료</span></div>
+        <div class="tr-paper">
+          <div class="tr-ticket-head">
+            <p class="tr-overline">YOUR SHARE OF THE RIDE</p>
+            <h2 class="tr-title">오늘도 잘 탔어요.</h2>
+            <p class="tr-label">동승자 A가 보낼 금액</p>
+            <p class="tr-amount">500<small>원</small></p>
+            <p class="tr-caption">함께한 구간만큼, 가볍게 나눠요.</p>
+            <div class="tr-route" role="img" aria-label="전체 20km 중 처음 10km에 탑승하고 중간 하차했습니다">
+              <div class="tr-route-labels"><span>출발</span><span>중간 하차</span><span>도착</span></div>
+              <div class="tr-route-bar"><span class="tr-route-stop"></span></div>
+              <div class="tr-route-under"><strong>여기까지 10km</strong><span class="tr-meta">전체 20km</span></div>
+            </div>
+          </div>
+          <div class="tr-tear"></div>
+          <div class="tr-ticket-bottom">
+            <div class="tr-explain">
+              <div class="tr-explain-header"><h3>왜 500원인가요?</h3><button class="tr-link cursor-interaction" type="button" data-detail-toggle aria-expanded="false">계산 근거 보기 ↗</button></div>
+              <div data-summary><div class="tr-facts"><div class="tr-fact"><span>내가 탄 거리</span><strong>10km</strong></div><div class="tr-fact"><span>함께 나눈 사람</span><strong>3명</strong></div></div><p class="tr-caption">운전자 D를 포함해 나눴어요.</p></div>
+              <div data-details hidden><div class="tr-detail-row"><span>10km의 추정 유류비</span><span>1,500원</span></div><div class="tr-detail-row"><span>분담 인원 · 운전자 포함</span><span>3명</span></div><div class="tr-detail-row tr-total"><span>1,500원 ÷ 3명</span><span>500원</span></div><p class="tr-caption">연비 12km/L · 유가 1,800원/L</p></div>
+            </div>
+            <div class="tr-footer-row"><span>통행료·주차비</span><span>0원</span></div>
+            <div class="tr-footer-row"><span>서비스 수수료</span><span>0원</span></div>
+          </div>
+        </div>
+        <div class="tr-pay"><p class="tr-meta">운전자 D에게 보낼게요</p><div class="tr-wallets"><button type="button" class="tr-wallet cursor-interaction" data-wallet="카카오페이" aria-pressed="false">카카오페이</button><button type="button" class="tr-wallet cursor-interaction" data-wallet="토스" aria-pressed="true">토스</button></div><button class="tr-action cursor-interaction" type="button" data-payment>토스로 500원 보내기</button></div>
+        <div class="tr-sponsor" data-ad><i data-lucide="sprout" aria-hidden="true"></i><div><strong>다음 동행에도, 좋은 기분만.</strong><span>광고 · 동행 파트너 예시</span></div></div>
+      </div>
+      <div class="tr-guide" hidden><button type="button" class="tr-back cursor-interaction" data-back><i data-lucide="arrow-left" aria-hidden="true"></i>영수증으로</button><h2 data-guide-title>토스로 송금</h2><p class="tr-guide-total">500원</p><div class="tr-guide-box"><div class="tr-detail-row"><span>받는 분</span><span>운전자 D</span></div><div class="tr-detail-row"><span>서비스 수수료</span><span>0원</span></div></div><p class="tr-guide-note">송금 앱에서 받는 분과 금액을 확인해 주세요.</p><button class="tr-action cursor-interaction" type="button" data-back>영수증으로 돌아가기</button></div>
+      <p class="tr-preview-note">가상 동행의 디자인 예시 · 실제 송금 없음</p>
+    </div>
+  </section>
+  <section data-variant="여정 노트" aria-label="여정 노트형 영수증" hidden>
+    <div class="tr-app" data-receipt="journal" aria-label="여정 노트 디자인">
+      <div class="tr-main">
+        <div class="tr-top"><span class="tr-wordmark">TANMAN.KM</span><span class="tr-meta">11.02 · 동승자 A</span></div>
+        <div class="tr-note"><h2 class="tr-note-title">함께한 20km,<br>내가 탄 <em>10km.</em></h2><p class="tr-note-sub">함께했던 만큼만 나눠요.</p></div>
+        <div class="tr-timeline" aria-label="탑승 구간별 부담액">
+          <div class="tr-leg"><div class="tr-leg-title"><span>출발 → 중간 하차</span><span>500원</span></div><p class="tr-leg-detail">10km · D, A, B 함께 탑승</p><span class="tr-leg-tag">운전자 포함 3명 분담</span></div>
+          <div class="tr-leg"><div class="tr-leg-title"><span>중간 하차 → 도착</span><span>0원</span></div><p class="tr-leg-detail">추가 10km · D와 B만 탑승</p><p class="tr-leg-detail">A는 이 구간에 타지 않았어요.</p></div>
+        </div>
+        <div class="tr-note-money">
+          <div class="tr-note-amount"><span>내가 보낼 금액</span><strong>500원</strong></div>
+          <div class="tr-explain"><div class="tr-explain-header"><h3>내 금액의 근거</h3><button type="button" class="tr-link cursor-interaction" data-detail-toggle aria-expanded="false">자세히 보기 ↗</button></div><div data-summary><p class="tr-caption">첫 구간 유류비 1,500원을<br>함께 탄 세 명이 나눴어요.</p></div><div data-details hidden><div class="tr-detail-row"><span>추정 유류비</span><span>1,500원</span></div><div class="tr-detail-row"><span>운전자 포함 3명 분담</span><span>각 500원</span></div><p class="tr-caption">연비 12km/L · 유가 1,800원/L</p></div></div>
+          <div class="tr-fee-note"><span>통행료·주차비 0원</span><span>수수료 0원</span></div>
+        </div>
+        <div class="tr-pay"><p class="tr-meta">운전자 D에게 보낼게요</p><div class="tr-wallets"><button type="button" class="tr-wallet cursor-interaction" data-wallet="카카오페이" aria-pressed="true">카카오페이</button><button type="button" class="tr-wallet cursor-interaction" data-wallet="토스" aria-pressed="false">토스</button></div><button class="tr-action cursor-interaction" type="button" data-payment>카카오페이로 500원 보내기</button></div>
+        <div class="tr-sponsor" data-ad><i data-lucide="coffee" aria-hidden="true"></i><div><strong>좋은 동행, 다음에도 함께.</strong><span>광고 · 동행 파트너 예시</span></div></div>
+      </div>
+      <div class="tr-guide" hidden><button type="button" class="tr-back cursor-interaction" data-back><i data-lucide="arrow-left" aria-hidden="true"></i>영수증으로</button><h2 data-guide-title>카카오페이로 송금</h2><p class="tr-guide-total">500원</p><div class="tr-guide-box"><div class="tr-detail-row"><span>받는 분</span><span>운전자 D</span></div><div class="tr-detail-row"><span>서비스 수수료</span><span>0원</span></div></div><p class="tr-guide-note">송금 앱에서 받는 분과 금액을 확인해 주세요.</p><button class="tr-action cursor-interaction" type="button" data-back>영수증으로 돌아가기</button></div>
+      <p class="tr-preview-note">가상 동행의 디자인 예시 · 실제 송금 없음</p>
+    </div>
+  </section>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('tanman-personal-receipt');
+  const hosts = [...root.querySelectorAll('[data-receipt]')];
+  const stored = window.openai && window.openai.widgetState;
+  const saved = stored && stored.privateContent && stored.privateContent.receipts || {};
+  const states = {};
+  const renders = {};
+  const save = () => {
+    if (window.openai && typeof window.openai.setWidgetState === 'function') {
+      window.openai.setWidgetState({ modelContent: { receiptDesigns: ['동행 티켓', '여정 노트'], example: { personalKm: 10, totalKm: 20, cost: 500, driverIncluded: true } }, privateContent: { receipts: states } }).catch(() => {});
+    }
+  };
+  hosts.forEach(host => {
+    const id = host.dataset.receipt;
+    const state = states[id] = { wallet: saved[id] && ['카카오페이', '토스'].includes(saved[id].wallet) ? saved[id].wallet : id === 'ticket' ? '토스' : '카카오페이', details: !!(saved[id] && saved[id].details), guide: false, ad: true };
+    const main = host.querySelector('.tr-main');
+    const guide = host.querySelector('.tr-guide');
+    const toggle = host.querySelector('[data-detail-toggle]');
+    const action = host.querySelector('[data-payment]');
+    const detailPanel = host.querySelector('[data-details]');
+    detailPanel.id = `tr-proof-${id}`;
+    toggle.setAttribute('aria-controls', detailPanel.id);
+    const render = () => {
+      host.querySelector('[data-summary]').hidden = state.details;
+      host.querySelector('[data-details]').hidden = !state.details;
+      toggle.setAttribute('aria-expanded', String(state.details));
+      toggle.textContent = state.details ? '간단히 보기 ↙' : '계산 근거 보기 ↗';
+      host.querySelectorAll('[data-wallet]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.wallet === state.wallet)));
+      action.textContent = `${state.wallet}로 500원 보내기`;
+      host.querySelector('[data-guide-title]').textContent = `${state.wallet}로 송금`;
+      main.hidden = state.guide;
+      guide.hidden = !state.guide;
+      host.querySelector('[data-ad]').hidden = !state.ad;
+    };
+    renders[id] = render;
+    toggle.addEventListener('click', () => { state.details = !state.details; render(); save(); });
+    host.querySelectorAll('[data-wallet]').forEach(button => button.addEventListener('click', () => { state.wallet = button.dataset.wallet; render(); save(); }));
+    action.addEventListener('click', () => { state.guide = true; render(); guide.querySelector('[data-back]').focus(); save(); });
+    host.querySelectorAll('[data-back]').forEach(button => button.addEventListener('click', () => { state.guide = false; render(); action.focus(); save(); }));
+    render();
+    if (globalThis.Tweak) {
+      const tweak = new Tweak({ container: host, onChange: render });
+      tweak.addToggle(state, 'ad', { label: '광고 영역' });
+    }
+  });
+  window.addEventListener('openai:set_globals', event => {
+    const next = event.detail && event.detail.globals && event.detail.globals.widgetState;
+    const values = next && next.privateContent && next.privateContent.receipts;
+    if (!values) return;
+    hosts.forEach(host => {
+      const value = values[host.dataset.receipt];
+      if (!value) return;
+      const state = states[host.dataset.receipt];
+      if (typeof value.details === 'boolean') state.details = value.details;
+      if (['카카오페이', '토스'].includes(value.wallet)) state.wallet = value.wallet;
+      renders[host.dataset.receipt]();
+    });
+  });
+})();
+</script>
