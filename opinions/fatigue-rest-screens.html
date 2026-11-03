@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>휴식 코치 화면 시안</title>
+<!-- 작성 winter1 · 2026-11-04 · 가상 시안, 실제 SDK 연동 아님 -->
+<style>
+  :root {
+    --bg: #0d1014; --panel: #171b21; --panel2: #1f242c; --line: #2a3039;
+    --text: #eef1f5; --muted: #8b94a1; --ok: #4cc38a; --warn: #f5b942;
+    --alert: #ff7a59; --blue: #4c8dff; --map: #1a2230; --road: #2d3a4f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px 16px 40px; background: #e9ecf0; color: #1b1f24;
+    font-family: system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .lead { margin: 0 0 16px; color: #5b6470; font-size: 14px; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .tabs button {
+    border: 1px solid #c9ced6; background: #fff; border-radius: 999px;
+    padding: 8px 14px; font: inherit; font-size: 14px; cursor: pointer;
+  }
+  .tabs button[aria-selected="true"] { background: #1b1f24; color: #fff; border-color: #1b1f24; }
+  .note { max-width: 1100px; font-size: 14px; color: #3c4450; margin: 12px 0 0; line-height: 1.6; }
+
+  /* 차량 디스플레이: 드라이빙 뷰 + 앱 창 2개 */
+  .screen {
+    container-type: inline-size; max-width: 1100px; aspect-ratio: 8 / 3;
+    background: var(--bg); color: var(--text); border-radius: 18px; padding: 1cqw;
+    display: grid; grid-template-columns: 17% 1fr 1fr; gap: 1cqw;
+    box-shadow: 0 10px 30px rgb(0 0 0 / .25);
+  }
+  .screen.landscape { grid-template-columns: 17% 1fr; }
+  .screen.landscape .map { display: none; }
+  .win { background: var(--panel); border-radius: 1.4cqw; overflow: hidden; position: relative; }
+
+  .drive { padding: 1.6cqw; display: flex; flex-direction: column; justify-content: space-between; }
+  .drive .speed { font-size: 6cqw; font-weight: 800; line-height: 1; }
+  .drive .unit { font-size: 1.2cqw; color: var(--muted); }
+  .gear { display: flex; gap: .6cqw; font-size: 1.5cqw; font-weight: 700; color: #4a525e; }
+  .gear .on { color: var(--text); }
+  .drive .clock { font-size: 1.3cqw; color: var(--muted); }
+
+  .map { background: var(--map); }
+  .map svg { width: 100%; height: 100%; display: block; }
+  .tbt {
+    position: absolute; left: 1.2cqw; top: 1.2cqw; background: rgb(13 16 20 / .85);
+    padding: .8cqw 1.2cqw; border-radius: 1cqw; font-size: 1.3cqw;
+  }
+  .tbt b { font-size: 1.8cqw; display: block; }
+
+  .app { padding: 1.6cqw; display: flex; flex-direction: column; gap: 1.2cqw; }
+  .app-head { display: flex; justify-content: space-between; align-items: center; font-size: 1.2cqw; color: var(--muted); }
+  .badge { padding: .3cqw .9cqw; border-radius: 999px; font-weight: 700; font-size: 1.1cqw; }
+  .badge.ok { background: rgb(76 195 138 / .15); color: var(--ok); }
+  .badge.warn { background: rgb(245 185 66 / .15); color: var(--warn); }
+  .badge.alert { background: rgb(255 122 89 / .15); color: var(--alert); }
+  .big { font-size: 4.2cqw; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+  .label { font-size: 1.2cqw; color: var(--muted); }
+  .meter { height: .8cqw; background: var(--panel2); border-radius: 999px; overflow: hidden; }
+  .meter i { display: block; height: 100%; border-radius: inherit; }
+  .row { display: flex; justify-content: space-between; align-items: center; background: var(--panel2);
+         border-radius: 1cqw; padding: 1cqw 1.2cqw; font-size: 1.4cqw; }
+  .row small { color: var(--muted); font-size: 1.1cqw; display: block; }
+  .say { font-size: 2.2cqw; font-weight: 700; line-height: 1.35; }
+  .hint { font-size: 1.2cqw; color: var(--muted); }
+  .wave { display: flex; align-items: center; gap: .4cqw; height: 4cqw; }
+  .wave i { width: .5cqw; background: var(--blue); border-radius: 1cqw; animation: w 1s ease-in-out infinite; }
+  @keyframes w { 0%,100% { height: 20%; } 50% { height: 100%; } }
+  .chips { display: flex; flex-wrap: wrap; gap: .6cqw; }
+  .chip { background: var(--panel2); border-radius: .8cqw; padding: .5cqw .9cqw; font-size: 1.15cqw; }
+  .chip.on { outline: 1px solid var(--blue); color: #b9d0ff; }
+  .btns { display: flex; gap: .8cqw; margin-top: auto; }
+  .btn { flex: 1; text-align: center; padding: 1.1cqw; border-radius: 1cqw; font-weight: 700; font-size: 1.4cqw; background: var(--panel2); }
+  .btn.primary { background: var(--blue); }
+  .rest { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.6cqw; height: 100%; }
+  .timer { font-size: 9cqw; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+  .col { display: flex; flex-direction: column; gap: 1cqw; min-width: 0; }
+  @media (prefers-reduced-motion: reduce) { .wave i { animation: none; height: 60%; } }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<h1>피로 → 휴식 코치 · 화면 시안</h1>
+<p class="lead">Pleos Connect 화면 구조(드라이빙 뷰 + 앱 창 최대 2개)를 가정한 가상 시안입니다. 작성 winter1</p>
+
+<div class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-s="1">① 주행 중</button>
+  <button role="tab" aria-selected="false" data-s="2">② 음성 체크</button>
+  <button role="tab" aria-selected="false" data-s="3">③ 깨우기 + 휴게소 제안</button>
+  <button role="tab" aria-selected="false" data-s="4">④ 휴게소 도착 (P단)</button>
+</div>
+
+<div class="screen" id="screen">
+  <!-- 드라이빙 뷰 (시스템 영역) -->
+  <div class="win drive">
+    <div><div class="speed" id="speed">98</div><div class="unit">km/h</div></div>
+    <div class="gear"><span>P</span><span>R</span><span>N</span><span class="on" id="gearD">D</span></div>
+    <div class="clock">오후 3:24 · 22°C</div>
+  </div>
+
+  <!-- 내비 창 -->
+  <div class="win map">
+    <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <path d="M-20 260 C 120 220, 160 140, 230 110 S 380 60, 430 20" stroke="var(--road)" stroke-width="34" fill="none"/>
+      <path d="M-20 260 C 120 220, 160 140, 230 110 S 380 60, 430 20" stroke="var(--blue)" stroke-width="8" fill="none"/>
+      <circle cx="120" cy="214" r="10" fill="#fff"/>
+      <g id="restPin"><circle cx="300" cy="78" r="13" fill="var(--warn)"/><text x="300" y="83" font-size="13" text-anchor="middle" font-weight="800" fill="#1b1f24">휴</text></g>
+    </svg>
+    <div class="tbt"><b>12km 직진</b>경부고속도로 · 서울 방향</div>
+  </div>
+
+  <!-- 우리 앱 창 -->
+  <div class="win app" id="app"></div>
+</div>
+
+<p class="note" id="note"></p>
+
+<template id="s1">
+  <div class="app-head"><span>휴식 코치</span><span class="badge ok">컨디션 양호</span></div>
+  <div><div class="label">연속 운전</div><div class="big">1시간 52분</div></div>
+  <div class="meter"><i style="width:62%;background:var(--ok)"></i></div>
+  <div class="label">권장 휴식까지 약 8분</div>
+  <div class="row"><div>○○휴게소<small>23km · 약 14분</small></div><span>휘발유 1,642원</span></div>
+  <div class="row"><div>△△휴게소<small>61km · 약 38분</small></div><span>휘발유 1,659원</span></div>
+</template>
+
+<template id="s2">
+  <div class="app-head"><span>휴식 코치 · 음성 체크</span><span class="badge warn">듣는 중</span></div>
+  <div class="say">“오늘 마지막 미팅이 몇 시였죠?”</div>
+  <div class="wave">
+    <i style="animation-delay:0s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.2s"></i><i style="animation-delay:.3s"></i>
+    <i style="animation-delay:.4s"></i><i style="animation-delay:.5s"></i><i style="animation-delay:.6s"></i><i style="animation-delay:.7s"></i>
+    <i style="animation-delay:.8s"></i><i style="animation-delay:.9s"></i>
+  </div>
+  <div class="hint">말로 답하면 돼요. 화면을 보지 않아도 됩니다.</div>
+  <div class="row"><div>응답 시간<small>최근 3회 평균 대비</small></div><span style="color:var(--warn)">+1.8초 느림</span></div>
+</template>
+
+<template id="s3">
+  <div class="app-head"><span>휴식 코치</span><span class="badge alert">휴식 권장</span></div>
+  <div class="say">“조금 피곤해 보여요. 23km 앞 ○○휴게소에서 15분 쉬어 갈까요?”</div>
+  <div class="label">차가 먼저 깨워 드렸어요</div>
+  <div class="chips">
+    <span class="chip on">❄ 실내 22→20°C</span><span class="chip on">외기 유입</span>
+    <span class="chip on">조명 · 청색</span><span class="chip on">시트 통풍 2단</span>
+  </div>
+  <div class="row"><div>○○휴게소<small>약 14분 · 화장실 평 좋음</small></div><span>휘발유 1,642원</span></div>
+  <div class="btns"><div class="btn">괜찮아요</div><div class="btn primary">경유지 추가</div></div>
+  <div class="hint">“응” 또는 “괜찮아”라고 말해도 돼요.</div>
+</template>
+
+<template id="s4">
+  <div class="rest">
+    <div class="col">
+      <div class="app-head"><span>○○휴게소 · 휴식 중</span><span class="badge ok">P단 확인</span></div>
+      <div class="label">권장 휴식</div>
+      <div class="timer">14:32</div>
+      <div class="meter"><i style="width:3%;background:var(--blue)"></i></div>
+      <div class="btns"><div class="btn">파워냅 15분 알람</div><div class="btn primary">휴식 끝내기</div></div>
+    </div>
+    <div class="col">
+      <div class="label">여기서 유명한 것</div>
+      <div class="row"><div>호두과자<small>대표 간식 · 매점 1층</small></div><span>4,000원</span></div>
+      <div class="row"><div>통감자<small>인기 메뉴</small></div><span>4,500원</span></div>
+      <div class="label">주유</div>
+      <div class="row"><div>이 휴게소 주유소<small>다음 휴게소보다 17원 저렴</small></div><span>1,642원</span></div>
+      <div class="row"><div>오늘 휴식 기록<small>2회 · 총 27분</small></div><span>주간 리포트 →</span></div>
+    </div>
+  </div>
+</template>
+
+<script>
+  const notes = {
+    1: '주행 중에는 내비 옆 좁은 세로 창에 연속 운전 시간과 다음 휴게소만 둡니다. 연속 운전은 Vehicle SDK(Odometer·기어), 휴게소는 NaviHelper 경로 기준입니다.',
+    2: '앱이 TTS로 먼저 말을 걸고 그 직후에만 STT를 엽니다. 응답 지연·정확도를 피로 신호로 씁니다. 상시 녹음은 하지 않습니다.',
+    3: '반응이 둔해지면 사전 동의한 범위에서 공조·외기·조명·시트를 바꾸고(Vehicle SDK 제어), 휴게소를 경유지로 제안합니다. 제어 권한은 에뮬레이터 검증 전입니다.',
+    4: 'P단 전환을 감지하면 앱이 두 창 너비(landscape)로 넓어져 휴식 타이머와 휴게소 정보를 보여 줍니다. 가격·메뉴는 가상 예시입니다.'
+  };
+  const screen = document.getElementById('screen');
+  const app = document.getElementById('app');
+  function show(s) {
+    app.replaceChildren(document.getElementById('s' + s).content.cloneNode(true));
+    screen.classList.toggle('landscape', s === 4);
+    document.getElementById('speed').textContent = s === 4 ? '0' : '98';
+    document.querySelectorAll('.gear span').forEach(g =>
+      g.classList.toggle('on', g.textContent === (s === 4 ? 'P' : 'D')));
+    document.getElementById('restPin').style.display = s >= 3 ? '' : 'none';
+    document.getElementById('note').textContent = notes[s];
+    document.querySelectorAll('.tabs button').forEach(b =>
+      b.setAttribute('aria-selected', b.dataset.s == s));
+  }
+  document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => show(+b.dataset.s));
+  show(1);
+</script>
+</body>
+</html>
