@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="656" viewBox="0 0 1120 656" role="img" aria-labelledby="title desc">
+  <title id="title">어디대? 로고와 주차 위치 마커</title>
+  <desc id="desc">어디대의 초성 ㅇㄷㄷ에서 마지막 ㄷ을 주차 칸으로, ㅇ을 그 안에 주차한 차로 사용한 아이콘 디자인.</desc>
+  <defs>
+    <g id="marker">
+      <rect x="1" y="1" width="62" height="62" rx="19" fill="#1652B8" stroke="#fff" stroke-width="2"/>
+      <path d="M17 44V18h30v26" fill="none" stroke="#FFCF29" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="32" cy="33" r="6" fill="none" stroke="#FFCF29" stroke-width="4"/>
+    </g>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0H0v20" fill="none" stroke="#CFD2D6"/>
+    </pattern>
+  </defs>
+  <rect width="1120" height="656" fill="#F2F3F5"/>
+  <g font-family="Apple SD Gothic Neo, Noto Sans KR, sans-serif" fill="#30363E">
+    <text x="54" y="70" font-size="13" font-weight="700" letter-spacing="2">EODIDAE / VISUAL IDENTITY</text>
+    <text x="52" y="133" font-size="52" font-weight="800" letter-spacing="-2.4">어디대?</text>
+    <text x="1066" y="128" text-anchor="end" font-size="18" font-weight="600" fill="#424B57">초성으로 만든 주차 위치 마커</text>
+
+    <rect x="52" y="166" width="496" height="409" rx="28" fill="#30363E"/>
+    <text x="82" y="207" font-size="13" font-weight="700" letter-spacing="1.4" fill="#E0E2E5">01 / APP MARK</text>
+    <g fill="none" stroke-width="13" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="199" cy="340" r="23" stroke="#F7F8FA"/>
+      <path d="M306 317h-48v46h48" stroke="#F7F8FA"/>
+      <path d="M390 317h-48v46h48" stroke="#FFCF29"/>
+    </g>
+    <text x="301" y="423" text-anchor="middle" font-size="30" font-weight="800" letter-spacing="-.8" fill="#F7F8FA">어디대?</text>
+    <path d="M82 501h436" stroke="#58606B"/>
+    <text x="82" y="539" font-size="17" font-weight="600" fill="#F0F1F3">초성 ㅇㄷㄷ의 마지막 칸을 강조</text>
+
+    <rect x="572" y="166" width="496" height="409" rx="28" fill="#fff" stroke="#D5D8DD"/>
+    <text x="602" y="207" font-size="13" font-weight="700" letter-spacing="1.4" fill="#424B57">02 / PARKED LOCATION</text>
+    <rect x="602" y="228" width="436" height="257" rx="17" fill="#D8DADE"/>
+    <rect x="602" y="228" width="436" height="257" rx="17" fill="url(#grid)"/>
+    <rect x="626" y="249" width="42" height="29" rx="8" fill="#1652B8"/>
+    <text x="647" y="269" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">B2</text>
+    <g fill="#CCD0D4" stroke="#F7F8FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M649 387v-76h73v76"/>
+      <path d="M732 387v-76h73v76"/>
+      <path d="M898 387v-76h73v76"/>
+    </g>
+    <path d="M815 387v-76h73v76" fill="#FFE998" stroke="#D3A600" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <g font-size="13" font-weight="700" text-anchor="middle" fill="#424B57">
+      <text x="686" y="356">H36</text>
+      <text x="769" y="356">H37</text>
+      <text x="935" y="356">H39</text>
+    </g>
+    <use href="#marker" x="820" y="311"/>
+    <rect x="803" y="400" width="98" height="35" rx="12" fill="#1652B8"/>
+    <text x="852" y="423" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">내 차 · H38</text>
+    <path d="M628 454h372m-7-7 7 7-7 7" fill="none" stroke="#F7F8FA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M602 501h436" stroke="#D5D8DD"/>
+    <text x="602" y="539" font-size="17" font-weight="600">ㄷ을 돌려 만든 주차 칸 안에 ㅇ을 놓기</text>
+
+    <text x="53" y="620" font-size="14" fill="#424B57">지도 화면 예시 · B2 H38</text>
+    <text x="1066" y="620" text-anchor="end" font-size="14" fill="#424B57">브랜드 시안 01</text>
+  </g>
+</svg>

@@ -1,0 +1,201 @@
+<section id="eodidae-parking-brand" aria-label="어디대? 주차장 컬러 로고와 지도 적용 시안">
+  <style>
+    #eodidae-parking-brand {
+      --asphalt: #30363e;
+      --concrete: #d8dade;
+      --stripe: #ffcf29;
+      --sign: #1652b8;
+      --paint: #f7f8fa;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+      gap: 12px;
+      font-family: system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    }
+    #eodidae-parking-brand figure {
+      margin: 0;
+      min-width: 0;
+    }
+    #eodidae-parking-brand .brand-sign,
+    #eodidae-parking-brand .parking-plan {
+      box-sizing: border-box;
+      min-height: 248px;
+      overflow: hidden;
+      border-radius: 16px;
+      position: relative;
+    }
+    #eodidae-parking-brand .brand-sign {
+      background: var(--asphalt);
+      color: var(--paint);
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 16px;
+      border-bottom: 6px solid var(--stripe);
+    }
+    #eodidae-parking-brand .brand-name {
+      color: var(--paint);
+      font-size: 28px;
+      font-weight: 750;
+      letter-spacing: -.06em;
+      line-height: 1.15;
+    }
+    #eodidae-parking-brand .initials {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+    #eodidae-parking-brand .initials span {
+      box-sizing: border-box;
+      width: 46px;
+      height: 43px;
+      display: block;
+      border: 7px solid currentColor;
+    }
+    #eodidae-parking-brand .initials .car {
+      width: 43px;
+      border-radius: 50%;
+    }
+    #eodidae-parking-brand .initials .bay {
+      border-right: 0;
+      border-radius: 6px 0 0 6px;
+    }
+    #eodidae-parking-brand .initials .highlight {
+      color: var(--stripe);
+    }
+    #eodidae-parking-brand .parking-plan {
+      background: var(--concrete);
+      color: var(--asphalt);
+      display: grid;
+      align-content: start;
+      gap: 19px;
+      padding: 20px 19px 16px;
+    }
+    #eodidae-parking-brand .parking-key {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    #eodidae-parking-brand .floor {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 5px;
+      background: var(--sign);
+      color: var(--paint);
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+    #eodidae-parking-brand .slots {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 5px;
+    }
+    #eodidae-parking-brand .slot {
+      display: grid;
+      grid-template-rows: 20px 1fr;
+      justify-items: center;
+      min-height: 102px;
+      box-sizing: border-box;
+      padding: 6px 0 0;
+      border: 3px solid var(--paint);
+      border-bottom: 0;
+      border-radius: 3px 3px 0 0;
+      font-size: 13px;
+      font-weight: 750;
+    }
+    #eodidae-parking-brand .slot.parked {
+      background: #ffe998;
+      border-color: var(--stripe);
+    }
+    #eodidae-parking-brand .marker {
+      display: grid;
+      place-items: center;
+      align-self: start;
+      width: 42px;
+      height: 42px;
+      margin-top: 4px;
+      border-radius: 12px;
+      background: var(--sign);
+      color: var(--stripe);
+    }
+    #eodidae-parking-brand .marker-bay {
+      display: grid;
+      place-items: center;
+      box-sizing: border-box;
+      width: 23px;
+      height: 22px;
+      border: 3px solid currentColor;
+      border-bottom: 0;
+      border-radius: 3px 3px 0 0;
+    }
+    #eodidae-parking-brand .marker-car {
+      width: 10px;
+      height: 10px;
+      box-sizing: border-box;
+      border: 2.5px solid currentColor;
+      border-radius: 50%;
+    }
+    #eodidae-parking-brand .parked-label {
+      align-self: end;
+      padding: 0 2px 4px;
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+    #eodidae-parking-brand .lane {
+      display: flex;
+      align-items: center;
+      padding: 2px 8px 0 0;
+    }
+    #eodidae-parking-brand .lane::before {
+      content: "";
+      height: 2px;
+      background: var(--paint);
+      flex: 1;
+    }
+    #eodidae-parking-brand .lane::after {
+      content: "";
+      width: 9px;
+      height: 9px;
+      margin-left: -9px;
+      border-top: 2px solid var(--paint);
+      border-right: 2px solid var(--paint);
+      transform: rotate(45deg);
+    }
+    #eodidae-parking-brand figcaption {
+      margin-top: 7px;
+      color: var(--muted-foreground);
+      font-size: 13px;
+    }
+  </style>
+  <figure>
+    <div class="brand-sign">
+      <div class="initials" role="img" aria-label="ㅇㄷㄷ, 마지막 ㄷ은 노란 주차선">
+        <span class="car"></span>
+        <span class="bay"></span>
+        <span class="bay highlight"></span>
+      </div>
+      <div class="brand-name">어디대?</div>
+    </div>
+    <figcaption>브랜드 마크</figcaption>
+  </figure>
+  <figure>
+    <div class="parking-plan">
+      <div class="parking-key"><span class="floor">B2</span><span>H 구역</span></div>
+      <div class="slots" aria-label="H 구역 주차 칸">
+        <div class="slot">H36</div>
+        <div class="slot">H37</div>
+        <div class="slot parked">
+          <span>H38</span>
+          <span class="marker" aria-hidden="true"><span class="marker-bay"><span class="marker-car"></span></span></span>
+          <span class="parked-label">내 차</span>
+        </div>
+        <div class="slot">H39</div>
+      </div>
+      <div class="lane" aria-hidden="true"></div>
+    </div>
+    <figcaption>지도에서 내 차 표시</figcaption>
+  </figure>
+</section>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">어디대? 내 차 위치</title>
+  <rect x="1" y="1" width="62" height="62" rx="19" fill="#1652B8" stroke="#fff" stroke-width="2"/>
+  <path d="M17 44V18h30v26" fill="none" stroke="#FFCF29" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="32" cy="33" r="6" fill="none" stroke="#FFCF29" stroke-width="4"/>
+</svg>
