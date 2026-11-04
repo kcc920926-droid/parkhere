@@ -61,6 +61,46 @@
 
 포지셔닝: 의료기기·졸음 감지 장치가 아닌 **"휴식 코치"**.
 
+### 4.4 핵심 재정의: 경고 앱 → 장거리 운전 플랜 코파일럿 (2026-11-05 추가)
+
+4.3까지의 구조는 결국 "졸음 경고 + 휴식 제안"이라 핵심 기능이 약하다는 문제가 있었다.
+
+- **이미 있는 기능과 겹친다**: 현대·기아 차량의 운전자 주의 경고(DAW)가 주행 패턴을 보고 휴식을 권한다. 내비에도 졸음쉼터·장시간 운전 휴식 안내가 있다. 심사위원이 가장 먼저 물을 질문이다.
+- **경고는 사용자가 켜고 싶은 기능이 아니다**: 귀찮으면 끈다. 스스로 쓸 이유가 없으니 MAU·Retention 근거가 약하다.
+- **음성 반응 피로 측정은 새롭지만 근거가 없다**: 정확도 질문에 마감 전까지 답하기 어렵다.
+
+반면 DAW에는 없는 무기가 둘 있다. **차가 직접 행동한다**(공조·외기·조명·시트)와 **경고음 대신 대화로 깨운다**이다. 이 둘을 비상 기능이 아니라 앱의 중심으로 끌어올린다.
+
+조종사가 비행 계획을 세우듯 **장거리 운전에 계획을 세우고 관리해 주는 앱**으로 바꾼다.
+
+| 단계 | 하는 일 | 차별점 |
+| --- | --- | --- |
+| 출발: 운전 플랜 | 목적지·출발 시각으로 "3시간 10분, 오후 2~3시 식곤증 구간, 휴게소 2곳 미리 배치"를 만든다. 휴게소는 주유·간식·화장실을 함께 고려한다. | DAW는 사후 반응, 이것은 **사전 설계**. 사용자가 스스로 켤 이유가 생긴다. |
+| 주행 중: 실시간 조정 | 실제 연속 운전 시간, 정체, 대화 반응으로 플랜을 고친다. "막혀서 늦어졌으니 다음 휴게소를 앞당길게요." | Navi와 Vehicle이 모두 핵심 흐름에 들어간다. |
+| 피로 구간: 차가 개입 | 대화 → 실내 환경 조율 → 그래도 둔하면 휴게소 경유 제안(5.1의 단계적 개입). | 폰으로 불가능한 장면, 시연 하이라이트. |
+| 도착 후: 기록 | 휴식 이행·피로 구간 리포트. | 재사용 동기, 법인차·보험 B2B 근거. |
+
+효과: 창의성은 "졸음 경고"가 아니라 "운전 계획"이라 DAW와 겹치지 않고, 사업성은 장거리·출장이 있을 때마다 쓰는 앱이 된다. 휴게소 정보·간식 선주문은 플랜 안에 자연스럽게 들어간다. 분야를 바꾸는 게 아니라 핵심만 바꾸므로 기존 정리·시안 대부분을 재사용한다.
+
+### 4.5 목적지를 다시 입력하지 않는다 (2026-11-05 추가)
+
+허들: 플랜을 받으려고 앱을 따로 켜고 내비에 친 주소를 한 번 더 입력해야 한다면 아무도 쓰지 않는다.
+
+해결: **내비에 목적지를 치는 순간이 곧 앱의 시작 신호**가 되게 한다. NaviHelper SDK 문서상 가능한 구조다.
+
+1. 앱은 백그라운드에서 `NaviHelperEventListener`를 등록해 둔다.
+2. 운전자가 평소처럼 내비에 목적지를 설정하면 `onDestinationChanged()` · `onRouteStarted()` · `onRoutingCompleted()`가 온다.
+3. 앱이 `getDestinationInfo()`로 목적지를, `onTripInfo()` · `onRouteStateInfo()` · `onDrivingInfo()` 계열로 경로·주행 정보를 읽는다.
+4. 예상 주행이 짧으면(예: 1시간 미만) 아무것도 하지 않는다. 길면 TTS로 한 문장만 말한다: *"3시간 걸리네요. 휴게소 두 곳 넣어 둘까요?"*
+5. "응" 한마디면 `addWaypoint()`로 휴게소를 경유지에 넣는다. 경유지는 **최대 2곳**(`WaypointIndex.FIRST`/`SECOND`)이라 플랜의 휴게소 2곳과 맞는다.
+
+결과적으로 운전자가 하는 일은 **평소처럼 내비에 목적지 입력 + "응" 한마디**뿐이다. 앱 화면은 내비 옆 창에 플랜 요약으로만 뜬다. Gleo App Schema를 등록하면 "글레오, 쉬는 곳 다시 짜 줘"처럼 운전자가 먼저 부를 수도 있다.
+
+확인할 점:
+- 앱이 **백그라운드일 때도** 내비 이벤트를 받는지 (6절의 백그라운드 검증과 같은 항목).
+- `TripInfo` · `RouteStateInfo`에 남은 시간·거리뿐 아니라 **경로 형상**(어느 고속도로를 지나는지)까지 있는지. API 레퍼런스의 데이터 클래스 필드는 문서에 표시되지 않아 SDK에서 직접 확인해야 한다. 없으면 현재 위치·목적지·도로공사 휴게소 데이터로 경로상 휴게소를 근사한다.
+- 문서상 "전달되는 이벤트는 내비 앱 구현 시나리오에 따라 다를 수 있다"는 단서가 있다 → 에뮬레이터에서 실제 수신 이벤트를 기록한다.
+
 ## 5. 덤으로 찾은 것 → 디벨롭 방향
 
 ### 5.1 차가 직접 깨운다 (차량 제어)
@@ -95,6 +135,10 @@ SDV OS Vehicle API 레퍼런스에 `DrowsinessSeverity`, `DriverMonitoringStatus
 | 멀티윈도우(내비 옆 앱 창) | ✅ 문서 확인 | 드라이빙 뷰 + 앱 창 최대 2개 |
 | STT 동작 방식 | ✅ 문서 확인 | 앱이 `request()`로 세션 시작 → 상시 호출어 없음. HYBRID/SERVER/ON_DEVICE, 권한 `pleos.car.permission.STT_SERVICE` |
 | Gleo 음성 호출 | ✅ 문서 확인 | App Schema(JSON function calling) 등록 |
+| 내비 목적지 설정 감지·조회 | ✅ 문서 확인 | `onDestinationChanged` · `onRouteStarted` · `onRoutingCompleted`, `getDestinationInfo()` |
+| 경유지 추가 | ✅ 문서 확인 | `addWaypoint()`, 최대 2곳 |
+| 남은 시간·거리, 경로 형상 필드 | ❓ SDK 확인 | `TripInfo` · `RouteStateInfo` · `DrivingInfo` 필드가 문서에 안 보임 |
+| 백그라운드에서 내비 이벤트 수신 | ❓ 에뮬레이터 검증 | 문서에 언급 없음, 이벤트는 내비 앱 구현에 따라 다를 수 있다고 명시 |
 | Vehicle 제어 도메인 존재 | ✅ 문서 확인 | HVAC·Window·Seat·Light 등. 속도·기어·연료량은 AAOS Car API 권장 |
 | 시동 시 자동 시작 | ❓ 에뮬레이터 검증 | 문서에 언급 없음 |
 | 백그라운드에서 STT·TTS 호출 | ❓ 에뮬레이터 검증 | 문서에 언급 없음 |
@@ -114,7 +158,7 @@ SDV OS Vehicle API 레퍼런스에 `DrowsinessSeverity`, `DriverMonitoringStatus
 
 ## 8. 다음 단계 제안
 
-1. **에뮬레이터 검증 (최우선)**: 자동 시작 / 백그라운드 STT·TTS / 백그라운드 Vehicle 콜백 / 제어 API 권한.
+1. **에뮬레이터 검증 (최우선)**: 자동 시작 / 백그라운드 STT·TTS / 백그라운드 Vehicle·내비 콜백 / 제어 API 권한 / `TripInfo` 필드.
 2. 타깃 인터뷰 3~5명(영업직·출장자·기사): 졸음을 어떻게 버티는지, 휴게소를 언제 정하는지.
 3. 기획서(DOCX)를 심사 4항목 순서로 구성, 사업성(MAU·Retention·확장) 섹션 신설.
 4. 시연 영상: Virtual Console로 연속 주행 → 대화 → 반응 둔화 → 공조·조명 변화 → 휴게소 경유 → P단 휴식 타이머.
@@ -145,6 +189,7 @@ SDV OS Vehicle API 레퍼런스에 `DrowsinessSeverity`, `DriverMonitoringStatus
 - [TextToSpeech SDK](https://document.pleos.ai/en/docs/pleos-only/connect-sdk-pleos/TextToSpeech/intro)
 - [Vehicle SDK](https://document.pleos.ai/en/docs/pleos-only/connect-sdk-pleos/Vehicle/intro) · [권한](https://document.pleos.ai/en/docs/pleos-only/connect-sdk-pleos/Vehicle/vehicle-permission)
 - [Gleo Interface](https://document.pleos.ai/en/docs/pleos-only/app-integration-guide/guide/core-concepts)
+- NaviHelper SDK: [목적지](https://document.pleos.ai/en/docs/pleos-only/connect-sdk-pleos/NaviHelper/destinations) · [이벤트 리스너](https://document.pleos.ai/en/docs/pleos-only/connect-sdk-pleos/NaviHelper/event-listeners) · [경유지](https://document.pleos.ai/en/docs/pleos-only/connect-sdk-pleos/NaviHelper/waypoint-settings)
 - `DrowsinessSeverity` 등 SDV OS API: [사이트맵](https://document.pleos.ai/sitemap.xml)에서 `Occupant/sdv_occupant_driver` 검색
 
 **Pleos Connect 탑재 현황 (언론)**
