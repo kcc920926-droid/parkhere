@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>뒤는 비었는데, 앞은? · 운전의 전제</title>
+<style>
+:root {
+  color-scheme: light;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  color: #172722;
+  background: #f3f1e9;
+  font-synthesis: none;
+  --ink: #172722;
+  --muted: #52615a;
+  --paper: #fffdf7;
+  --line: #d5d8ca;
+  --green: #185a47;
+  --mint: #97f1c2;
+  --amber: #ffd078;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid #357dff; outline-offset: 3px; }
+button:disabled { cursor: default; }
+.shell { width: min(1100px, 100% - 48px); margin: 32px auto 40px; }
+.eyebrow { display: flex; align-items: center; gap: .65rem; font-size: .8rem; font-weight: 800; color: var(--green); }
+.eyebrow span { background: #dde9d7; border-radius: 5px; padding: .24rem .46rem; font-variant-numeric: tabular-nums; }
+h1 { margin: .42rem 0 .3rem; font-size: clamp(1.8rem, 5vw, 3.25rem); letter-spacing: -.06em; line-height: 1.13; }
+.intro { margin: 0 0 22px; color: var(--muted); line-height: 1.5; }
+.lab { display: grid; grid-template-columns: minmax(0, 1fr) 298px; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; background: var(--paper); box-shadow: 0 12px 30px #192c2010; }
+.scene { min-width: 0; padding: 15px; background: #1a2b27; color: #eef8ee; }
+.scene-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; }
+.views { display: inline-flex; gap: 3px; padding: 3px; background: #101d1a; border-radius: 10px; }
+.views button { min-height: 38px; padding: 0 .72rem; border: 0; border-radius: 7px; background: transparent; color: #d1e2d8; font-size: .88rem; font-weight: 750; white-space: nowrap; }
+.views button[aria-pressed="true"] { background: #e9f4e6; color: #17302a; }
+.scene-mode { font-size: .75rem; color: #bed0c5; text-align: right; font-weight: 650; }
+.frame { background: #142520; overflow: hidden; border: 1px solid #4c6359; border-radius: 12px; }
+.frame svg { display: block; width: 100%; height: auto; }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem 1rem; min-height: 46px; font-size: .8rem; color: #d6e6db; }
+.legend span { display: inline-flex; align-items: center; gap: .36rem; }
+.legend i { width: 20px; border-top: 3px solid var(--mint); }
+.legend .baseline { border-top: 3px dashed var(--amber); }
+.legend [hidden] { display: none; }
+.panel { min-width: 0; padding: 17px; }
+fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+legend { margin-bottom: .65rem; font-size: .78rem; color: var(--muted); font-weight: 800; }
+.control-label { display: flex; justify-content: space-between; gap: .45rem; align-items: baseline; font-weight: 800; font-size: .93rem; }
+output { color: var(--green); font-weight: 850; font-variant-numeric: tabular-nums; }
+input[type="range"] { accent-color: var(--green); width: 100%; height: 32px; margin: 2px 0 4px; }
+.presets { display: grid; grid-template-columns: 1fr .78fr 1fr; gap: 5px; }
+.presets button, .secondary { min-height: 42px; border: 1px solid #ccd4c6; border-radius: 8px; color: var(--ink); background: transparent; font-size: .8rem; font-weight: 750; white-space: nowrap; padding: 0 .48rem; }
+.presets button[aria-pressed="true"] { color: #164c3c; background: #dfede2; border-color: #8fb8a2; }
+.motion { margin-top: 16px; padding-top: 15px; border-top: 1px solid var(--line); }
+.actions { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+.primary { min-height: 43px; border: 0; border-radius: 8px; background: var(--green); color: white; font-size: .86rem; font-weight: 800; padding: 0 .5rem; }
+.readout { margin-top: 15px; padding: 12px; border-radius: 10px; background: #eaf1e5; min-height: 86px; }
+.readout[data-contact="true"] { background: #fae4db; color: #70281a; }
+.readout strong { display: block; font-size: .93rem; margin-bottom: .28rem; }
+.readout p { margin: 0; font-size: .8rem; line-height: 1.42; }
+.note { margin: 13px 0 0; font-size: .8rem; color: var(--muted); line-height: 1.52; }
+svg text { font-family: inherit; }
+@media (max-width: 860px) {
+  .shell { width: min(720px, 100% - 32px); }
+  .lab { grid-template-columns: 1fr; }
+  .panel { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .motion { margin: 0; padding: 0; border: 0; }
+  .readout { grid-column: 1 / -1; margin: 0; min-height: 0; }
+}
+@media (max-width: 520px) {
+  .shell { width: calc(100% - 24px); margin: 20px auto 24px; }
+  .intro { font-size: .87rem; margin-bottom: 13px; }
+  .lab { border-radius: 13px; }
+  .scene { padding: 9px; }
+  .scene-head { margin-bottom: 8px; }
+  .views button { padding: 0 .52rem; min-height: 35px; }
+  .panel { display: block; padding: 13px; }
+  .motion { margin-top: 12px; }
+  .readout { margin-top: 12px; }
+  .legend { min-height: 36px; }
+  .frame svg text { font-size: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <div class="eyebrow"><span>06</span> 운전의 전제 · 후진 주차</div>
+    <h1>뒤는 비었는데, 앞은?</h1>
+    <p class="intro">같은 위치에서 바퀴 방향만 바꿔 후진해 보세요.</p>
+  </header>
+  <div class="lab">
+    <section class="scene" aria-label="후진 주차 시뮬레이션">
+      <div class="scene-head">
+        <div class="views" role="group" aria-label="카메라 시점">
+          <button id="rear-button" type="button" aria-pressed="true">후방뷰</button>
+          <button id="top-button" type="button" aria-pressed="false">탑뷰</button>
+        </div>
+        <span class="scene-mode" id="view-label">뒤 카메라 시점</span>
+      </div>
+      <div class="frame">
+        <svg id="scene" viewBox="0 0 720 440" role="img" aria-labelledby="scene-title scene-desc"></svg>
+      </div>
+      <div class="legend" id="legend">
+        <span id="rear-legend">뒤쪽 바닥과 주차선</span>
+        <span id="active-legend" hidden><i aria-hidden="true"></i> 선택 각도 앞 모서리</span>
+        <span id="straight-legend" hidden><i aria-hidden="true" class="baseline"></i> 직진(0°) 앞 모서리</span>
+      </div>
+    </section>
+    <aside class="panel" aria-label="시뮬레이션 조작">
+      <fieldset>
+        <legend>01 · 방향</legend>
+        <div class="control-label">
+          <label for="angle">앞바퀴 조향각</label>
+          <output id="angle-value" for="angle">왼쪽 28°</output>
+        </div>
+        <input id="angle" type="range" min="-34" max="34" step="1" value="-28">
+        <div class="presets" role="group" aria-label="조향각 예시">
+          <button type="button" data-angle="-28" aria-pressed="true">왼쪽 28°</button>
+          <button type="button" data-angle="0" aria-pressed="false">직진</button>
+          <button type="button" data-angle="28" aria-pressed="false">오른쪽 28°</button>
+        </div>
+      </fieldset>
+      <fieldset class="motion">
+        <legend>02 · 움직임</legend>
+        <div class="control-label">
+          <label for="travel">후진 거리</label>
+          <output id="travel-value" for="travel">0.00 m</output>
+        </div>
+        <input id="travel" type="range" min="0" max="165" step="1" value="0">
+        <div class="actions">
+          <button type="button" class="primary" id="play">후진 재생</button>
+          <button type="button" class="secondary" id="reset">시작 위치</button>
+        </div>
+      </fieldset>
+      <div class="readout" id="readout" data-contact="false">
+        <strong id="status" aria-live="polite">출발 위치</strong>
+        <p id="status-detail">후진한 뒤 탑뷰에서 직진과 비교해 보세요.</p>
+      </div>
+    </aside>
+  </div>
+  <p class="note">학습용 모형입니다. 화면은 임의의 차체와 기둥 배치에서 앞바퀴 각도를 고정해 그립니다.</p>
+</main>
+<script>
+(() => {
+  const svg = document.getElementById("scene");
+  const angleInput = document.getElementById("angle");
+  const travelInput = document.getElementById("travel");
+  const playButton = document.getElementById("play");
+  const resetButton = document.getElementById("reset");
+  const rearButton = document.getElementById("rear-button");
+  const topButton = document.getElementById("top-button");
+  const readout = document.getElementById("readout");
+  const angleValue = document.getElementById("angle-value");
+  const travelValue = document.getElementById("travel-value");
+  const status = document.getElementById("status");
+  const statusDetail = document.getElementById("status-detail");
+  const viewLabel = document.getElementById("view-label");
+  const rearLegend = document.getElementById("rear-legend");
+  const activeLegend = document.getElementById("active-legend");
+  const straightLegend = document.getElementById("straight-legend");
+  const presets = [...document.querySelectorAll("[data-angle]")];
+
+  // World coordinates are meters from the initial rear axle. Positive x points right.
+  const halfWidth = .91;
+  const front = 3.65;
+  const rear = -.92;
+  const wheelbase = 2.72;
+  const pillar = { x: 1.34, y: 2.22, width: .60, length: .60 };
+  const pillarCorners = [
+    [pillar.x, pillar.y], [pillar.x + pillar.width, pillar.y],
+    [pillar.x + pillar.width, pillar.y + pillar.length], [pillar.x, pillar.y + pillar.length]
+  ];
+  const localCorners = [[-halfWidth, rear], [halfWidth, rear], [halfWidth, front], [-halfWidth, front]];
+  const maxDistance = Number(travelInput.max) / 100;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const mint = "#97f1c2";
+  const amber = "#ffd078";
+  let angle = Number(angleInput.value);
+  let distance = 0;
+  let view = "rear";
+  let animation = null;
+  let impact = firstContact(angle);
+
+  function poseAt(degrees, meters) {
+    const curvature = Math.tan(degrees * Math.PI / 180) / wheelbase;
+    if (!curvature) return { x: 0, y: -meters, heading: 0 };
+    const heading = -curvature * meters;
+    return { x: (1 - Math.cos(heading)) / curvature, y: Math.sin(heading) / curvature, heading };
+  }
+
+  function worldPoint(pose, [x, y]) {
+    const c = Math.cos(pose.heading);
+    const s = Math.sin(pose.heading);
+    return [pose.x + x * c + y * s, pose.y - x * s + y * c];
+  }
+
+  function contactsPillar(pose) {
+    const carCorners = localCorners.map(corner => worldPoint(pose, corner));
+    const c = Math.cos(pose.heading);
+    const s = Math.sin(pose.heading);
+    return [[1, 0], [0, 1], [c, -s], [s, c]].every(([ax, ay]) => {
+      const carProjection = carCorners.map(([x, y]) => x * ax + y * ay);
+      const pillarProjection = pillarCorners.map(([x, y]) => x * ax + y * ay);
+      return Math.max(...carProjection) >= Math.min(...pillarProjection)
+        && Math.max(...pillarProjection) >= Math.min(...carProjection);
+    });
+  }
+
+  function firstContact(degrees) {
+    for (let step = 1; step <= maxDistance * 200; step++) {
+      if (!contactsPillar(poseAt(degrees, step / 200))) continue;
+      let clear = (step - 1) / 200;
+      let hit = step / 200;
+      for (let i = 0; i < 10; i++) {
+        const middle = (clear + hit) / 2;
+        if (contactsPillar(poseAt(degrees, middle))) hit = middle;
+        else clear = middle;
+      }
+      return hit;
+    }
+    return null;
+  }
+
+  const screenPoint = ([x, y]) => [335 + 59 * x, 269 - 59 * y];
+  const points = values => values.map(pair => pair.map(value => value.toFixed(2)).join(",")).join(" ");
+  const angleLabel = () => angle === 0 ? "직진 0°" : `${angle < 0 ? "왼쪽" : "오른쪽"} ${Math.abs(angle)}°`;
+
+  function frontTrace(degrees, stop) {
+    return Array.from({ length: 61 }, (_, index) =>
+      screenPoint(worldPoint(poseAt(degrees, stop * index / 60), [halfWidth, front]))
+    );
+  }
+
+  function car(pose, ghost = false) {
+    const [x, y] = screenPoint([pose.x, pose.y]);
+    const color = ghost ? amber : mint;
+    const heading = pose.heading * 180 / Math.PI;
+    const outline = `x="-${halfWidth * 59}" y="-${front * 59}" width="${halfWidth * 118}" height="${(front - rear) * 59}" rx="7"`;
+    const transform = `translate(${x} ${y}) rotate(${heading})`;
+    if (ghost) return `<g transform="${transform}"><rect ${outline} fill="none" stroke="${color}" stroke-opacity=".74" stroke-width="2" stroke-dasharray="7 6"/></g>`;
+    return `<g transform="${transform}">
+      <rect ${outline} fill="#3c675a" stroke="${color}" stroke-width="2.6"/>
+      <path d="M-40 -179 Q0 -192 40 -179 L36 -147 Q0 -155 -36 -147 Z" fill="#182e2a"/>
+      <path d="M-37 -39 Q0 -32 37 -39 L40 -20 Q0 -11 -40 -20 Z" fill="#182e2a"/>
+      <rect x="-34" y="-139" width="68" height="91" rx="11" fill="#719185" opacity=".4"/>
+      <path d="M-44 -207h15m58 0h15" stroke="#e6fff1" stroke-width="4" stroke-linecap="round"/>
+      <path d="M-45 46h13m64 0h13" stroke="#ff9b8c" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="0" cy="49" r="3" fill="#e6fff1"/>
+      <circle cx="${halfWidth * 59}" cy="-${front * 59}" r="5" fill="${color}" stroke="#17352c" stroke-width="1.5"/>
+      <text x="0" y="-90" fill="#edf9ef" font-size="19" text-anchor="middle" font-weight="800">내 차</text>
+    </g>`;
+  }
+
+  function topScene(pose, moved, hit) {
+    const [pillarX, pillarY] = screenPoint([pillar.x, pillar.y + pillar.length]);
+    const pillarWidth = pillar.width * 59;
+    const pillarHeight = pillar.length * 59;
+    const [frontX, frontY] = screenPoint(worldPoint(pose, [halfWidth, front]));
+    const activePath = frontTrace(angle, impact ?? maxDistance);
+    const straightPath = frontTrace(0, maxDistance);
+    const pattern = `<defs><pattern id="grid" width="29.5" height="29.5" patternUnits="userSpaceOnUse"><path d="M29.5 0H0V29.5" fill="none" stroke="#354d45" stroke-width="1"/></pattern><pattern id="pillar" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#4b4940"/><rect width="3" height="8" fill="#d6ad67"/></pattern></defs>`;
+    const contact = hit ? `<circle cx="${frontX}" cy="${frontY}" r="10" fill="none" stroke="#ff947c" stroke-width="3"/>` : "";
+    const straightGhost = angle && moved > 0.015 ? car(poseAt(0, distance), true) : "";
+    return `${pattern}
+      <rect width="720" height="440" fill="#1d332c"/>
+      <rect width="720" height="440" fill="url(#grid)"/>
+      <path d="M162 96H207V375H162 M602 96H548V375H602" fill="none" stroke="#92a59b" stroke-width="3" opacity=".62"/>
+      <path d="M33 39V79m-5-33 5-7 5 7" fill="none" stroke="#b5c9be" stroke-width="2"/>
+      <text x="49" y="51" fill="#d2e0d9" font-size="17" font-weight="700">차량 앞쪽</text>
+      ${straightGhost}${car(pose)}
+      <polyline points="${points(straightPath)}" fill="none" stroke="${amber}" stroke-width="3.6" stroke-dasharray="7 6" stroke-linecap="round"/>
+      ${angle ? `<polyline points="${points(activePath)}" fill="none" stroke="${mint}" stroke-width="3.6" stroke-linecap="round"/>` : ""}
+      <rect x="${pillarX}" y="${pillarY}" width="${pillarWidth}" height="${pillarHeight}" fill="url(#pillar)" stroke="${hit ? "#ff947c" : "#ffdf9b"}" stroke-width="${hit ? 3 : 1.5}"/>
+      <path d="M${pillarX + pillarWidth} ${pillarY + pillarHeight / 2}H${pillarX + pillarWidth + 18}" fill="none" stroke="#ebd3a5"/>
+      <text x="${pillarX + pillarWidth + 25}" y="${pillarY + pillarHeight / 2 + 6}" fill="#ffecbf" font-size="19" font-weight="750">기둥</text>
+      ${contact}
+      <path d="M43 395h59m-59-4v8m59-8v8" stroke="#b5c9be" stroke-width="2"/>
+      <text x="73" y="422" fill="#d2e0d9" font-size="16" text-anchor="middle">1 m</text>`;
+  }
+
+  function rearScene(pose) {
+    const pitch = .30;
+    const c = Math.cos(pose.heading);
+    const s = Math.sin(pose.heading);
+    // Rear camera projection is illustrative and follows the same world pose as the overhead view.
+    function cameraPoint([x, y, z]) {
+      const dx = x - pose.x;
+      const dy = y - pose.y;
+      const depth = -(dx * s + dy * c) + rear;
+      const height = z - .93;
+      return [-(dx * c - dy * s),
+        Math.sin(pitch) * depth + Math.cos(pitch) * height,
+        Math.cos(pitch) * depth - Math.sin(pitch) * height];
+    }
+    function project([x, y, z]) {
+      return [360 + 285 * x / z, 206 - 285 * y / z];
+    }
+    function floorLine(from, to, color, width = 2, opacity = 1) {
+      let start = cameraPoint(from);
+      let end = cameraPoint(to);
+      const near = .16;
+      if (start[2] < near && end[2] < near) return "";
+      function clip(low, high) {
+        const t = (near - low[2]) / (high[2] - low[2]);
+        return low.map((value, index) => value + t * (high[index] - value));
+      }
+      if (start[2] < near) start = clip(start, end);
+      if (end[2] < near) end = clip(end, start);
+      return `<polyline points="${points([project(start), project(end)])}" fill="none" stroke="${color}" stroke-width="${width}" opacity="${opacity}"/>`;
+    }
+    let grid = "";
+    for (let x = -9; x <= 9; x++) grid += floorLine([x, -.5, 0], [x, -15, 0], "#698278", 1, .35);
+    for (let y = -1; y >= -15; y--) grid += floorLine([-12, y, 0], [12, y, 0], "#698278", 1, .35);
+    const lines = [-1.62, 1.62].map(x => floorLine([x, -1.15, 0], [x, -6.8, 0], "#e3ecdf", 4, .78)).join("");
+    const endLine = floorLine([-1.62, -6.8, 0], [1.62, -6.8, 0], "#e3ecdf", 4, .78);
+    const band = floorLine([-13, -9, .55], [13, -9, .55], "#c5a567", 13, .65);
+    const wall = floorLine([-13, -9, 0], [13, -9, 0], "#728981", 4);
+    const pillarEdges = pillarCorners.map((corner, index) => {
+      const next = pillarCorners[(index + 1) % pillarCorners.length];
+      return floorLine([...corner, 0], [...corner, 2.1], "#d1b06d", 4)
+        + floorLine([...corner, 2.1], [...next, 2.1], "#d1b06d", 4);
+    }).join("");
+    return `<defs><linearGradient id="rear-floor" x2="0" y2="1"><stop stop-color="#4b625a"/><stop offset="1" stop-color="#253c33"/></linearGradient></defs>
+      <rect width="720" height="440" fill="#314841"/>
+      <path d="M0 145H720V440H0Z" fill="url(#rear-floor)"/>
+      ${band}${wall}${grid}${lines}${endLine}${pillarEdges}
+      <path d="M0 437 Q360 382 720 437V440H0Z" fill="#172b24"/>
+      <text x="25" y="40" fill="#e5f2e8" font-size="20" font-weight="750">차 뒤쪽</text>`;
+  }
+
+  function draw() {
+    const moved = Math.min(distance, impact ?? maxDistance);
+    const hit = impact !== null && distance >= impact;
+    const pose = poseAt(angle, moved);
+    const top = view === "top";
+    const description = top
+      ? "위에서 본 주차장. 오른쪽 앞범퍼의 선택 각도와 직진 궤적을 비교합니다."
+      : "뒤 카메라에서 본 주차선. 앞쪽 기둥은 후방 시야 밖에 있습니다.";
+    svg.innerHTML = `<title id="scene-title">${top ? "탑뷰" : "후방뷰"}</title><desc id="scene-desc">${description}</desc>`
+      + (top ? topScene(pose, moved, hit) : rearScene(pose));
+
+    angleValue.textContent = angleLabel();
+    angleInput.setAttribute("aria-valuetext", angleLabel());
+    travelValue.textContent = `${distance.toFixed(2)} m`;
+    travelInput.setAttribute("aria-valuetext", `${distance.toFixed(2)}미터${hit ? `, 선택 차량은 ${moved.toFixed(2)}미터에서 접촉` : ""}`);
+    travelInput.value = Math.round(distance * 100);
+    rearButton.setAttribute("aria-pressed", !top);
+    topButton.setAttribute("aria-pressed", top);
+    viewLabel.textContent = top ? "같은 장면을 위에서" : "뒤 카메라 시점";
+    rearLegend.hidden = top;
+    activeLegend.hidden = !top || angle === 0;
+    straightLegend.hidden = !top;
+    presets.forEach(button => button.setAttribute("aria-pressed", Number(button.dataset.angle) === angle));
+    readout.dataset.contact = String(hit);
+
+    let title = "출발 위치";
+    let detail = top ? "실선은 선택한 각도, 점선은 같은 위치에서 직진한 경우예요." : "후진한 뒤 탑뷰에서 직진과 비교해 보세요.";
+    if (angle === 0 && top) detail = "선택 각도와 직진의 앞범퍼 궤적이 겹쳐요.";
+    if (moved > 0) title = "현재 위치 · 접촉 없음";
+    if (distance >= maxDistance && !hit) title = "이 모형에서는 접촉 없이 후진";
+    if (hit) {
+      title = "오른쪽 앞 모서리가 기둥에 닿음";
+      const stopMessage = `${moved.toFixed(2)} m에서 멈췄어요.`;
+      detail = top ? `${stopMessage} 뒤는 비어 있지만, 앞 모서리가 기둥 쪽으로 움직였어요.`
+        : `${stopMessage} 탑뷰에서 닿은 지점을 확인해 보세요.`;
+    }
+    if (status.textContent !== title) status.textContent = title;
+    if (statusDetail.textContent !== detail) statusDetail.textContent = detail;
+  }
+
+  function stop() {
+    if (animation !== null) cancelAnimationFrame(animation);
+    animation = null;
+    playButton.textContent = "후진 재생";
+  }
+
+  function changeAngle(value) {
+    stop();
+    angle = value;
+    angleInput.value = value;
+    impact = firstContact(angle);
+    draw();
+  }
+
+  function replay() {
+    if (animation !== null) {
+      stop();
+      return;
+    }
+    const limit = impact ?? maxDistance;
+    if (reduceMotion.matches) {
+      distance = limit;
+      draw();
+      return;
+    }
+    if (distance >= limit - .001) distance = 0;
+    const from = distance;
+    let startedAt;
+    function step(now) {
+      startedAt ??= now;
+      distance = Math.min(limit, from + (now - startedAt) / 2100 * maxDistance);
+      draw();
+      if (distance >= limit) stop();
+      else animation = requestAnimationFrame(step);
+    }
+    playButton.textContent = "일시정지";
+    animation = requestAnimationFrame(step);
+  }
+
+  angleInput.addEventListener("input", () => changeAngle(Number(angleInput.value)));
+  travelInput.addEventListener("input", () => {
+    stop();
+    distance = Number(travelInput.value) / 100;
+    draw();
+  });
+  presets.forEach(button => button.addEventListener("click", () => changeAngle(Number(button.dataset.angle))));
+  rearButton.addEventListener("click", () => { view = "rear"; draw(); });
+  topButton.addEventListener("click", () => { view = "top"; draw(); });
+  playButton.addEventListener("click", replay);
+  resetButton.addEventListener("click", () => { stop(); distance = 0; draw(); });
+  draw();
+})();
+</script>
+</body>
+</html>
