@@ -10,6 +10,18 @@
 
 ## 1. 국내 수요와 첫 고객
 
+### 국내 교통사고 5개년
+
+| 연도 | 전체 교통사고(건) | 고령 운전자 사고(건) | 고령 운전자 사고 사망자(명) | 전체 사고 중 고령 운전자 비중 |
+| --- | ---: | ---: | ---: | ---: |
+| 2021년 | 203,130 | 31,841 | 709 | 15.7% |
+| 2022년 | 196,836 | 34,652 | 735 | 17.6% |
+| 2023년 | 198,296 | 39,614 | 745 | 20.0% |
+| 2024년 | 196,349 | 42,369 | 761 | 21.6% |
+| 2025년 | 193,889 | 45,873 | 843 | 23.7% |
+
+2021년 대비 2025년 전체 사고 건수는 **4.5% 감소**했다. 같은 기간 고령 운전자 사고 건수는 **44.1% 증가**했고 해당 사고의 사망자는 **18.9% 증가**했다. 고령 운전자 사고 비중은 전체 사고 건수를 분모로 계산했다. [TAAS 전체 교통사고 추세][taas-trend] · [TAAS 고령 운전자 5개년][taas-senior]
+
 | 시장 신호 | 확인 수치 | 기획에 쓰는 방법 |
 | --- | --- | --- |
 | 고령 운전자 사고 | 2024년 42,369건 → 2025년 45,873건(+8.3%). 해당 사고 사망자 761명 → 843명(+10.8%) | 운전을 지속하면서 습관 변화를 관찰할 필요성을 제시. 사고 건수와 주행거리당 사고율, 해당 사고 사망자와 고령 운전자 본인 사망자 수를 구별. [TAAS][taas] |
@@ -43,6 +55,18 @@
 | 호주 · NSW SIRA Young Drivers Telematics Trial | 앱과 장치의 피드백이 청년 운전자 행동에 미치는 영향을 무작위 대조 연구로 관찰 | 보험 감독기관이 실증을 주도. 효과를 검증할 지표의 근거이며, 제품 구매나 보험 할인 계약은 별도. [SIRA 연구보고서][nsw] |
 | 미국·글로벌 · Samsara Coach | 법인차에서 졸음 등 일부 위험 신호를 계기로 음성 코칭하고 관리자 코칭 업무와 연결 | **감지 후 행동을 돕는 기능도 선례가 있다.** 소규모 운영사가 기존 장비와 승인된 차량 데이터로 쓸 수 있는 범위, 관리자 시간 절감을 비교할 필요가 있음. [Samsara Coach 발표][samsara] |
 
+### Life360 2분기 5개년 비교
+
+| 기준 | 글로벌 유료 그룹(만 개) | 연결 구독 매출(백만 달러) |
+| --- | ---: | ---: |
+| 2022년 2분기 | 142 | 36.0 |
+| 2023년 2분기 | 160 | 52.7 |
+| 2024년 2분기 | 200 | 65.7 |
+| 2025년 2분기 | 250 | 88.6 |
+| 2026년 2분기 | 320 | 115.6 |
+
+각 연도 2분기 말 유료 그룹과 해당 분기의 연결 구독 매출을 비교했다. 유료 그룹 수는 발표 자료의 반올림 정밀도를 따르고, 매출은 발표 당시 명목 미국 달러다. 연결 구독 매출에는 하드웨어 관련 구독도 포함된다. [2022년 2분기 실적][life360-22] · [2024년 2분기 실적과 2023년 비교치][life360-24] · [2026년 2분기 실적과 2025년 비교치][life360-ir]
+
 초보 운전자에게는 **기간이 정해진 학습**, 고령 운전자 가족에게는 **동의한 범위 안에서 보는 변화 기록**, 법인에는 **코칭 운영 시간과 행동의 변화**가 구매 이유가 될 수 있다. 공통 데이터는 운전자별 주행 세션, 관측된 사건, 선택한 행동과 이행 기록이다. 판매 상품과 공유 범위는 고객군에 맞춰 설계한다.
 
 ## 3. 주행보조 채택률과 사고율
@@ -57,7 +81,7 @@
 | 차로 이탈 경고(LDW) | 79% | 13% | 50% | 37% |
 | 사각지대 모니터링(BSM) | 66% | 28% | 52% | 39% |
 
-HLDI의 2026년 4월 보고서, 그림 5–19. 차종은 연구의 *vehicle series* 단위이며 첫 두 열은 판매 대수로 가중한 신차 점유율과 다르다. 등록차 실제 장착은 제조사 13곳의 VIN 자료 등을 활용해 옵션 구매를 추정한 값이다. HLDI는 전방 AEB의 미국 등록차 장착 비중을 **2030년 59%**로 전망했다. 보행자 감지 AEB와 전방 AEB는 중복될 수 있다. [HLDI 원문, pp. 7–11, 17][hldi]
+HLDI의 2026년 4월 보고서, 그림 5–19. 차종은 연구의 *vehicle series* 단위이며 첫 두 열은 판매 대수로 가중한 신차 점유율과 다르다. 등록차 실제 장착은 제조사 13곳의 VIN 자료 등을 활용해 옵션 구매를 추정한 값이다. HLDI는 전방 AEB의 미국 등록차 장착 비중을 **2030년 59%**로 전망했다. 보행자 감지 AEB와 전방 AEB는 중복될 수 있다. 연도별 등록차 장착 추세는 원문의 그림 6·9·12·15·18에서 볼 수 있다. [HLDI 원문, pp. 7–11, 17][hldi]
 
 **기능이 켜져 있는 비중과 실제 작동하며 주행한 비중도 따로 본다.** IIHS의 2025년 연구는 2023년 워싱턴 DC권 딜러 정비 차량 2,000대 이상에서 AEB 활성 설정 **93%**, 차로 이탈 경고·방지 시스템 **87%**를 관찰했다. 시동 사이에 설정이 유지되는 해당 장치의 활성 상태를 본 표본이다. 별도의 4주 주행 관찰에서는 특정 차량·자원자 표본에서 고속도로·간선급 고속도로 계열 주행거리의 **39.5%**에 조사 대상 자동화 기능이 켜져 있거나 작동했다. ACC와 차로 중앙 유지 결합 기능을 포함하므로 미국 전체의 L2 사용률로 확대할 수 없다. [IIHS 활성 설정 연구][iihs-use] · [실주행 사용 관찰][iihs-road-use]
 
@@ -140,6 +164,8 @@ Pleos 신청 안내는 **Vehicle State와 NaviHelper**를 신청 없이 사용 �
 팀의 상세 기획은 [휴식 코치](fatigue-rest-direction.md), [DriveWatch](drive-watch.md), [Training Wheels](training-wheels.md)에 연결한다.
 
 [taas]: https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdOccrrncSttus.do?menuId=WEB_KMP_OVT_MVT_TAC_TOS
+[taas-trend]: https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdTrend.do?menuId=WEB_KMP_OVT_MVT_TAC_TCO
+[taas-senior]: https://taas.koroad.or.kr/sta/acs/gus/selectOdsnDrverTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAS_ODT
 [taas-detail]: https://taas.koroad.or.kr/web/shp/sbm/initUnityAnalsSys.do
 [korea-older]: https://mods.go.kr/board.es?act=view&bid=10820&list_no=447294&mid=a10301010000
 [police]: https://www.police.go.kr/www/open/publice/publice0204.jsp
@@ -152,6 +178,8 @@ Pleos 신청 안내는 **Vehicle State와 NaviHelper**를 신청 없이 사용 �
 [aioi]: https://www.aioinissaydowa.co.jp/corporate/service/telematics/plus.html
 [honda]: https://hondanews.com/en-US/releases/release-28a0418eb9f96c2502c6b994171cd104-honda-creates-new-driver-coaching-app-to-advance-teen-driver-education-and-safety-awareness
 [life360-drive]: https://intl.life360.com/driving-safety
+[life360-22]: https://investors.life360.com/news-releases/news-release-details/life360-reports-q2-and-half-year-2022-results
+[life360-24]: https://investors.life360.com/news-releases/news-release-details/life360-reports-record-q2-2024-results
 [life360-ir]: https://investors.life360.com/news-releases/news-release-details/life360-reports-record-q2-2026-results
 [admiral]: https://www.admiral.com/black-box-insurance/littlebox
 [icbc]: https://www.icbc.com/assets/en/tKIezLX5StAWMcti0AoOY/techpilot-final-report.pdf
