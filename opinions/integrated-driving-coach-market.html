@@ -1,0 +1,1309 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="고령·초보·장거리 운전자를 위한 통합 운전 코치의 국내외 시장, 주행보조 장착과 사고율, 수익모델 분석.">
+<title>통합 운전 코치 시장 분석 | Parkhere Research</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f5f7f4;
+  --paper: #fff;
+  --ink: #172c2e;
+  --muted: #4d6160;
+  --line: #d8e1db;
+  --green: #217459;
+  --green-dark: #14563f;
+  --mint: #a6efd4;
+  --soft: #eaf5ef;
+  --slate: #4c6476;
+  --gold: #986222;
+  --gold-soft: #fbf2df;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+[hidden] { display: none !important; }
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: 1.5rem; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.75 var(--sans); word-break: keep-all; overflow-wrap: anywhere; }
+a { color: var(--green-dark); text-decoration-thickness: .08em; text-underline-offset: .18em; }
+a:hover { color: #0c392b; }
+a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3px solid #ba6c15; outline-offset: 3px; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+svg { display: block; max-width: 100%; }
+p { margin: 0 0 1em; }
+.wrap { width: min(100% - 64px, 1240px); margin-inline: auto; }
+.skip { position: fixed; top: .6rem; left: .6rem; padding: .4rem .9rem; background: var(--paper); z-index: 5; transform: translateY(-160%); }
+.skip:focus { transform: none; }
+.masthead { color: #d9e9e2; background: #11292a; border-bottom: 1px solid #36514e; }
+.masthead .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 58px; }
+.wordmark { display: flex; align-items: center; gap: .65rem; letter-spacing: .09em; font-size: .77rem; font-weight: 800; }
+.wordmark svg { width: 24px; color: var(--mint); }
+.mast-meta { color: #b6cbc1; font-size: .78rem; }
+.hero { position: relative; isolation: isolate; overflow: hidden; background: #11292a; color: #f3faf6; }
+.hero .wrap { position: relative; padding-block: clamp(2.8rem, 7vw, 6rem) 3rem; }
+.route-art { position: absolute; z-index: -1; inset: 0 0 auto auto; width: min(54%, 810px); height: 100%; opacity: .78; }
+.eyebrow { color: var(--mint); font-size: .76rem; letter-spacing: .14em; font-weight: 800; margin-bottom: .85rem; }
+h1 { font-size: clamp(2.1rem, 6.1vw, 5rem); line-height: 1.08; letter-spacing: -.065em; margin: 0 0 1rem; max-width: 760px; }
+.hero-copy { font-size: clamp(1.02rem, 2.1vw, 1.3rem); max-width: 37rem; color: #d1e4db; margin-bottom: 1.65rem; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: .65rem; }
+.action { min-height: 43px; display: inline-flex; align-items: center; padding: .52rem 1rem; font-weight: 750; font-size: .86rem; border: 1px solid #6f8b80; border-radius: 8px; text-decoration: none; color: #eef8f3; background: #183332; }
+.action:hover { background: #264441; color: #fff; }
+.action.primary { background: var(--mint); color: #153b30; border-color: var(--mint); }
+.action.primary:hover { background: #c5f8e5; color: #123228; }
+.hero-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 2.6rem; border-top: 1px solid #47615b; }
+.hero-metric { padding: 1rem 1.1rem .25rem 0; }
+.hero-metric + .hero-metric { border-left: 1px solid #47615b; padding-left: 1.2rem; }
+.hero-metric b { display: block; font-size: clamp(1.6rem, 3.7vw, 2.5rem); color: #f6fcf9; letter-spacing: -.05em; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.hero-metric span { color: #b8cec2; font-size: .84rem; }
+.hero-metric a { color: var(--mint); font-size: .78rem; }
+.layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); column-gap: clamp(24px, 5vw, 64px); align-items: start; padding-block: 2.6rem 4rem; }
+.toc { position: sticky; top: 1.3rem; align-self: start; }
+.toc-heading { margin: 0 0 .7rem; font-weight: 800; color: var(--muted); font-size: .8rem; letter-spacing: .07em; }
+.toc ol { list-style: none; padding: 0; margin: 0; border-left: 1px solid var(--line); }
+.toc a { display: flex; gap: .6rem; padding: .5rem .7rem; border-radius: 0 6px 6px 0; color: var(--muted); font-size: .86rem; text-decoration: none; }
+.toc a span { flex: 0 0 1.25rem; color: var(--green); font-variant-numeric: tabular-nums; font-weight: 750; }
+.toc a:hover, .toc a[aria-current="location"] { color: var(--green-dark); background: var(--soft); }
+.report { min-width: 0; }
+.intro { border: 1px solid var(--line); border-left: 4px solid var(--green); border-radius: 10px; padding: 1.35rem 1.45rem; background: var(--paper); }
+.intro p:last-child, .note p:last-child { margin-bottom: 0; }
+.intro p:first-child { font-size: 1.07rem; }
+.intro p:last-child { font-size: .85rem; color: var(--muted); }
+.report-section { margin-top: 3.25rem; }
+.report-section h2 { border-top: 1px solid var(--line); padding-top: 1.25rem; font-size: clamp(1.6rem, 3.4vw, 2.55rem); line-height: 1.25; letter-spacing: -.055em; margin: 0 0 1.15rem; }
+.section-index { display: block; margin-bottom: .36rem; font-size: .78rem; color: var(--green-dark); font-variant-numeric: tabular-nums; letter-spacing: .1em; }
+h3 { font-size: 1.23rem; line-height: 1.35; letter-spacing: -.028em; margin: 1.75rem 0 .75rem; }
+.report-section > p, .report-section > ul, .report-section > ol { max-width: 75ch; }
+.report-section ul, .report-section ol { padding-left: 1.5rem; }
+.report-section li { margin-bottom: .52em; }
+.table-wrap { margin: 1.2rem 0; overflow-x: auto; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; min-width: 590px; font-size: .86rem; line-height: 1.6; }
+th, td { padding: .78rem .85rem; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+th { color: #24433a; background: #edf4ef; font-weight: 780; }
+td:first-child { font-weight: 650; }
+tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) { background: #f9fbf9; }
+.chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; margin: 1.15rem 0; }
+.chart-grid.single { grid-template-columns: minmax(0, 1fr); }
+.chart { min-width: 0; margin: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 13px; padding: clamp(.9rem, 2.3vw, 1.35rem); display: flex; flex-direction: column; }
+.chart[data-scenario-chart] { border-color: #dbc9a8; }
+.chart-no { color: var(--green-dark); display: block; font-size: .7rem; font-weight: 800; letter-spacing: .1em; }
+.chart h3 { margin: .25rem 0 .25rem; font-size: 1.13rem; }
+.chart-sub, .chart-caption { color: var(--muted); font-size: .79rem; line-height: 1.55; }
+.chart-sub { margin: 0 0 .9rem; }
+.chart-caption { margin: .75rem 0 0; padding-top: .62rem; border-top: 1px solid var(--line); }
+.chart-caption a { font-weight: 700; }
+.chart-content { flex: 1; min-width: 0; }
+.bar-set { display: grid; grid-template-columns: min(38%, 9.5rem) minmax(0, 1fr) max-content; column-gap: .55rem; }
+.bar-group { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; margin: .52rem 0 .8rem; }
+.bar-group-name { grid-column: 1 / -1; }
+.bar-group-name { font-size: .84rem; font-weight: 780; margin-bottom: .28rem; }
+.bar-row { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: center; min-height: 1.72rem; font-size: .79rem; color: var(--muted); }
+.bar-row strong { min-width: 3.15rem; text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
+.bar-track { height: .64rem; border-radius: 2px; background: #edf2ee; overflow: hidden; }
+.bar-fill { display: block; height: 100%; width: var(--w); border-radius: 2px; background: var(--green); }
+.bar-fill.comparison, .swatch.comparison { background: var(--slate); }
+.bar-fill.assumption, .swatch.assumption { background: var(--gold); }
+.swatch.neutral { background: #69847a; }
+.swatch.light { background: #adc5ba; }
+.swatch { display: inline-block; width: .68rem; height: .68rem; border-radius: 2px; background: var(--green); }
+.scale { grid-column: 2; display: flex; justify-content: space-between; gap: .2rem; color: var(--muted); font-size: .71rem; border-top: 1px solid var(--line); padding-top: .22rem; margin-top: .4rem; font-variant-numeric: tabular-nums; }
+.scale span:last-child { text-align: right; }
+.segmented { display: flex; height: 1.45rem; gap: 2px; border-radius: 5px; overflow: hidden; margin: .7rem 0 .9rem; background: var(--line); }
+.segmented span { flex: var(--w) 1 0; background: var(--green); }
+.segmented span.comparison { background: var(--slate); }
+.segmented span.neutral { background: #69847a; }
+.segmented span.light { background: #adc5ba; }
+.segmented span.assumption { background: var(--gold); }
+.legend-list { list-style: none; padding: 0 !important; margin: 0; font-size: .81rem; }
+.legend-list li { display: grid; grid-template-columns: .7rem 1fr auto; align-items: center; gap: .5rem; }
+.legend-list strong { font-variant-numeric: tabular-nums; }
+.note { margin: 1rem 0; background: var(--soft); border: 1px solid #cce4d5; padding: .85rem 1rem; border-radius: 9px; font-size: .88rem; }
+.plan { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .6rem; list-style: none; margin: .45rem 0; padding: 0 !important; }
+.plan li { margin: 0; background: var(--soft); border-radius: 7px; padding: .7rem; font-size: .83rem; }
+.plan strong { display: block; color: var(--green-dark); }
+.plan span { font-size: .77rem; color: var(--muted); display: block; }
+.calc { margin-top: 1rem; border: 1px solid #dbc9a8; background: var(--gold-soft); border-radius: 13px; padding: 1rem 1.25rem; }
+.calc h3 { margin-top: 0; }
+.calc p { color: #5b4c32; font-size: .83rem; }
+.presets { display: flex; flex-wrap: wrap; gap: .4rem; margin: .7rem 0; }
+.preset { color: #523711; background: #fffaf0; border: 1px solid #b7a078; border-radius: 6px; padding: .38rem .7rem; min-height: 40px; font-size: .82rem; }
+.preset[aria-pressed="true"] { background: #6d4917; border-color: #6d4917; color: #fff; }
+.calc-fields, .calc-values { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .6rem; }
+.calc label { display: grid; gap: .23rem; font-size: .8rem; font-weight: 700; color: #523d1d; }
+.calc input { width: 100%; min-width: 0; background: #fffdf9; border: 1px solid #b7a078; border-radius: 6px; padding: .42rem .5rem; color: #322710; font-variant-numeric: tabular-nums; }
+.calc-values { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: .9rem; border-top: 1px solid #d9c49f; padding-top: .65rem; }
+.calc-values span { display: block; font-size: .76rem; color: #654a22; }
+.calc-values strong { color: #442e13; font-size: clamp(.98rem, 2.6vw, 1.4rem); font-variant-numeric: tabular-nums; }
+.calc-values .calc-money { white-space: normal; }
+.sources { columns: 2; column-gap: 2rem; padding-left: 1.5rem; font-size: .85rem; }
+.sources li { break-inside: avoid; padding-right: .5rem; }
+.footer { border-top: 1px solid var(--line); padding-block: 1.15rem; color: var(--muted); font-size: .82rem; }
+.footer .wrap { display: flex; justify-content: space-between; gap: .6rem; flex-wrap: wrap; }
+@media (max-width: 1000px) {
+  .wrap { width: min(100% - 40px, 1240px); }
+  .layout { grid-template-columns: 155px minmax(0, 1fr); column-gap: 25px; }
+  .toc a { padding-inline: .5rem; }
+}
+@media (max-width: 760px) {
+  .layout { grid-template-columns: minmax(0, 1fr); padding-top: 1.15rem; }
+  .toc { position: static; margin-bottom: 1.05rem; }
+  .toc ol { display: flex; flex-wrap: wrap; gap: .35rem; border: 0; }
+  .toc a { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: .3rem .48rem; font-size: .78rem; }
+  .route-art { width: 75%; opacity: .44; }
+  .chart-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+  .wrap { width: calc(100% - 28px); }
+  .mast-meta { font-size: .7rem; }
+  .hero .wrap { padding-bottom: 1.5rem; }
+  .hero-metrics { margin-top: 1.55rem; }
+  .hero-metric { padding-right: .45rem; }
+  .hero-metric + .hero-metric { padding-left: .58rem; }
+  .hero-metric span, .hero-metric a { font-size: .72rem; line-height: 1.4; }
+  .intro { padding: .95rem; }
+  .report-section { margin-top: 2.5rem; }
+  .calc { padding-inline: .85rem; }
+  .calc-fields, .plan { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .calc-values { grid-template-columns: minmax(0, 1fr); gap: .3rem; }
+  .calc-values > .calc-result { display: flex; justify-content: space-between; align-items: baseline; gap: .55rem; }
+  .bar-set { grid-template-columns: minmax(0, 1fr) max-content; }
+  .bar-row > span:first-child { grid-column: 1; grid-row: 1; }
+  .bar-row strong { grid-column: 2; grid-row: 1; }
+  .bar-row .bar-track { grid-column: 1 / -1; grid-row: 2; margin: .12rem 0 .35rem; }
+  .scale { grid-column: 1 / -1; font-size: .65rem; }
+  .sources { columns: 1; }
+}
+@media print {
+  @page { size: A4; margin: 14mm; }
+  html, body { background: white; color: #111; }
+  .wrap { width: 100%; }
+  .layout { display: block; padding: 0; }
+  .masthead, .toc, .hero-actions, .route-art, .footer, .skip, .presets { display: none !important; }
+  .hero { background: white; color: #111; }
+  .hero .wrap { padding: 0 0 1rem; }
+  .hero h1 { font-size: 28pt; }
+  .hero-copy, .eyebrow, .hero-metric b, .hero-metric span, .hero-metric a { color: #111; }
+  .hero-metrics { margin-top: 1rem; border-color: #999; }
+  .hero-metric + .hero-metric { border-color: #999; }
+  .chart-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .chart, .calc { break-inside: avoid; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .table-wrap { overflow: visible; border-radius: 0; }
+  table { min-width: 0; table-layout: fixed; font-size: 8pt; }
+  tr { break-inside: avoid; }
+  th, td { padding: .34rem; }
+  h2, h3 { break-after: avoid; }
+  .report-section { margin-top: 1.5rem; }
+  .sources { font-size: 8pt; }
+}
+</style>
+</head>
+<body id="top">
+<a class="skip" href="#report">본문으로 이동</a>
+<header class="masthead">
+  <div class="wrap">
+    <div class="wordmark">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 18h5a4 4 0 0 0 0-8H8a3 3 0 0 1 0-6h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="19" cy="4" r="2.3" fill="currentColor"/><circle cx="4" cy="18" r="2.3" fill="currentColor"/></svg>
+      PARKHERE RESEARCH
+    </div>
+    <span class="mast-meta">공모전 검토용 · 2026.11.06</span>
+  </div>
+</header>
+<header class="hero">
+  <svg class="route-art" viewBox="0 0 720 470" preserveAspectRatio="xMaxYMid slice" fill="none" aria-hidden="true">
+    <defs><pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M34 0H0V34" stroke="#648077" stroke-opacity=".28"/></pattern><linearGradient id="fade"><stop stop-color="#11292a"/><stop offset=".65" stop-color="#11292a" stop-opacity="0"/></linearGradient></defs>
+    <path d="M0 0h720v470H0z" fill="url(#grid)"/>
+    <path d="M138 460 290 361 350 273 450 267 536 190 544 98 649 49 733 61" stroke="#294c45" stroke-width="24" stroke-linejoin="round"/>
+    <path d="M138 460 290 361 350 273 450 267 536 190 544 98 649 49 733 61" stroke="#7bd7b4" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5 8"/>
+    <circle cx="350" cy="273" r="8" fill="#11292a" stroke="#b0edd5" stroke-width="2"/>
+    <circle cx="536" cy="190" r="13" stroke="#88dec0" stroke-opacity=".5"/><circle cx="536" cy="190" r="6" fill="#b0edd5"/>
+    <circle cx="649" cy="49" r="7" fill="#11292a" stroke="#b0edd5" stroke-width="2"/>
+    <path d="M0 0h720v470H0z" fill="url(#fade)"/>
+  </svg>
+  <div class="wrap">
+    <p class="eyebrow">DRIVING SAFETY / MARKET BRIEF</p>
+    <h1>통합 운전 코치<br>시장 분석</h1>
+    <p class="hero-copy">고령·초보·장거리 운전자의 행동 변화를 돕는 제품이 어디에서 시작하고, 누가 비용을 지불할지 살폈습니다.</p>
+    <div class="hero-actions">
+      <a class="action primary" href="#adas">주행보조 통계 보기</a>
+      <a class="action" href="#business">수익모델 보기</a>
+      <button class="action" type="button" id="print-report" hidden>인쇄 · PDF 저장</button>
+    </div>
+    <div class="hero-metrics">
+      <div class="hero-metric"><b>23.7%</b><span>한국 2025년<br>고령 운전자 사고 비중</span><br><a href="#market">국내 수요와 분모 →</a></div>
+      <div class="hero-metric"><b>37%</b><span>미국 2025년 등록차<br>전방 AEB 장착 추정</span><br><a href="#adoption">기능별 채택률 →</a></div>
+      <div class="hero-metric"><b>320만</b><span>Life360 유료 그룹<br>2026년 2분기 · 전체 서비스</span><br><a href="#cases">해외 사례 →</a></div>
+    </div>
+  </div>
+</header>
+<div class="wrap layout">
+  <nav class="toc" aria-label="보고서 목차">
+    <p class="toc-heading">보고서 목차</p>
+    <ol>
+<li><a href="#market"><span aria-hidden="true">01</span>국내 수요와 첫 고객</a></li>
+<li><a href="#cases"><span aria-hidden="true">02</span>해외 사례와 지불 주체</a></li>
+<li><a href="#adas"><span aria-hidden="true">03</span>주행보조 채택률과 사고율</a></li>
+<li><a href="#evidence"><span aria-hidden="true">04</span>코칭의 행동 변화 근거</a></li>
+<li><a href="#business"><span aria-hidden="true">05</span>수익모델과 사업성 판단</a></li>
+<li><a href="#product"><span aria-hidden="true">06</span>공모전 제품 범위와 기술 확인</a></li>
+<li><a href="#validation"><span aria-hidden="true">07</span>검증 계획과 의사결정</a></li>
+<li><a href="#sources"><span aria-hidden="true">08</span>참고 자료</a></li>
+</ol>
+  </nav>
+  <main class="report" id="report" tabindex="-1">
+    <div class="intro"><p>고령 운전자의 <strong>본인 기준선 변화</strong>, 초보 운전자의 <strong>반복 연습</strong>, 장거리 운전자의 <strong>휴식 이행</strong>을 하나의 주행 기록으로 지원하는 제품을 검토했다. 국내외 상품과 실증을 보면 운전 피드백을 가족 안전 구독, 보험, 기업 코칭에 묶어 판매한 사례가 있다. 우리 제품은 <strong>운전자에게 다음 행동을 제안하고 이행을 확인하는 경험</strong>을 검증할 만하다. 공모전에서는 장거리 휴식으로 차량 내 경험을 보여주고, 초기 매출은 장거리 운행이 반복되는 법인차 운영사의 유료 실증에서 검증하는 방향을 제안한다.</p><p>한국의 2025년 교통사고 193,889건 중 65세 이상 운전자가 일으킨 사고는 45,873건(23.7%)이었다. 미국에서는 2025년형 차종의 90%에 전방 자동긴급제동(AEB)이 기본 적용됐지만, 같은 해 등록차 전체의 장착 추정치는 37%였다. 차로 중앙 유지가 결합된 적응형 크루즈는 각각 35%와 9%였다. <strong>문제의 규모와 앱이 실제로 접근할 수 있는 차량의 규모는 따로 추정해야 한다.</strong> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdOccrrncSttus.do?menuId=WEB_KMP_OVT_MVT_TAC_TOS" rel="noopener noreferrer" target="_blank">한국도로교통공단 TAAS</a> · <a href="https://www.iihs.org/media/a14defa9-8140-4fd9-b76d-9929ff272919/2U4dfw/HLDI%20Research/Bulletins/hldi_bulletin_43-03.pdf" rel="noopener noreferrer" target="_blank">HLDI 2026년판, 그림 5–13</a></p><p>에고라이트로 정부 통계, 기업 발표, 공식 상품과 연구기관 페이지를 확인했다. 일부 사이트의 브라우저 차단·PDF 접근 오류는 공개 색인에 수록된 발행기관 원문으로 보완했다. 제품 발표, 관측값, 연구 결과, 규제 요건과 이 문서의 사업 가정을 구분했다.</p></div><section class="report-section" id="market"><h2><span aria-hidden="true" class="section-index">01</span>국내 수요와 첫 고객</h2>
+<h3>국내 교통사고 5개년</h3><div class="chart-grid">
+<figure aria-labelledby="figure-01-title" class="chart" id="figure-01">
+<span class="chart-no">차트 01</span>
+<h3 id="figure-01-title">전체 교통사고</h3>
+<p class="chart-sub">한국 · 2021–2025년 · 연간 발생 건수</p>
+<div class="chart-content">
+<div class="bar-set">
+<div class="bar-group">
+<div class="bar-row">
+<span>2021년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="250000" data-value="203130" style="--w:81.2520%"></span></span>
+<strong>203,130건</strong>
+</div>
+<div class="bar-row">
+<span>2022년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="250000" data-value="196836" style="--w:78.7344%"></span></span>
+<strong>196,836건</strong>
+</div>
+<div class="bar-row">
+<span>2023년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="250000" data-value="198296" style="--w:79.3184%"></span></span>
+<strong>198,296건</strong>
+</div>
+<div class="bar-row">
+<span>2024년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="250000" data-value="196349" style="--w:78.5396%"></span></span>
+<strong>196,349건</strong>
+</div>
+<div class="bar-row">
+<span>2025년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="250000" data-value="193889" style="--w:77.5556%"></span></span>
+<strong>193,889건</strong>
+</div>
+</div>
+<div aria-hidden="true" class="scale"><span>0</span><span>12.5만</span><span>25만 건</span></div>
+</div>
+</div>
+<figcaption class="chart-caption">2021년 대비 2025년 4.5% 감소. <a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdTrend.do?menuId=WEB_KMP_OVT_MVT_TAC_TCO" rel="noopener noreferrer" target="_blank">TAAS 전체 교통사고 추세</a></figcaption>
+</figure>
+<figure aria-labelledby="figure-02-title" class="chart" id="figure-02">
+<span class="chart-no">차트 02</span>
+<h3 id="figure-02-title">고령 운전자가 일으킨 사고</h3>
+<p class="chart-sub">한국 · 65세 이상 운전자 · 2021–2025년</p>
+<div class="chart-content">
+<div class="bar-set">
+<div class="bar-group">
+<div class="bar-row">
+<span>2021년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="50000" data-value="31841" style="--w:63.6820%"></span></span>
+<strong>31,841건</strong>
+</div>
+<div class="bar-row">
+<span>2022년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="50000" data-value="34652" style="--w:69.3040%"></span></span>
+<strong>34,652건</strong>
+</div>
+<div class="bar-row">
+<span>2023년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="50000" data-value="39614" style="--w:79.2280%"></span></span>
+<strong>39,614건</strong>
+</div>
+<div class="bar-row">
+<span>2024년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="50000" data-value="42369" style="--w:84.7380%"></span></span>
+<strong>42,369건</strong>
+</div>
+<div class="bar-row">
+<span>2025년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="50000" data-value="45873" style="--w:91.7460%"></span></span>
+<strong>45,873건</strong>
+</div>
+</div>
+<div aria-hidden="true" class="scale"><span>0</span><span>2.5만</span><span>5만 건</span></div>
+</div>
+</div>
+<figcaption class="chart-caption">2021년 대비 2025년 44.1% 증가. 연간 사고 건수를 비교한 값입니다. <a href="https://taas.koroad.or.kr/sta/acs/gus/selectOdsnDrverTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAS_ODT" rel="noopener noreferrer" target="_blank">TAAS 고령 운전자 5개년</a></figcaption>
+</figure>
+<figure aria-labelledby="figure-03-title" class="chart" id="figure-03">
+<span class="chart-no">차트 03</span>
+<h3 id="figure-03-title">고령 운전자 사고의 사망자</h3>
+<p class="chart-sub">한국 · 2021–2025년 · 해당 사고의 연간 사망자 수</p>
+<div class="chart-content">
+<div class="bar-set">
+<div class="bar-group">
+<div class="bar-row">
+<span>2021년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="1000" data-value="709" style="--w:70.9000%"></span></span>
+<strong>709명</strong>
+</div>
+<div class="bar-row">
+<span>2022년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="1000" data-value="735" style="--w:73.5000%"></span></span>
+<strong>735명</strong>
+</div>
+<div class="bar-row">
+<span>2023년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="1000" data-value="745" style="--w:74.5000%"></span></span>
+<strong>745명</strong>
+</div>
+<div class="bar-row">
+<span>2024년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="1000" data-value="761" style="--w:76.1000%"></span></span>
+<strong>761명</strong>
+</div>
+<div class="bar-row">
+<span>2025년</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="1000" data-value="843" style="--w:84.3000%"></span></span>
+<strong>843명</strong>
+</div>
+</div>
+<div aria-hidden="true" class="scale"><span>0</span><span>500</span><span>1,000명</span></div>
+</div>
+</div>
+<figcaption class="chart-caption">2021년 대비 2025년 18.9% 증가. 해당 사고의 전체 사망자입니다. <a href="https://taas.koroad.or.kr/sta/acs/gus/selectOdsnDrverTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAS_ODT" rel="noopener noreferrer" target="_blank">TAAS 고령 운전자 5개년</a></figcaption>
+</figure>
+<figure aria-labelledby="figure-04-title" class="chart" id="figure-04">
+<span class="chart-no">차트 04</span>
+<h3 id="figure-04-title">면허 경과 연수별 사고 구성</h3>
+<p class="chart-sub">한국 · 2025년 전체 193,889건</p>
+<div class="chart-content">
+<div aria-hidden="true" class="segmented">
+<span class="" data-total="193889" data-value="18179" style="--w:18179"></span>
+<span class="comparison" data-total="193889" data-value="20603" style="--w:20603"></span>
+<span class="neutral" data-total="193889" data-value="142441" style="--w:142441"></span>
+<span class="light" data-total="193889" data-value="12666" style="--w:12666"></span>
+</div><ul class="legend-list">
+<li><span aria-hidden="true" class="swatch"></span><span>5년 미만</span><strong>18,179건 · 9.4%</strong></li>
+<li><span aria-hidden="true" class="swatch comparison"></span><span>5~10년</span><strong>20,603건 · 10.6%</strong></li>
+<li><span aria-hidden="true" class="swatch neutral"></span><span>10년 이상</span><strong>142,441건 · 73.5%</strong></li>
+<li><span aria-hidden="true" class="swatch light"></span><span>기타</span><strong>12,666건 · 6.5%</strong></li>
+</ul>
+</div>
+<figcaption class="chart-caption">사고 구성비의 분모는 전체 사고 건수입니다. <a href="https://www.police.go.kr/www/open/publice/publice0204.jsp" rel="noopener noreferrer" target="_blank">경찰청 통계</a></figcaption>
+</figure>
+</div>
+<div aria-label="가로로 이동할 수 있는 데이터 표" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">연도</th>
+<th scope="col" style="text-align:right">전체 교통사고(건)</th>
+<th scope="col" style="text-align:right">고령 운전자 사고(건)</th>
+<th scope="col" style="text-align:right">고령 운전자 사고 사망자(명)</th>
+<th scope="col" style="text-align:right">전체 사고 중 고령 운전자 비중</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2021년</td>
+<td style="text-align:right">203,130</td>
+<td style="text-align:right">31,841</td>
+<td style="text-align:right">709</td>
+<td style="text-align:right">15.7%</td>
+</tr>
+<tr>
+<td>2022년</td>
+<td style="text-align:right">196,836</td>
+<td style="text-align:right">34,652</td>
+<td style="text-align:right">735</td>
+<td style="text-align:right">17.6%</td>
+</tr>
+<tr>
+<td>2023년</td>
+<td style="text-align:right">198,296</td>
+<td style="text-align:right">39,614</td>
+<td style="text-align:right">745</td>
+<td style="text-align:right">20.0%</td>
+</tr>
+<tr>
+<td>2024년</td>
+<td style="text-align:right">196,349</td>
+<td style="text-align:right">42,369</td>
+<td style="text-align:right">761</td>
+<td style="text-align:right">21.6%</td>
+</tr>
+<tr>
+<td>2025년</td>
+<td style="text-align:right">193,889</td>
+<td style="text-align:right">45,873</td>
+<td style="text-align:right">843</td>
+<td style="text-align:right">23.7%</td>
+</tr>
+</tbody>
+</table></div>
+<p>2021년 대비 2025년 전체 사고 건수는 <strong>4.5% 감소</strong>했다. 같은 기간 고령 운전자 사고 건수는 <strong>44.1% 증가</strong>했고 해당 사고의 사망자는 <strong>18.9% 증가</strong>했다. 고령 운전자 사고 비중은 전체 사고 건수를 분모로 계산했다. <a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdTrend.do?menuId=WEB_KMP_OVT_MVT_TAC_TCO" rel="noopener noreferrer" target="_blank">TAAS 전체 교통사고 추세</a> · <a href="https://taas.koroad.or.kr/sta/acs/gus/selectOdsnDrverTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAS_ODT" rel="noopener noreferrer" target="_blank">TAAS 고령 운전자 5개년</a></p>
+<div aria-label="가로로 이동할 수 있는 데이터 표" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">시장 신호</th>
+<th scope="col">확인 수치</th>
+<th scope="col">기획에 쓰는 방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>고령 운전자 사고</td>
+<td>2024년 42,369건 → 2025년 45,873건(+8.3%). 해당 사고 사망자 761명 → 843명(+10.8%)</td>
+<td>운전을 지속하면서 습관 변화를 관찰할 필요성을 제시. 사고 건수와 주행거리당 사고율, 해당 사고 사망자와 고령 운전자 본인 사망자 수를 구별. <a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdOccrrncSttus.do?menuId=WEB_KMP_OVT_MVT_TAC_TOS" rel="noopener noreferrer" target="_blank">TAAS</a></td>
+</tr>
+<tr>
+<td>고령 인구</td>
+<td>국가데이터처의 2026년 65세 이상 인구 비중 21.6%</td>
+<td>인구 구조의 근거. 실제 고객은 면허 보유·실운전·차량 호환·사용 동의를 거쳐 좁혀야 함. <a href="https://mods.go.kr/board.es?act=view&amp;bid=10820&amp;list_no=447294&amp;mid=a10301010000" rel="noopener noreferrer" target="_blank">2026 고령자 통계</a></td>
+</tr>
+<tr>
+<td>면허 경과 연수와 사고</td>
+<td>경찰청 2025년 통계에서 면허 취득 5년 미만 구간 사고 18,179건. 전체 193,889건의 9.4%</td>
+<td>면허 경과 연수 기준의 사고 건수. 해당 운전자 수나 주행거리당 위험률과 구별. 5년 미만 전체를 처음 운전하는 고객으로 간주할 수 없음. <a href="https://www.police.go.kr/www/open/publice/publice0204.jsp" rel="noopener noreferrer" target="_blank">경찰청, 운전면허 취득경과연수별 교통사고</a></td>
+</tr>
+<tr>
+<td>신규 면허 유입의 참고치</td>
+<td>경찰청의 2024년 시험장·학원 경로 운전면허 배출 1,003,857명</td>
+<td>교육 채널 유입 규모의 참고치. 실제 첫 운행자, 장롱면허 복귀자, 유료 고객 수와 구별. <a href="https://www.police.go.kr/www/open/publice/publice0204.jsp" rel="noopener noreferrer" target="_blank">경찰청, 연도별 운전면허 배출</a></td>
+</tr>
+<tr>
+<td>주행 노출을 보정한 해외 참고</td>
+<td>영국 DfT 2025년 자료에서 17–24세와 70세 이상 승용차 운전자의 주행거리당 사망·중상(KSI) 발생률이 다른 연령대보다 높게 나타남</td>
+<td>연령과 주행 노출을 함께 봐야 한다는 근거. 17–24세는 초보 면허군과 다르며, 노출 추정에는 2024년 National Travel Survey가 사용됨. <a href="https://www.gov.uk/government/statistics/reported-road-casualties-great-britain-older-and-younger-driver-factsheets/reported-road-casualties-in-great-britain-younger-and-older-car-drivers-factsheet-2025" rel="noopener noreferrer" target="_blank">DfT 팩트시트</a></td>
+</tr>
+<tr>
+<td>장거리·피로</td>
+<td>미국 NHTSA는 2024년 졸음운전 관련 사고 사망자를 644명으로 집계</td>
+<td>피로가 도로 안전 문제라는 배경. 사고 후 졸음 원인 식별에 한계가 있으며, 한국의 휴게소 미방문율이나 매출로 환산할 수 없음. <a href="https://www.nhtsa.gov/risky-driving/drowsy-driving" rel="noopener noreferrer" target="_blank">NHTSA 졸음운전</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>2025년 국내 전체 사고는 전년 대비 1.3% 줄고 고령 운전자 사고 건수는 늘었다. 고령 운전자 개인의 위험 변화는 면허 보유와 실제 주행 노출을 추가로 봐야 한다. 초보 대상 인터뷰도 나이나 면허 발급 시점만으로 모집하지 않고, 최근 실운전 빈도와 운전 재개 여부를 함께 확인한다. <a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdOccrrncSttus.do?menuId=WEB_KMP_OVT_MVT_TAC_TOS" rel="noopener noreferrer" target="_blank">TAAS</a> · <a href="https://taas.koroad.or.kr/web/shp/sbm/initUnityAnalsSys.do" rel="noopener noreferrer" target="_blank">TAAS 상세통계</a></p>
+<div aria-label="가로로 이동할 수 있는 데이터 표" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">사용 장면</th>
+<th scope="col">사용자가 원하는 변화</th>
+<th scope="col">지불 주체 후보</th>
+<th scope="col">초기 판단</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>혼자 장거리 운전하며 휴식을 미룸</td>
+<td>다음 휴식 지점을 제때 결정하고 실제로 쉼</td>
+<td>운행사·렌터카 운영사, 장거리 운전자</td>
+<td><strong>시연 우선.</strong> 상황과 행동을 짧게 보여줄 수 있음. 개인의 반복 사용 빈도는 검증 필요</td>
+</tr>
+<tr>
+<td>면허 취득·운전 재개 후 혼자 운전</td>
+<td>매번 연습할 목표를 알고, 주행 후 하나씩 개선</td>
+<td>운전자·가족·운전학원·렌터카</td>
+<td><strong>단기 상품 후보.</strong> 학원 졸업 후 실제 첫 주행에 연결. 학습 종료 이후 유지율을 따로 봄</td>
+</tr>
+<tr>
+<td>고령 운전자와 가족이 운전 변화를 상의</td>
+<td>본인이 먼저 변화를 확인하고 공유 여부와 운전 약속을 선택</td>
+<td>가족·지자체·보험사</td>
+<td><strong>후속 확장.</strong> 장기 관찰과 운전자 동의가 전제. 자녀의 결제 의사와 운전자의 수용성은 별개</td>
+</tr>
+<tr>
+<td>반복 운행하는 법인차의 코칭</td>
+<td>담당자가 개별 운행을 일일이 검토하지 않고 코칭을 진행</td>
+<td>안전·운영 예산을 가진 법인</td>
+<td><strong>첫 유료 검증 후보.</strong> 호환 차량을 가진 운영사 1곳에서 관리 시간과 운전자 수용성 측정</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>국내 대안에는 보험 할인과 차량 내 휴식 권고가 이미 있다.</strong> 삼성화재는 TMAP 주행거리와 안전운전점수를 연계한 할인 특약을 안내한다. 현대차 블루링크 Safe &amp; Save는 차량 주행 정보 기반 점수와 제휴 보험 할인 조건을 안내한다. 현대차 운전자 주의 경고(DAW)도 주의 수준이 낮아지면 휴식을 권한다. 이번 제품의 차별점 가설은 <strong>현재 경로에서 쉬기로 결정하고, 그 결과를 다음 운전 계획과 주행 후 복기에 반영하는 경험</strong>이다. <a href="https://gift.samsungfire.com/mall/PP030102_025.html" rel="noopener noreferrer" target="_blank">삼성화재 TMAP 특약</a> · <a href="https://www.hyundai.com/kr/ko/digital-customer-support/app/myhyundai/bluelink/bluelink-vehicle-care/safe-driving-habits" rel="noopener noreferrer" target="_blank">블루링크 Safe &amp; Save</a> · <a href="https://ownersmanual.hyundai.com/full_webhelp/DN8HEV/2024/ko_KR/id76efe2af6b5.html" rel="noopener noreferrer" target="_blank">현대차 운전자 주의 경고</a></p>
+</section><section class="report-section" id="cases"><h2><span aria-hidden="true" class="section-index">02</span>해외 사례와 지불 주체</h2>
+<div aria-label="가로로 이동할 수 있는 데이터 표" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">국가·사례</th>
+<th scope="col">제공하는 가치</th>
+<th scope="col">지불 구조와 사업적 해석</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>일본 · ORIX Ever Drive</td>
+<td>고령 부모의 운전 행동과 운행 상황을 가족에게 공유하는 차량 단말 서비스</td>
+<td><strong>2017년 출시 조건</strong>은 월 ¥2,980, 초기 ¥10,000(각 세전). 자녀를 지불 주체로 삼은 사례. 현재 가입 가능 여부·가입자 수 미확인. <a href="https://www.orix.co.jp/grp/company/newsroom/newsrelease/161208_ORIXG.html" rel="noopener noreferrer" target="_blank">ORIX 출시 발표</a></td>
+</tr>
+<tr>
+<td>일본 · 아이오이닛세이동화손보</td>
+<td>드라이브 레코더 기반 운전 진단, 운전 특성 반영, 가족 대상 긴급 알림 등 보험과 결합</td>
+<td>평시 피드백과 사고 대응을 하나의 보험 계약에 묶음. 운전자·가족·보험사의 역할을 참고할 수 있음. <a href="https://www.aioinissaydowa.co.jp/corporate/service/telematics/plus.html" rel="noopener noreferrer" target="_blank">보험사 상품 설명</a></td>
+</tr>
+<tr>
+<td>미국 · Honda Driver Coaching</td>
+<td>호환 차량의 온보드 데이터와 앱을 결합해 주행 교육과 운전 후 피드백 제공</td>
+<td>2023년 무료 출시 발표. 초보 교육을 OEM이 고객 서비스로 제공한 사례. 직접 구독료 지불 의사의 근거는 별도. <a href="https://hondanews.com/en-US/releases/release-28a0418eb9f96c2502c6b994171cd104-honda-creates-new-driver-coaching-app-to-advance-teen-driver-education-and-safety-awareness" rel="noopener noreferrer" target="_blank">Honda 공식 발표</a></td>
+</tr>
+<tr>
+<td>미국·글로벌 · Life360</td>
+<td>가족 안전 서비스에 주간 운전 요약과 개인 운전 보고서를 묶음</td>
+<td>2026년 2분기 글로벌 MAU <strong>1억 240만 명</strong>, 유료 그룹 <strong>약 320만 개</strong>, 구독 매출 <strong>1억 1,560만 달러</strong>. 모두 전체 서비스 지표. 개인 수와 그룹 수를 나눠 전환율을 만들거나 운전 기능 단독 매출로 해석할 수 없음. <a href="https://intl.life360.com/driving-safety" rel="noopener noreferrer" target="_blank">운전 기능</a> · <a href="https://investors.life360.com/news-releases/news-release-details/life360-reports-record-q2-2026-results" rel="noopener noreferrer" target="_blank">Life360 2분기 실적</a></td>
+</tr>
+<tr>
+<td>영국 · Admiral LittleBox</td>
+<td>차량 단말로 운전 행동을 기록하고 피드백 제공</td>
+<td>안전운전이 갱신 보험료 할인으로 이어질 수 있는 텔레매틱스 보험. 보상 구조의 사례이며 국내 보험 제휴 조건이나 앱 가격은 별도 검증. <a href="https://www.admiral.com/black-box-insurance/littlebox" rel="noopener noreferrer" target="_blank">Admiral 상품 설명</a></td>
+</tr>
+<tr>
+<td>캐나다 · ICBC Techpilot</td>
+<td>운전 경력이 짧은 참가자에게 데이터 기반 피드백을 제공하고 대조군과 비교</td>
+<td>보험사가 코칭을 실증한 사례. 위험 행동 지표에 변화가 있었지만 사고 빈도 감소는 확정하지 못함. 상용 가입률과 구별. <a href="https://www.icbc.com/assets/en/tKIezLX5StAWMcti0AoOY/techpilot-final-report.pdf" rel="noopener noreferrer" target="_blank">ICBC 결과보고서</a></td>
+</tr>
+<tr>
+<td>호주 · NSW SIRA Young Drivers Telematics Trial</td>
+<td>앱과 장치의 피드백이 청년 운전자 행동에 미치는 영향을 무작위 대조 연구로 관찰</td>
+<td>보험 감독기관이 실증을 주도. 효과를 검증할 지표의 근거이며, 제품 구매나 보험 할인 계약은 별도. <a href="https://www.sira.nsw.gov.au/__data/assets/pdf_file/0010/556264/NSW-Young-Drivers-Telematics-Trial.pdf" rel="noopener noreferrer" target="_blank">SIRA 연구보고서</a></td>
+</tr>
+<tr>
+<td>미국·글로벌 · Samsara Coach</td>
+<td>법인차에서 졸음 등 일부 위험 신호를 계기로 음성 코칭하고 관리자 코칭 업무와 연결</td>
+<td><strong>감지 후 행동을 돕는 기능도 선례가 있다.</strong> 소규모 운영사가 기존 장비와 승인된 차량 데이터로 쓸 수 있는 범위, 관리자 시간 절감을 비교할 필요가 있음. <a href="https://www.samsara.com/blog/introducing-samsara-coach" rel="noopener noreferrer" target="_blank">Samsara Coach 발표</a></td>
+</tr>
+</tbody>
+</table></div>
+<h3>Life360 2분기 5개년 비교</h3><div class="chart-grid">
+<figure aria-labelledby="figure-05-title" class="chart" id="figure-05">
+<span class="chart-no">차트 05</span>
+<h3 id="figure-05-title">Life360 유료 그룹</h3>
+<p class="chart-sub">글로벌 · 2022–2026년 각 2분기 말 · 그룹 수</p>
+<div class="chart-content">
+<div class="bar-set">
+<div class="bar-group">
+<div class="bar-row">
+<span>2022년 2분기</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="400" data-value="142" style="--w:35.5000%"></span></span>
+<strong>142만 개</strong>
+</div>
+<div class="bar-row">
+<span>2023년 2분기</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="400" data-value="160" style="--w:40.0000%"></span></span>
+<strong>160만 개</strong>
+</div>
+<div class="bar-row">
+<span>2024년 2분기</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="400" data-value="200" style="--w:50.0000%"></span></span>
+<strong>200만 개</strong>
+</div>
+<div class="bar-row">
+<span>2025년 2분기</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="400" data-value="250" style="--w:62.5000%"></span></span>
+<strong>250만 개</strong>
+</div>
+<div class="bar-row">
+<span>2026년 2분기</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="400" data-value="320" style="--w:80.0000%"></span></span>
+<strong>320만 개</strong>
+</div>
+</div>
+<div aria-hidden="true" class="scale"><span>0</span><span>200만</span><span>400만 개</span></div>
+</div>
+</div>
+<figcaption class="chart-caption">전체 가족 안전 서비스의 유료 그룹. <a href="https://investors.life360.com/news-releases/news-release-details/life360-reports-q2-and-half-year-2022-results" rel="noopener noreferrer" target="_blank">2022년 실적</a> · <a href="https://investors.life360.com/news-releases/news-release-details/life360-reports-record-q2-2024-results" rel="noopener noreferrer" target="_blank">2023–2024년 실적</a> · <a href="https://investors.life360.com/news-releases/news-release-details/life360-reports-record-q2-2026-results" rel="noopener noreferrer" target="_blank">2025–2026년 실적</a></figcaption>
+</figure>
+<figure aria-labelledby="figure-06-title" class="chart" id="figure-06">
+<span class="chart-no">차트 06</span>
+<h3 id="figure-06-title">Life360 구독 매출</h3>
+<p class="chart-sub">글로벌 · 2022–2026년 각 2분기 · 미국 달러</p>
+<div class="chart-content">
+<div class="bar-set">
+<div class="bar-group">
+<div class="bar-row">
+<span>2022년 2분기</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="120" data-value="36.0" style="--w:30.0000%"></span></span>
+<strong>3,600만 달러</strong>
+</div>
+<div class="bar-row">
+<span>2023년 2분기</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="120" data-value="52.7" style="--w:43.9167%"></span></span>
+<strong>5,270만 달러</strong>
+</div>
+<div class="bar-row">
+<span>2024년 2분기</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="120" data-value="65.7" style="--w:54.7500%"></span></span>
+<strong>6,570만 달러</strong>
+</div>
+<div class="bar-row">
+<span>2025년 2분기</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="120" data-value="88.6" style="--w:73.8333%"></span></span>
+<strong>8,860만 달러</strong>
+</div>
+<div class="bar-row">
+<span>2026년 2분기</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="120" data-value="115.6" style="--w:96.3333%"></span></span>
+<strong>1억 1,560만 달러</strong>
+</div>
+</div>
+<div aria-hidden="true" class="scale"><span>0</span><span>6,000만</span><span>1.2억 달러</span></div>
+</div>
+</div>
+<figcaption class="chart-caption">실적 발표의 연결 구독 매출입니다. <a href="https://investors.life360.com/news-releases/news-release-details/life360-reports-q2-and-half-year-2022-results" rel="noopener noreferrer" target="_blank">2022년 실적</a> · <a href="https://investors.life360.com/news-releases/news-release-details/life360-reports-record-q2-2024-results" rel="noopener noreferrer" target="_blank">2023–2024년 실적</a> · <a href="https://investors.life360.com/news-releases/news-release-details/life360-reports-record-q2-2026-results" rel="noopener noreferrer" target="_blank">2025–2026년 실적</a></figcaption>
+</figure>
+</div>
+<div aria-label="가로로 이동할 수 있는 데이터 표" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">기준</th>
+<th scope="col" style="text-align:right">글로벌 유료 그룹(만 개)</th>
+<th scope="col" style="text-align:right">연결 구독 매출(백만 달러)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2022년 2분기</td>
+<td style="text-align:right">142</td>
+<td style="text-align:right">36.0</td>
+</tr>
+<tr>
+<td>2023년 2분기</td>
+<td style="text-align:right">160</td>
+<td style="text-align:right">52.7</td>
+</tr>
+<tr>
+<td>2024년 2분기</td>
+<td style="text-align:right">200</td>
+<td style="text-align:right">65.7</td>
+</tr>
+<tr>
+<td>2025년 2분기</td>
+<td style="text-align:right">250</td>
+<td style="text-align:right">88.6</td>
+</tr>
+<tr>
+<td>2026년 2분기</td>
+<td style="text-align:right">320</td>
+<td style="text-align:right">115.6</td>
+</tr>
+</tbody>
+</table></div>
+<p>각 연도 2분기 말 유료 그룹과 해당 분기의 연결 구독 매출을 비교했다. 유료 그룹 수는 발표 자료의 반올림 정밀도를 따르고, 매출은 발표 당시 명목 미국 달러다. 연결 구독 매출에는 하드웨어 관련 구독도 포함된다. <a href="https://investors.life360.com/news-releases/news-release-details/life360-reports-q2-and-half-year-2022-results" rel="noopener noreferrer" target="_blank">2022년 2분기 실적</a> · <a href="https://investors.life360.com/news-releases/news-release-details/life360-reports-record-q2-2024-results" rel="noopener noreferrer" target="_blank">2024년 2분기 실적과 2023년 비교치</a> · <a href="https://investors.life360.com/news-releases/news-release-details/life360-reports-record-q2-2026-results" rel="noopener noreferrer" target="_blank">2026년 2분기 실적과 2025년 비교치</a></p>
+<p>초보 운전자에게는 <strong>기간이 정해진 학습</strong>, 고령 운전자 가족에게는 <strong>동의한 범위 안에서 보는 변화 기록</strong>, 법인에는 <strong>코칭 운영 시간과 행동의 변화</strong>가 구매 이유가 될 수 있다. 공통 데이터는 운전자별 주행 세션, 관측된 사건, 선택한 행동과 이행 기록이다. 판매 상품과 공유 범위는 고객군에 맞춰 설계한다.</p>
+</section><section class="report-section" id="adas"><h2><span aria-hidden="true" class="section-index">03</span>주행보조 채택률과 사고율</h2>
+<h3 id="adoption">3.1 2025년 미국 장착 추정치</h3><div class="chart-grid single">
+<figure aria-labelledby="figure-07-title" class="chart" id="figure-07">
+<span class="chart-no">차트 07</span>
+<h3 id="figure-07-title">신차 기본 탑재와 등록차 장착</h3>
+<p class="chart-sub">미국 · 2025년형 차종과 2025년 등록차의 각 분모 대비 비중</p>
+<div class="chart-content">
+<div class="bar-set">
+<div class="bar-group"><div class="bar-group-name">전방 자동긴급제동(AEB)</div>
+<div class="bar-row">
+<span>신차 기본</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="100" data-value="90" style="--w:90.0000%"></span></span>
+<strong>90%</strong>
+</div>
+<div class="bar-row">
+<span>등록차 장착 추정</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="100" data-value="37" style="--w:37.0000%"></span></span>
+<strong>37%</strong>
+</div>
+</div>
+<div class="bar-group"><div class="bar-group-name">보행자 감지 전방 AEB</div>
+<div class="bar-row">
+<span>신차 기본</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="100" data-value="89" style="--w:89.0000%"></span></span>
+<strong>89%</strong>
+</div>
+<div class="bar-row">
+<span>등록차 장착 추정</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="100" data-value="31" style="--w:31.0000%"></span></span>
+<strong>31%</strong>
+</div>
+</div>
+<div class="bar-group"><div class="bar-group-name">차로 중앙 유지 + 적응형 크루즈</div>
+<div class="bar-row">
+<span>신차 기본</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="100" data-value="35" style="--w:35.0000%"></span></span>
+<strong>35%</strong>
+</div>
+<div class="bar-row">
+<span>등록차 장착 추정</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="100" data-value="9" style="--w:9.0000%"></span></span>
+<strong>9%</strong>
+</div>
+</div>
+<div class="bar-group"><div class="bar-group-name">차로 이탈 경고(LDW)</div>
+<div class="bar-row">
+<span>신차 기본</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="100" data-value="79" style="--w:79.0000%"></span></span>
+<strong>79%</strong>
+</div>
+<div class="bar-row">
+<span>등록차 장착 추정</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="100" data-value="37" style="--w:37.0000%"></span></span>
+<strong>37%</strong>
+</div>
+</div>
+<div class="bar-group"><div class="bar-group-name">사각지대 모니터링(BSM)</div>
+<div class="bar-row">
+<span>신차 기본</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="100" data-value="66" style="--w:66.0000%"></span></span>
+<strong>66%</strong>
+</div>
+<div class="bar-row">
+<span>등록차 장착 추정</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="100" data-value="39" style="--w:39.0000%"></span></span>
+<strong>39%</strong>
+</div>
+</div>
+<div aria-hidden="true" class="scale"><span>0%</span><span>50%</span><span>100%</span></div>
+</div>
+</div>
+<figcaption class="chart-caption">첫 막대는 판매 대수가 아닌 차종 기준입니다. 옵션까지 포함한 제공 가능 비율은 표에 별도 표시했습니다. <a href="https://www.iihs.org/media/a14defa9-8140-4fd9-b76d-9929ff272919/2U4dfw/HLDI%20Research/Bulletins/hldi_bulletin_43-03.pdf" rel="noopener noreferrer" target="_blank">HLDI 2026년판</a></figcaption>
+</figure>
+</div>
+<div aria-label="가로로 이동할 수 있는 데이터 표" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">기능</th>
+<th scope="col" style="text-align:right">2025년형 차종 기본 장착</th>
+<th scope="col" style="text-align:right">같은 모델연도 옵션 제공</th>
+<th scope="col" style="text-align:right">2025년 등록차 중 기본·옵션 제공 가능</th>
+<th scope="col" style="text-align:right">2025년 등록차 실제 장착 추정</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>전방 자동긴급제동(AEB)</td>
+<td style="text-align:right">90%</td>
+<td style="text-align:right">4%</td>
+<td style="text-align:right">45%</td>
+<td style="text-align:right"><strong>37%</strong></td>
+</tr>
+<tr>
+<td>보행자 감지 전방 AEB</td>
+<td style="text-align:right">89%</td>
+<td style="text-align:right">3%</td>
+<td style="text-align:right">35%</td>
+<td style="text-align:right">31%</td>
+</tr>
+<tr>
+<td>차로 중앙 유지가 결합된 적응형 크루즈(ACC)</td>
+<td style="text-align:right">35%</td>
+<td style="text-align:right">30%</td>
+<td style="text-align:right">19%</td>
+<td style="text-align:right"><strong>9%</strong></td>
+</tr>
+<tr>
+<td>차로 이탈 경고(LDW)</td>
+<td style="text-align:right">79%</td>
+<td style="text-align:right">13%</td>
+<td style="text-align:right">50%</td>
+<td style="text-align:right">37%</td>
+</tr>
+<tr>
+<td>사각지대 모니터링(BSM)</td>
+<td style="text-align:right">66%</td>
+<td style="text-align:right">28%</td>
+<td style="text-align:right">52%</td>
+<td style="text-align:right">39%</td>
+</tr>
+</tbody>
+</table></div>
+<p>HLDI의 2026년 4월 보고서, 그림 5–19. 차종은 연구의 <em>vehicle series</em> 단위이며 첫 두 열은 판매 대수로 가중한 신차 점유율과 다르다. 등록차 실제 장착은 제조사 13곳의 VIN 자료 등을 활용해 옵션 구매를 추정한 값이다. HLDI는 전방 AEB의 미국 등록차 장착 비중을 **2030년 59%**로 전망했다. 보행자 감지 AEB와 전방 AEB는 중복될 수 있다. 연도별 등록차 장착 추세는 원문의 그림 6·9·12·15·18에서 볼 수 있다. <a href="https://www.iihs.org/media/a14defa9-8140-4fd9-b76d-9929ff272919/2U4dfw/HLDI%20Research/Bulletins/hldi_bulletin_43-03.pdf" rel="noopener noreferrer" target="_blank">HLDI 원문, pp. 7–11, 17</a></p>
+<p><strong>기능이 켜져 있는 비중과 실제 작동하며 주행한 비중도 따로 본다.</strong> IIHS의 2025년 연구는 2023년 워싱턴 DC권 딜러 정비 차량 2,000대 이상에서 AEB 활성 설정 <strong>93%</strong>, 차로 이탈 경고·방지 시스템 **87%**를 관찰했다. 시동 사이에 설정이 유지되는 해당 장치의 활성 상태를 본 표본이다. 별도의 4주 주행 관찰에서는 특정 차량·자원자 표본에서 고속도로·간선급 고속도로 계열 주행거리의 **39.5%**에 조사 대상 자동화 기능이 켜져 있거나 작동했다. ACC와 차로 중앙 유지 결합 기능을 포함하므로 미국 전체의 L2 사용률로 확대할 수 없다. <a href="https://www.iihs.org/research-areas/bibliography/ref/2314" rel="noopener noreferrer" target="_blank">IIHS 활성 설정 연구</a> · <a href="https://www.iihs.org/research-areas/bibliography/ref/2184" rel="noopener noreferrer" target="_blank">실주행 사용 관찰</a></p>
+<p>미국 성인 운전자 1,010명 설문에서는 80%가 차로 중앙 유지 기능을 쓰고 싶다고 답했다. 수요 설문에서 구매·장착·실제 사용률을 산출할 수 없다. 유럽연합에서는 2024년 7월 7일부터 신규 차량에 일반안전규정이 적용되면서 차종별 졸음 주의 경고, 긴급제동 등 장착 요건이 확대됐다. 규제 적용 대상, 운행 중인 전체 차량의 장착률, 앱의 데이터 접근 권한은 각각 다르다. <a href="https://www.iihs.org/research-areas/bibliography/ref/2255" rel="noopener noreferrer" target="_blank">IIHS 수요 연구</a> · <a href="https://single-market-economy.ec.europa.eu/news/mandatory-drivers-assistance-systems-expected-help-save-over-25000-lives-2038-2024-07-05_en" rel="noopener noreferrer" target="_blank">EU 집행위 발표</a></p><div class="chart-grid">
+<figure aria-labelledby="figure-08-title" class="chart" id="figure-08">
+<span class="chart-no">차트 08</span>
+<h3 id="figure-08-title">장착 차량의 기능 활성 설정</h3>
+<p class="chart-sub">미국 워싱턴 DC권 정비 차량 표본 · 2023년</p>
+<div class="chart-content">
+<div class="bar-set">
+<div class="bar-group">
+<div class="bar-row">
+<span>전방 AEB</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="100" data-value="93" style="--w:93.0000%"></span></span>
+<strong>93%</strong>
+</div>
+<div class="bar-row">
+<span>차로 이탈 경고·방지</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="100" data-value="87" style="--w:87.0000%"></span></span>
+<strong>87%</strong>
+</div>
+</div>
+<div aria-hidden="true" class="scale"><span>0%</span><span>50%</span><span>100%</span></div>
+</div>
+</div>
+<figcaption class="chart-caption">해당 기능의 설정 상태를 관찰했습니다. 주행 중 실제 작동거리 비중과는 분모가 다릅니다. <a href="https://www.iihs.org/research-areas/bibliography/ref/2314" rel="noopener noreferrer" target="_blank">IIHS 활성 설정 연구</a></figcaption>
+</figure>
+<figure aria-labelledby="figure-09-title" class="chart" id="figure-09">
+<span class="chart-no">차트 09</span>
+<h3 id="figure-09-title">사용 의향과 실제 주행 관찰</h3>
+<p class="chart-sub">두 연구는 서로 다른 표본과 분모를 사용</p>
+<div class="chart-content">
+<div class="bar-group">
+<div class="bar-group-name">80% · 차로 중앙 유지 사용 의향</div><p class="chart-sub">미국 성인 운전자 1,010명의 응답 비중</p>
+<div class="bar-group-name">39.5% · 기능이 켜졌거나 작동한 거리</div><p class="chart-sub">4주 자원자 연구에서 고속도로 계열 구간. ACC와 결합 기능을 포함한 표본</p>
+</div>
+</div>
+<figcaption class="chart-caption"><a href="https://www.iihs.org/research-areas/bibliography/ref/2255" rel="noopener noreferrer" target="_blank">사용 의향 설문</a> · <a href="https://www.iihs.org/research-areas/bibliography/ref/2184" rel="noopener noreferrer" target="_blank">실주행 관찰 연구</a></figcaption>
+</figure>
+</div>
+<h3 id="crash-rates">3.2 실제 도로의 사고 관련 연구</h3><div class="chart-grid single">
+<figure aria-labelledby="figure-10-title" class="chart" id="figure-10">
+<span class="chart-no">차트 10</span>
+<h3 id="figure-10-title">사고 유형별 상대 사고율 변화</h3>
+<p class="chart-sub">각 연구의 미장착 비교군 대비 감소 폭 · 지표와 표본이 서로 다름</p>
+<div class="chart-content">
+<div class="bar-set">
+<div class="bar-group">
+<div class="bar-row">
+<span>AEB · 후방추돌</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="60" data-value="50" style="--w:83.3333%"></span></span>
+<strong>−50%</strong>
+</div>
+<div class="bar-row">
+<span>AEB · 부상 후방추돌</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="60" data-value="56" style="--w:93.3333%"></span></span>
+<strong>−56%</strong>
+</div>
+<div class="bar-row">
+<span>BSM · 차로 변경 사고</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="60" data-value="14" style="--w:23.3333%"></span></span>
+<strong>−14%</strong>
+</div>
+<div class="bar-row">
+<span>LDW · 관련 사고</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="60" data-value="11" style="--w:18.3333%"></span></span>
+<strong>−11%</strong>
+</div>
+</div>
+<div aria-hidden="true" class="scale"><span>0%</span><span>30%</span><span>60% 감소</span></div>
+</div>
+</div>
+<figcaption class="chart-caption">기능 간 안전성 순위나 앱의 예방 효과를 나타내지 않습니다. <a href="https://www.iihs.org/news/detail/front-crash-prevention-slashes-police-reported-rear-end-crashes" rel="noopener noreferrer" target="_blank">AEB</a> · <a href="https://www.iihs.org/research-areas/bibliography/ref/2143" rel="noopener noreferrer" target="_blank">BSM</a> · <a href="https://www.iihs.org/research-areas/bibliography/ref/2142" rel="noopener noreferrer" target="_blank">LDW</a></figcaption>
+</figure>
+</div><aside class="note"><p><strong>L2 부분 자동화</strong>는 하단 비교표에서 확인할 수 있습니다. BMW·Nissan 일부 모델 연구는 기능 활성 주행거리를 직접 연결한 연구가 아니므로 위 막대와 동일한 감소율로 표시하지 않았습니다. <a href="https://www.iihs.org/research-areas/bibliography/ref/2309" rel="noopener noreferrer" target="_blank">IIHS 부분 자동화 연구</a></p></aside>
+<div aria-label="가로로 이동할 수 있는 데이터 표" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">기능·연구</th>
+<th scope="col">관찰된 결과</th>
+<th scope="col">비교 범위와 해석</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>전방 AEB</td>
+<td>후방추돌 가해 사고율 <strong>50% 감소</strong>, 부상자가 발생한 해당 추돌 사고율 <strong>56% 감소</strong></td>
+<td>IIHS 업데이트 연구의 경찰 신고 자료. 옵션 장착 차량과 비교 가능한 미장착 차량 사이의 해당 유형 상대율. 전체 사고나 L2 효과로 환산할 수 없음. <a href="https://www.iihs.org/news/detail/front-crash-prevention-slashes-police-reported-rear-end-crashes" rel="noopener noreferrer" target="_blank">IIHS 연구 설명</a></td>
+</tr>
+<tr>
+<td>사각지대 모니터링</td>
+<td>차로 변경 사고율 <strong>14% 감소</strong></td>
+<td>2009–2015년 미국 26개 주 경찰 신고 사고, 보험 가입 차량-연 기준. 같은 모델의 옵션 장착·미장착 차량을 보정 비교. <a href="https://www.iihs.org/research-areas/bibliography/ref/2143" rel="noopener noreferrer" target="_blank">Cicchino, 2018</a></td>
+</tr>
+<tr>
+<td>차로 이탈 경고</td>
+<td>단독·측면 접촉·정면충돌 등 연구 대상 사고율 <strong>11% 감소</strong></td>
+<td>2009–2015년 미국 25개 주 자료의 운전자 특성 보정 추정치. 인명 피해 사고 감소 추정치 21%는 논문의 유의수준 표현이 다르므로 핵심 수치는 11%를 사용. <a href="https://www.iihs.org/research-areas/bibliography/ref/2142" rel="noopener noreferrer" target="_blank">Cicchino, 2018</a></td>
+</tr>
+<tr>
+<td>L2 부분 자동화</td>
+<td>BMW Driving Assistant Plus에서 차로 이탈 방지 기능 대비 유의한 추가 감소를 확인하지 못함. Nissan ProPILOT Assist 장착 차량 일부에서 낮은 사고율이 관찰됐지만, 기능을 쓰기 어려운 도로에서도 차이가 관찰됨</td>
+<td>일부 모델연도 Nissan Rogue·BMW의 경찰 신고 사고와 차량 주행거리 비교. 기능의 실제 작동 주행거리나 당시 활성 여부를 직접 연결한 인과 추정이 아니다. 조명 등 사양 차이의 영향 가능성. 현대 HDA에 같은 결과를 적용할 수 없음. <a href="https://www.iihs.org/research-areas/bibliography/ref/2309" rel="noopener noreferrer" target="_blank">IIHS 원연구</a></td>
+</tr>
+<tr>
+<td>운전 코칭 앱</td>
+<td>실증에서 급제동·과속 같은 행동 지표 개선 사례가 있음</td>
+<td>코칭과 긴급제동의 개입 방식이 다름. 통합 코치의 자체 사고 감소율은 별도 실증 과제. <a href="https://www.icbc.com/assets/en/tKIezLX5StAWMcti0AoOY/techpilot-final-report.pdf" rel="noopener noreferrer" target="_blank">ICBC</a> · <a href="https://www.sira.nsw.gov.au/__data/assets/pdf_file/0010/556264/NSW-Young-Drivers-Telematics-Trial.pdf" rel="noopener noreferrer" target="_blank">SIRA</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>NHTSA의 Standing General Order(SGO)는 <strong>사고 신고 자료</strong>다. 제조사별 텔레메트리 수집·신고 가능성, 사고 당시 기능 사용 여부 확인, 신고 요건이 다르고 기능 활성 주행거리 같은 공통 분모가 없다. 신고 건수로 브랜드 순위를 만들거나 L2를 켠 주행과 일반 주행의 사고율을 계산할 수 없다. 국내 현대 HDA의 활성 주행거리와 비교군이 함께 공개된 전국 수준 자료는 이번 조사에서 확인하지 못했다. 효과를 비교하려면 <strong>동일 유형 사고 건수 ÷ 해당 조건의 주행거리 또는 차량-연</strong>을 맞추고 도로·속도·시간대·차종과 운전자 차이를 고려해야 한다. <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" rel="noopener noreferrer" target="_blank">NHTSA SGO 데이터 해석 지침</a></p>
+</section><section class="report-section" id="evidence"><h2><span aria-hidden="true" class="section-index">04</span>코칭의 행동 변화 근거</h2><div class="chart-grid">
+<figure aria-labelledby="figure-11-title" class="chart" id="figure-11">
+<span class="chart-no">차트 11</span>
+<h3 id="figure-11-title">호주 NSW SIRA</h3>
+<p class="chart-sub">무작위 대조 연구 · 대조군 대비 행동 지표 감소 폭</p>
+<div class="chart-content">
+<div class="bar-set">
+<div class="bar-group">
+<div class="bar-row">
+<span>중간 범위 과속 시간</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="50" data-value="10.9" style="--w:21.8000%"></span></span>
+<strong>−10.9%</strong>
+</div>
+<div class="bar-row">
+<span>고범위 과속 시간</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="50" data-value="38.9" style="--w:77.8000%"></span></span>
+<strong>−38.9%</strong>
+</div>
+<div class="bar-row">
+<span>고강도 급제동 사건</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="50" data-value="42" style="--w:84.0000%"></span></span>
+<strong>−42%</strong>
+</div>
+</div>
+<div aria-hidden="true" class="scale"><span>0%</span><span>25%</span><span>50% 감소</span></div>
+</div>
+</div>
+<figcaption class="chart-caption">과속은 주행 100시간당, 급제동은 1,000km당 지표입니다. <a href="https://www.sira.nsw.gov.au/__data/assets/pdf_file/0010/556264/NSW-Young-Drivers-Telematics-Trial.pdf" rel="noopener noreferrer" target="_blank">SIRA 연구보고서</a></figcaption>
+</figure>
+<figure aria-labelledby="figure-12-title" class="chart" id="figure-12">
+<span class="chart-no">차트 12</span>
+<h3 id="figure-12-title">캐나다 BC ICBC</h3>
+<p class="chart-sub">Techpilot · 대조군 대비 주행 100km당 행동 지표</p>
+<div class="chart-content">
+<div class="bar-set">
+<div class="bar-group">
+<div class="bar-row">
+<span>급가속</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="50" data-value="11" style="--w:22.0000%"></span></span>
+<strong>−11%</strong>
+</div>
+<div class="bar-row">
+<span>급제동</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill" data-max="50" data-value="14" style="--w:28.0000%"></span></span>
+<strong>−14%</strong>
+</div>
+<div class="bar-row">
+<span>과속</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill comparison" data-max="50" data-value="8" style="--w:16.0000%"></span></span>
+<strong>−8%</strong>
+</div>
+</div>
+<div aria-hidden="true" class="scale"><span>0%</span><span>25%</span><span>50% 감소</span></div>
+</div>
+</div>
+<figcaption class="chart-caption">행동 지표 관측값입니다. 사고율의 개입 효과는 확인하지 못했습니다. <a href="https://www.icbc.com/assets/en/tKIezLX5StAWMcti0AoOY/techpilot-final-report.pdf" rel="noopener noreferrer" target="_blank">ICBC 평가보고서</a></figcaption>
+</figure>
+</div>
+<ul>
+<li><strong>호주 NSW SIRA.</strong> 2019년 무작위 대조 연구 보고서에서 앱과 LED 피드백을 받은 그룹의 주행 100시간당 제한속도 10–20km/h 초과 시간은 대조군보다 <strong>10.9%</strong>, 20km/h 초과 시간은 <strong>38.9%</strong> 낮았다. 고강도 급제동 사건은 주행 1,000km당 42% 낮았다. 특정 조건의 행동 지표에 해당하며 사고 감소나 본 서비스 효과로 바꿔 인용할 수 없다. <a href="https://www.sira.nsw.gov.au/__data/assets/pdf_file/0010/556264/NSW-Young-Drivers-Telematics-Trial.pdf" rel="noopener noreferrer" target="_blank">SIRA, 요약 및 §4</a></li>
+<li><strong>캐나다 BC ICBC.</strong> Techpilot 평가에서 대조군 대비 주행 100km당 급가속·급제동·과속이 각각 <strong>11%·14%·8% 낮은 관측 결과</strong>를 보고했다. 항목별 비교 기간과 표본은 보고서에 제시되어 있으며, 사고율에 대해서는 표본이 작아 개입 효과를 확인하지 못했다. <a href="https://www.icbc.com/assets/en/tKIezLX5StAWMcti0AoOY/techpilot-final-report.pdf" rel="noopener noreferrer" target="_blank">Techpilot 평가보고서</a> · <a href="https://www.icbc.com/assets/en/6SzbV2BfsbeeNNCuKGEeKv/icbc-revenue-requirements-application.pdf" rel="noopener noreferrer" target="_blank">ICBC 규제 제출 자료, Appendix 8G</a></li>
+</ul>
+<p>급제동을 일괄 벌점 처리하면 불가피한 회피 행동도 불이익을 받는다. 코칭 화면에는 어떤 사건을 어떻게 관측했는지 보여주고, 운전자가 맥락을 확인할 수 있게 한다. 습관 변화는 도로 종류와 시간대, 주행거리가 비슷한 조건에서 같은 운전자를 비교한다.</p>
+</section><section class="report-section" id="business"><h2><span aria-hidden="true" class="section-index">05</span>수익모델과 사업성 판단</h2>
+<div aria-label="가로로 이동할 수 있는 데이터 표" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">우선</th>
+<th scope="col">모델</th>
+<th scope="col">고객이 지불하는 가치</th>
+<th scope="col">가격·판매 검증</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>법인 유료 실증 → 활성 차량당 월 과금</strong></td>
+<td>코칭 요약, 휴식 계획 이행률, 담당자 검토 시간 절감</td>
+<td>호환 차량을 가진 운영사 1곳에서 6–8주 유료 실증. 건당 원가·담당자 업무시간·차량당 이용률과 갱신 조건 확인</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>초보 코칭 패스</strong></td>
+<td>기간을 정해 연습 목표와 주행 후 복기를 제공</td>
+<td>운전학원 졸업·렌터카 첫 이용 때 4–6주 패스. <strong>19,900원은 가격 실험안</strong>. 실제 결제·완료·환불률과 채널 수수료 확인</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>가족 요약 구독</strong></td>
+<td>운전자가 동의한 요약과 가족이 함께 정한 운전 약속</td>
+<td><strong>가족당 월 4,900원은 가격 실험안</strong>. 자녀 결제율, 운전자 동의율·철회율, 유료 유지율 확인</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>보험사·OEM 제휴</strong></td>
+<td>검증된 코칭 기능, 계약된 범위의 요약 데이터, 가입자 혜택</td>
+<td>보험사 주도의 보험료 검증이나 OEM 기능 라이선스 계약. 보험 할인·사고 비용 절감액을 우리 매출로 산정하지 않음</td>
+</tr>
+</tbody>
+</table></div>
+<p>법인차는 반복 주행과 예산 책임자가 있어 효용과 결제를 같은 실증에서 볼 수 있다. 이미 관제 상품이 있는 곳에는 주행 점수나 대시보드를 더하는 비용을 설명하기 어렵다. <strong>휴식 계획 이행과 주행 후 코칭 시간을 실제로 개선하는 기능</strong>을 제안하고, 데이터 연동·기기 설치·교육 부담을 기존 방식과 비교한다. 보험 할인, 정밀 DMS 접근, 가족 구독은 각각 제휴와 검증이 필요한 가설이다.</p>
+<h3>5.1 계약 기반 규모 산식</h3><div class="chart-grid">
+<figure aria-labelledby="figure-13-title" class="chart" data-scenario-chart="" id="figure-13">
+<span class="chart-no">차트 13</span>
+<h3 id="figure-13-title">계약 규모별 월 반복매출</h3>
+<p class="chart-sub">국내 법인차 · 가격·계약 수·청구 비율 가정</p>
+<div class="chart-content">
+<div class="bar-set">
+<div class="bar-group">
+<div class="bar-row">
+<span>소규모</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill assumption" data-max="24000000" data-value="840000" style="--w:3.5000%"></span></span>
+<strong>84만 원</strong>
+</div>
+<div class="bar-row">
+<span>기준</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill assumption" data-max="24000000" data-value="5625000" style="--w:23.4375%"></span></span>
+<strong>562.5만 원</strong>
+</div>
+<div class="bar-row">
+<span>확대</span>
+<span aria-hidden="true" class="bar-track"><span class="bar-fill assumption" data-max="24000000" data-value="24000000" style="--w:100.0000%"></span></span>
+<strong>2,400만 원</strong>
+</div>
+</div>
+<div aria-hidden="true" class="scale"><span>0</span><span>1,200만</span><span>2,400만 원</span></div>
+</div>
+</div>
+<figcaption class="chart-caption">매출 추정에 쓰는 입력을 비교한 예시입니다.</figcaption>
+</figure>
+<figure aria-labelledby="figure-14-title" class="chart" data-scenario-chart="" id="figure-14">
+<span class="chart-no">차트 14</span>
+<h3 id="figure-14-title">100대 계약의 월 손익 구성</h3>
+<p class="chart-sub">월 매출 50만 원 · 비용과 공헌이익 가정</p>
+<div class="chart-content">
+<div aria-hidden="true" class="segmented">
+<span class="comparison" data-total="500000" data-value="150000" style="--w:150000"></span>
+<span class="neutral" data-total="500000" data-value="100000" style="--w:100000"></span>
+<span class="assumption" data-total="500000" data-value="250000" style="--w:250000"></span>
+</div><ul class="legend-list">
+<li><span aria-hidden="true" class="swatch comparison"></span><span>차량당 변동비 합계</span><strong>15만 원</strong></li>
+<li><span aria-hidden="true" class="swatch neutral"></span><span>고객 지원비</span><strong>10만 원</strong></li>
+<li><span aria-hidden="true" class="swatch assumption"></span><span>공헌이익</span><strong>25만 원</strong></li>
+</ul>
+</div>
+<figcaption class="chart-caption">영업·설치 초기 비용 100만 원을 가정하면 회수 기간은 4개월입니다.</figcaption>
+</figure>
+</div><section aria-labelledby="calc-title" class="calc" hidden="" id="revenue-calculator">
+<h3 id="calc-title">매출 시나리오 계산기</h3>
+<p>계약 수와 청구 조건을 바꾸면 가정에 따른 매출을 계산합니다. 과금 차량 수의 소수점 이하는 버립니다.</p>
+<div aria-label="예시 가정" class="presets" role="group">
+<button aria-pressed="false" class="preset" data-values="3,100,70,4000" type="button">소규모</button>
+<button aria-pressed="true" class="preset" data-values="10,150,75,5000" type="button">기준</button>
+<button aria-pressed="false" class="preset" data-values="25,200,80,6000" type="button">확대</button>
+</div>
+<div class="calc-fields">
+<label for="calc-sites">계약 사업장 (곳)<input id="calc-sites" inputmode="numeric" max="1000" min="0" step="1" type="number" value="10"/></label>
+<label for="calc-vehicles">사업장당 차량 (대)<input id="calc-vehicles" inputmode="numeric" max="10000" min="0" step="1" type="number" value="150"/></label>
+<label for="calc-share">청구 비율 (%)<input id="calc-share" inputmode="numeric" max="100" min="0" step="1" type="number" value="75"/></label>
+<label for="calc-price">대당 월 단가 (원)<input id="calc-price" inputmode="numeric" max="1000000" min="0" step="1" type="number" value="5000"/></label>
+</div>
+<output aria-live="polite" class="calc-values" for="calc-sites calc-vehicles calc-share calc-price">
+<span class="calc-result"><span>과금 차량</span><strong>1,125대</strong></span>
+<span class="calc-result"><span>월 반복매출</span><strong class="calc-money">5,625,000원</strong></span>
+<span class="calc-result"><span>12개월 환산</span><strong class="calc-money">67,500,000원</strong></span>
+</output>
+</section>
+<ul>
+<li><strong>접근 가능한 차량</strong> = 후보 운영사의 국내 차량 수 × 실제 지원 차종·버전 비율 × 조직 승인 및 운전자 사용 가능 비율.</li>
+<li><strong>과금 차량</strong> = 계약 사업장 수 × 사업장당 평균 대상 차량 × 계약상 청구 조건을 만족한 비율. 실제 사용률을 따로 기록한다.</li>
+<li><strong>월 반복매출</strong> = 과금 차량 × 차량당 월 단가. 온보딩비·별도 실증비는 일회성 매출로 표시한다.</li>
+</ul>
+<div aria-label="가로로 이동할 수 있는 데이터 표" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">순수 예시</th>
+<th scope="col" style="text-align:right">계약 사업장</th>
+<th scope="col" style="text-align:right">사업장당 대상 차량</th>
+<th scope="col" style="text-align:right">청구 대상 비율</th>
+<th scope="col" style="text-align:right">월 단가</th>
+<th scope="col" style="text-align:right">월 반복매출</th>
+<th scope="col" style="text-align:right">동일 월이 12개월 지속될 때</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>소규모</td>
+<td style="text-align:right">3곳</td>
+<td style="text-align:right">100대</td>
+<td style="text-align:right">70%</td>
+<td style="text-align:right">4,000원</td>
+<td style="text-align:right">84만 원</td>
+<td style="text-align:right">1,008만 원</td>
+</tr>
+<tr>
+<td>기준</td>
+<td style="text-align:right">10곳</td>
+<td style="text-align:right">150대</td>
+<td style="text-align:right">75%</td>
+<td style="text-align:right">5,000원</td>
+<td style="text-align:right">562만 5,000원</td>
+<td style="text-align:right">6,750만 원</td>
+</tr>
+<tr>
+<td>확대</td>
+<td style="text-align:right">25곳</td>
+<td style="text-align:right">200대</td>
+<td style="text-align:right">80%</td>
+<td style="text-align:right">6,000원</td>
+<td style="text-align:right">2,400만 원</td>
+<td style="text-align:right">2억 8,800만 원</td>
+</tr>
+</tbody>
+</table></div>
+<p>표는 계약 건수와 가격을 가정한 민감도 예시다. 국내 플레오스 적용 차량 수와 목표 업체의 차종 구성, 결제 전환을 확인하기 전에는 전국 면허 소지자 수로 유료 시장을 계산하기 어렵다. 예를 들어 100대에 월 5,000원이면 고객의 1년 구독료는 600만 원이다. 고객이 기록한 관리자 시간 절감 등 검증 가능한 편익을 이 비용과 비교한다. 공급자 측 공헌이익은 제휴 수수료, 서버·지도·음성 사용료, 지원 비용을 차감해 산출하고, 설치·영업 초기 비용도 따로 기록한다.</p>
+<p>같은 100대 계약에서 대당 월 변동비 1,500원, 고객사당 월 지원비 10만 원을 가정하면 계약별 월 공헌이익은 <strong>25만 원</strong>이다. 영업·설치에 100만 원이 들었다면 계약을 유지하고 같은 이용 규모를 전제로 약 <strong>4개월</strong>이 걸려 회수한다. 두 원가는 검증 전 가정이다. 파트너마다 커스텀 연동이 필요하거나 사용 차량이 줄면 이 회수 기간이 늘어나므로, 파일럿에서 설치·지원 시간과 실제 청구 차량 수를 함께 잰다.</p>
+<p>현대차그룹은 2026년 9월 기준 더 뉴 그랜저·디 올 뉴 아반떼 등 탑재차에 앱 마켓을 제공한다고 발표했다. 2030년 약 2,000만 대는 현대차·기아·제네시스를 합친 글로벌 <strong>적용 목표</strong>다. 현재 국내 설치 대수나 우리 앱에 접근할 수 있는 차량 수와 구분한다. 첫 파트너의 실제 보유 차량과 인포테인먼트 버전에서 권한·주행 중 접근을 확인한다. <a href="https://www.hyundaimotorgroup.com/ko/news/42dot-pleos-connect-app-market-new-apps" rel="noopener noreferrer" target="_blank">앱 마켓 발표</a> · <a href="https://www.hyundaimotorgroup.com/ko/news/hyundai-motor-group-redefines-in-vehicle-experience-with-pleos-connect-next-generation-infotainment-system" rel="noopener noreferrer" target="_blank">Pleos Connect 공개 계획</a></p>
+</section><section class="report-section" id="product"><h2><span aria-hidden="true" class="section-index">06</span>공모전 제품 범위와 기술 확인</h2><div class="chart-grid single">
+<figure aria-labelledby="figure-15-title" class="chart" id="figure-15">
+<span class="chart-no">차트 15</span>
+<h3 id="figure-15-title">휴식 시연에서 기록하는 네 단계</h3>
+<p class="chart-sub">같은 경로에서 안내가 실제 행동으로 이어졌는지 비교</p>
+<div class="chart-content">
+<ol class="plan">
+<li><strong>01. 계획</strong><span>출발 전 휴식 지점 설정</span></li>
+<li><strong>02. 안내</strong><span>경유 선택이 가능한 시점에 제안</span></li>
+<li><strong>03. 선택</strong><span>수락한 지점을 내비 경유지로 추가</span></li>
+<li><strong>04. 이행</strong><span>주차 상태에서 휴식 확인</span></li>
+</ol>
+</div>
+<figcaption class="chart-caption">시연 장면과 검증 지표의 연결. <a href="https://document.pleos.ai/en/api-reference/connect-sdk-pleos/NaviHelper/declaring-permissions" rel="noopener noreferrer" target="_blank">NaviHelper 권한</a></figcaption>
+</figure>
+</div>
+<p>시연은 **“지나치려던 휴식 지점을 운전자가 선택해 실제 휴식까지 이어지는 장면”**으로 잡는다. 출발 전에 휴식 계획을 만들고, 실제 연속 운전 시간과 경로에 따라 한 번 안내한다. 수락하면 내비게이션에 경유지를 추가하고, 안전한 주차 상태에서 도착 및 휴식을 확인한다. 안내에 쓰는 시간은 확인된 경로 데이터나 시뮬레이터의 명시된 가상 값을 사용한다.</p>
+<div aria-label="가로로 이동할 수 있는 데이터 표" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">기능</th>
+<th scope="col">입력과 행동</th>
+<th scope="col">실제 출시 전 확인</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>주행·휴식 기록</td>
+<td>Vehicle State의 읽기 신호와 주행 세션. 속도 0과 안전한 주차 구분</td>
+<td>운전자 교대, 앱 재시작, 정체 정차와 휴식 구분, 차량별 권한</td>
+</tr>
+<tr>
+<td>경유 제안</td>
+<td>NaviHelper 경로 정보와 사용자 수락 후 경유지 추가. 진행 방향과 진입 가능성 확인</td>
+<td>실제 경로·ETA 필드, 다른 내비 앱에 대한 접근 범위, 주행 중 UX 허용과 에뮬레이터 동작</td>
+</tr>
+<tr>
+<td>초보 복기</td>
+<td>주행 후 한 가지 연습 목표와 사건 기록. 비슷한 조건에서 변화 확인</td>
+<td>휴대폰 기반 대안 대비 가치, 측정 오류 제외·정정, 학습 완료 후 재사용</td>
+</tr>
+<tr>
+<td>개인 기준선</td>
+<td>도로 종류·시간대가 유사한 기록으로 본인의 평소와 비교. 공유는 운전자 선택</td>
+<td>충분한 관측량, 운전자 식별, 동의 철회, 가족·운영사별 공유 범위</td>
+</tr>
+<tr>
+<td>얼굴·주의 신호 및 반응시간</td>
+<td>실내 카메라·DMS는 승인된 신호 접근이 확인되는 경우 후속 평가. 반응시간은 정차·시뮬레이터에서 검증</td>
+<td>단말 지연, 피로의 기준 라벨, 미탐·오경보, 개인 기준선의 유효성. 주행 중에는 짧은 안내만 평가</td>
+</tr>
+<tr>
+<td>산소포화도·HDA</td>
+<td>산소포화도는 정확도와 졸음 지표 타당성 연구 항목. HDA 경고와 제어는 차량 시스템의 역할</td>
+<td>앱의 초기 사업성은 기존 읽기 신호로 검증. 원시 얼굴·생체·음성 데이터 없이 필요한 요약부터 평가</td>
+</tr>
+</tbody>
+</table></div>
+<p>Pleos 신청 안내는 <strong>Vehicle State와 NaviHelper</strong>를 신청 없이 사용 가능하다고 안내한다. 경유지 추가 함수 addWaypoint에는 NAVI_ROUTE_SEARCH 권한이 필요하다. 신청 안내에 FusedLocation, 음성 합성·인식, Vehicle Control은 준비 중으로 기재되어 있다. 공개 기술 문서와 실제 프로젝트의 접근 가능 여부는 구분한다. 시연의 기본 경로는 출발 전 설정과 검증된 내비·차량 상태로 설계하고, 음성 확인·카메라 연동은 지원 확인 뒤 평가한다. <a href="https://document.pleos.ai/docs/pleos-only/create-my-project" rel="noopener noreferrer" target="_blank">Pleos SDK 신청</a> · <a href="https://document.pleos.ai/en/api-reference/connect-sdk-pleos/NaviHelper/declaring-permissions" rel="noopener noreferrer" target="_blank">NaviHelper 권한</a> · <a href="https://document.pleos.ai/docs/pleos-only/vehicle-app-planning-guide/driver-distraction-guideline" rel="noopener noreferrer" target="_blank">주행 안전 설계</a> · <a href="https://ownersmanual.hyundai.com/full_webhelp/DN8/2026/ko_KR/id7e5669bf712.html" rel="noopener noreferrer" target="_blank">현대차 HDA 설명서</a> · <a href="https://www.fda.gov/medical-devices/products-and-medical-procedures/pulse-oximeters" rel="noopener noreferrer" target="_blank">FDA 산소포화도계 안내</a></p>
+<p>운전자 본인에게 먼저 사건 근거와 개선 목표를 보여준다. 가족은 운전자가 고른 요약을 보고, 운영사는 코칭에 필요한 이행 지표를 확인한다. 운전자와 구매자가 다르므로 두 역할의 동의·열람·철회 흐름을 각기 검증한다. 보험사 제공 범위와 보관 기간은 파트너 검증 계약에서 정한다.</p>
+</section><section class="report-section" id="validation"><h2><span aria-hidden="true" class="section-index">07</span>검증 계획과 의사결정</h2>
+<ol>
+<li><strong>운전자와 구매자를 따로 인터뷰한다.</strong> 최근 실제 운행에서 언제 쉬었는지, 누가 코칭했는지, 기존 도구에서 어떤 단계가 남았는지 확인한다. 법인 담당자에게 현재 관제 비용, 코칭 담당 시간, 지원 차종과 유료 실증 결재 조건을 확인한다.</li>
+<li><strong>시뮬레이터에서 안내 두 가지를 비교한다.</strong> 일반 휴식 안내와 실제 후보·도착 시간·경유 추가가 있는 안내를 같은 경로 조건에 배정한다. 경유 선택률, 조작 횟수, 놓친 진입·오안내, 거절·알림 해제를 기록한다. 차량 기본 안전 경고는 모든 비교 조건에서 유지한다.</li>
+<li><strong>유료 실증에서는 선택과 이행을 구분한다.</strong> 사전에 정한 휴식 기회 수를 분모로 추천 수락률과 실제 휴식 완료율을 계산한다. 주행 시간·도로 유형·노출 거리를 맞춰 행동 지표를 보고하고 운전자·운행사별 편차를 남긴다. 초기 표본에서는 운영과 수용성부터 확인한다.</li>
+<li><strong>다음 투자 기준을 계약과 이행으로 잡는다.</strong> 비교 조건보다 휴식 완료가 늘고 조작 부담이 늘지 않으며, 운영사가 실증 비용을 지불하고 재계약 조건을 제시하면 차량 수를 확대한다. 호환 차량이 부족하거나 효용이 작으면 과금 모델과 초기 타깃을 재검토한다. 사고율 검증은 충분한 차량-연 또는 주행거리와 비교군을 확보한 뒤 별도로 설계한다.</li>
+</ol>
+<p>공모전 자료에는 <strong>국내 사고 규모와 실제 운전자 경험 → 동일 경로의 휴식 결정 시연 → 해외 지불 구조와 초기 계약 산식 → 자체 검증 계획</strong>을 배치한다. 차량특화성은 차량 상태와 내비 경유 연결로, 사업성은 운영사의 실제 업무에 붙인 유료 실증으로 설명한다. <a href="https://appdevchallenge.auto-hmg.io/guide/judging-awards" rel="noopener noreferrer" target="_blank">공식 심사 기준</a></p>
+<p>팀의 상세 기획은 <a href="fatigue-rest-direction.md">휴식 코치</a>, <a href="drive-watch.md">DriveWatch</a>, <a href="training-wheels.md">Training Wheels</a>에 연결한다.</p>
+</section><section class="report-section" id="sources">
+<h2><span aria-hidden="true" class="section-index">08</span>참고 자료</h2>
+<p>통계 표의 기준 연도와 연구 조건은 본문의 출처 설명에 표시했습니다. 함께 검토할 수 있도록 발행기관 원문을 모았습니다.</p>
+<ol class="sources"><li><a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdOccrrncSttus.do?menuId=WEB_KMP_OVT_MVT_TAC_TOS" rel="noopener noreferrer" target="_blank">한국도로교통공단 TAAS</a></li>
+<li><a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdTrend.do?menuId=WEB_KMP_OVT_MVT_TAC_TCO" rel="noopener noreferrer" target="_blank">TAAS 전체 교통사고 추세</a></li>
+<li><a href="https://taas.koroad.or.kr/sta/acs/gus/selectOdsnDrverTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAS_ODT" rel="noopener noreferrer" target="_blank">TAAS 고령 운전자 5개년</a></li>
+<li><a href="https://taas.koroad.or.kr/web/shp/sbm/initUnityAnalsSys.do" rel="noopener noreferrer" target="_blank">TAAS 상세통계</a></li>
+<li><a href="https://mods.go.kr/board.es?act=view&amp;bid=10820&amp;list_no=447294&amp;mid=a10301010000" rel="noopener noreferrer" target="_blank">2026 고령자 통계</a></li>
+<li><a href="https://www.police.go.kr/www/open/publice/publice0204.jsp" rel="noopener noreferrer" target="_blank">경찰청, 운전면허 취득경과연수별 교통사고</a></li>
+<li><a href="https://www.gov.uk/government/statistics/reported-road-casualties-great-britain-older-and-younger-driver-factsheets/reported-road-casualties-in-great-britain-younger-and-older-car-drivers-factsheet-2025" rel="noopener noreferrer" target="_blank">DfT 팩트시트</a></li>
+<li><a href="https://www.nhtsa.gov/risky-driving/drowsy-driving" rel="noopener noreferrer" target="_blank">NHTSA 졸음운전</a></li>
+<li><a href="https://gift.samsungfire.com/mall/PP030102_025.html" rel="noopener noreferrer" target="_blank">삼성화재 TMAP 특약</a></li>
+<li><a href="https://www.hyundai.com/kr/ko/digital-customer-support/app/myhyundai/bluelink/bluelink-vehicle-care/safe-driving-habits" rel="noopener noreferrer" target="_blank">블루링크 Safe &amp; Save</a></li>
+<li><a href="https://ownersmanual.hyundai.com/full_webhelp/DN8HEV/2024/ko_KR/id76efe2af6b5.html" rel="noopener noreferrer" target="_blank">현대차 운전자 주의 경고</a></li>
+<li><a href="https://www.orix.co.jp/grp/company/newsroom/newsrelease/161208_ORIXG.html" rel="noopener noreferrer" target="_blank">ORIX 출시 발표</a></li>
+<li><a href="https://www.aioinissaydowa.co.jp/corporate/service/telematics/plus.html" rel="noopener noreferrer" target="_blank">보험사 상품 설명</a></li>
+<li><a href="https://hondanews.com/en-US/releases/release-28a0418eb9f96c2502c6b994171cd104-honda-creates-new-driver-coaching-app-to-advance-teen-driver-education-and-safety-awareness" rel="noopener noreferrer" target="_blank">Honda 공식 발표</a></li>
+<li><a href="https://intl.life360.com/driving-safety" rel="noopener noreferrer" target="_blank">운전 기능</a></li>
+<li><a href="https://investors.life360.com/news-releases/news-release-details/life360-reports-q2-and-half-year-2022-results" rel="noopener noreferrer" target="_blank">2022년 2분기 실적</a></li>
+<li><a href="https://investors.life360.com/news-releases/news-release-details/life360-reports-record-q2-2024-results" rel="noopener noreferrer" target="_blank">2024년 2분기 실적과 2023년 비교치</a></li>
+<li><a href="https://investors.life360.com/news-releases/news-release-details/life360-reports-record-q2-2026-results" rel="noopener noreferrer" target="_blank">2026년 2분기 실적과 2025년 비교치</a></li>
+<li><a href="https://www.admiral.com/black-box-insurance/littlebox" rel="noopener noreferrer" target="_blank">Admiral 상품 설명</a></li>
+<li><a href="https://www.icbc.com/assets/en/tKIezLX5StAWMcti0AoOY/techpilot-final-report.pdf" rel="noopener noreferrer" target="_blank">Techpilot 평가보고서</a></li>
+<li><a href="https://www.icbc.com/assets/en/6SzbV2BfsbeeNNCuKGEeKv/icbc-revenue-requirements-application.pdf" rel="noopener noreferrer" target="_blank">ICBC 규제 제출 자료, Appendix 8G</a></li>
+<li><a href="https://www.sira.nsw.gov.au/__data/assets/pdf_file/0010/556264/NSW-Young-Drivers-Telematics-Trial.pdf" rel="noopener noreferrer" target="_blank">SIRA, 요약 및 §4</a></li>
+<li><a href="https://www.samsara.com/blog/introducing-samsara-coach" rel="noopener noreferrer" target="_blank">Samsara Coach 발표</a></li>
+<li><a href="https://www.iihs.org/media/a14defa9-8140-4fd9-b76d-9929ff272919/2U4dfw/HLDI%20Research/Bulletins/hldi_bulletin_43-03.pdf" rel="noopener noreferrer" target="_blank">HLDI 원문, pp. 7–11, 17</a></li>
+<li><a href="https://www.iihs.org/research-areas/bibliography/ref/2314" rel="noopener noreferrer" target="_blank">IIHS 활성 설정 연구</a></li>
+<li><a href="https://www.iihs.org/research-areas/bibliography/ref/2184" rel="noopener noreferrer" target="_blank">실주행 사용 관찰</a></li>
+<li><a href="https://www.iihs.org/research-areas/bibliography/ref/2255" rel="noopener noreferrer" target="_blank">IIHS 수요 연구</a></li>
+<li><a href="https://single-market-economy.ec.europa.eu/news/mandatory-drivers-assistance-systems-expected-help-save-over-25000-lives-2038-2024-07-05_en" rel="noopener noreferrer" target="_blank">EU 집행위 발표</a></li>
+<li><a href="https://www.iihs.org/news/detail/front-crash-prevention-slashes-police-reported-rear-end-crashes" rel="noopener noreferrer" target="_blank">IIHS 연구 설명</a></li>
+<li><a href="https://www.iihs.org/research-areas/bibliography/ref/2143" rel="noopener noreferrer" target="_blank">Cicchino, 2018</a></li>
+<li><a href="https://www.iihs.org/research-areas/bibliography/ref/2142" rel="noopener noreferrer" target="_blank">Cicchino, 2018</a></li>
+<li><a href="https://www.iihs.org/research-areas/bibliography/ref/2309" rel="noopener noreferrer" target="_blank">IIHS 부분 자동화 연구</a></li>
+<li><a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" rel="noopener noreferrer" target="_blank">NHTSA SGO 데이터 해석 지침</a></li>
+<li><a href="https://www.hyundaimotorgroup.com/ko/news/42dot-pleos-connect-app-market-new-apps" rel="noopener noreferrer" target="_blank">앱 마켓 발표</a></li>
+<li><a href="https://www.hyundaimotorgroup.com/ko/news/hyundai-motor-group-redefines-in-vehicle-experience-with-pleos-connect-next-generation-infotainment-system" rel="noopener noreferrer" target="_blank">Pleos Connect 공개 계획</a></li>
+<li><a href="https://document.pleos.ai/docs/pleos-only/create-my-project" rel="noopener noreferrer" target="_blank">Pleos SDK 신청</a></li>
+<li><a href="https://document.pleos.ai/en/api-reference/connect-sdk-pleos/NaviHelper/declaring-permissions" rel="noopener noreferrer" target="_blank">NaviHelper 권한</a></li>
+<li><a href="https://document.pleos.ai/docs/pleos-only/vehicle-app-planning-guide/driver-distraction-guideline" rel="noopener noreferrer" target="_blank">주행 안전 설계</a></li>
+<li><a href="https://ownersmanual.hyundai.com/full_webhelp/DN8/2026/ko_KR/id7e5669bf712.html" rel="noopener noreferrer" target="_blank">현대차 HDA 설명서</a></li>
+<li><a href="https://www.fda.gov/medical-devices/products-and-medical-procedures/pulse-oximeters" rel="noopener noreferrer" target="_blank">FDA 산소포화도계 안내</a></li>
+<li><a href="https://appdevchallenge.auto-hmg.io/guide/judging-awards" rel="noopener noreferrer" target="_blank">공식 심사 기준</a></li></ol></section>
+  </main>
+</div>
+<footer class="footer"><div class="wrap"><span>Parkhere Research · 2026년 11월 6일 기준</span><a href="#top">맨 위로 ↑</a></div></footer>
+<script>
+(() => {
+  const printButton = document.querySelector("#print-report");
+  printButton.hidden = false;
+  printButton.addEventListener("click", () => window.print());
+
+  const calculator = document.querySelector("#revenue-calculator");
+  calculator.hidden = false;
+  const fields = [...calculator.querySelectorAll("input")];
+  const presetButtons = [...calculator.querySelectorAll("[data-values]")];
+  const outputs = [...calculator.querySelectorAll("output strong")];
+  const format = new Intl.NumberFormat("ko-KR");
+
+  function updateRevenue() {
+    const values = fields.map((input) => {
+      const value = input.valueAsNumber;
+      return Number.isFinite(value) ? Math.min(Number(input.max), Math.max(0, value)) : 0;
+    });
+    const [sites, vehicles, share, price] = values;
+    const billed = Math.floor(sites * vehicles * share / 100);
+    const monthly = billed * price;
+    outputs[0].textContent = format.format(billed) + "대";
+    outputs[1].textContent = format.format(monthly) + "원";
+    outputs[2].textContent = format.format(monthly * 12) + "원";
+    presetButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.values === values.join(","))));
+  }
+  calculator.addEventListener("input", updateRevenue);
+  calculator.addEventListener("change", () => {
+    fields.forEach((input) => {
+      if (input.value !== "" && Number.isFinite(input.valueAsNumber)) {
+        input.value = Math.round(Math.max(0, Math.min(Number(input.max), input.valueAsNumber)));
+      }
+    });
+    updateRevenue();
+  });
+  presetButtons.forEach((button) => button.addEventListener("click", () => {
+    button.dataset.values.split(",").forEach((value, index) => { fields[index].value = value; });
+    updateRevenue();
+  }));
+  updateRevenue();
+
+  if ("IntersectionObserver" in window) {
+    const links = [...document.querySelectorAll(".toc a")];
+    const observer = new IntersectionObserver((entries) => {
+      const current = entries.find((entry) => entry.isIntersecting);
+      if (!current) return;
+      links.forEach((link) => {
+        if (link.hash === "#" + current.target.id) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      });
+    }, { rootMargin: "0px 0px -70% 0px" });
+    document.querySelectorAll(".report-section").forEach((section) => observer.observe(section));
+  }
+})();
+</script>
+</body>
+</html>

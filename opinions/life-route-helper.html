@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>생활길 헬퍼 · 동네병원 가는 길</title>
+<style>
+:root {
+  color-scheme: light;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  color: #1a2b32;
+  background: #f3f5f1;
+  --ink: #1a2b32;
+  --muted: #4c6168;
+  --line: #d6dfdb;
+  --paper: #fff;
+  --teal: #145c4d;
+  --teal-soft: #e5f3e9;
+  --blue: #3158a1;
+  --orange: #9c4b19;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: default; }
+button:focus-visible, input:focus-visible + .route-card { outline: 3px solid #1c68ce; outline-offset: 3px; }
+[hidden] { display: none !important; }
+.shell { width: min(1160px, calc(100% - 48px)); margin: 30px auto; }
+.topline { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: inline-flex; align-items: center; gap: 9px; font-weight: 850; color: var(--teal); letter-spacing: -.02em; }
+.brand svg { width: 30px; height: 30px; padding: 5px; border-radius: 8px; background: #dceadf; }
+.steps { display: flex; flex-wrap: wrap; gap: 5px; padding: 4px; border: 1px solid var(--line); border-radius: 12px; background: #eaf0eb; }
+.steps button { min-height: 40px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-weight: 750; font-size: .92rem; }
+.steps button[aria-current="step"] { background: var(--paper); color: var(--teal); box-shadow: 0 1px 3px #25443a1d; }
+.steps button:disabled { color: #566b70; }
+.intro { margin: 22px 0; }
+.kicker { display: flex; align-items: center; gap: 8px; color: var(--teal); font-size: .89rem; font-weight: 800; }
+.kicker::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #287960; }
+h1 { margin: 5px 0 7px; font-size: clamp(1.9rem, 4.5vw, 3.25rem); letter-spacing: -.06em; line-height: 1.13; }
+h1:focus { outline: none; }
+.intro p, .panel p { color: var(--muted); margin: 0; line-height: 1.48; }
+.layout { display: grid; grid-template-columns: minmax(0, 1.62fr) minmax(320px, 1fr); gap: 15px; align-items: stretch; }
+.surface { min-width: 0; border: 1px solid var(--line); border-radius: 19px; background: var(--paper); box-shadow: 0 8px 20px #243d2e0b; }
+.map-panel { padding: 16px; }
+.map-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+.map-head strong { font-size: 1.05rem; }
+.map-head span { color: var(--muted); font-size: .83rem; }
+.map { position: relative; isolation: isolate; overflow: hidden; aspect-ratio: 720 / 425; border: 1px solid #d0ddd4; border-radius: 12px; background: #edf2e9; }
+.map svg { display: block; width: 100%; height: 100%; }
+.map svg text { font-family: inherit; }
+.map .route-casing, .map .route-line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.map .route-casing { stroke: #fff; stroke-width: 15; }
+.map .route-line { stroke-width: 7.5; }
+.map .shared { stroke: #677c73; }
+.map[data-phase="arrival"] .shared, .map[data-choice="fast"] .shared { stroke: var(--blue); }
+.map .fast { stroke: var(--blue); }
+.map .easy { stroke: var(--teal); stroke-dasharray: 13 7; }
+.map .last-flag { display: none; }
+.map[data-phase="arrival"] .easy-route { display: none; }
+.map[data-choice="easy"] .fast-route, .map[data-choice="fast"] .easy-route { opacity: .32; }
+.map[data-choice="easy"] .shared { stroke: var(--teal); }
+.map[data-marked="true"] .last-flag { display: block; }
+.map[data-phase="started"][data-choice="easy"] .fast-route, .map[data-phase="started"][data-choice="fast"] .easy-route { display: none; }
+.map-pin {
+  position: absolute; left: 45.14%; top: 51.29%; transform: translate(-50%, -50%);
+  display: grid; place-items: center; width: 52px; height: 52px; padding: 0;
+  border: 2px solid #a64f18; border-radius: 50%; background: #fff9ec; color: var(--orange);
+  font-size: 1.28rem; font-weight: 900; box-shadow: 0 2px 8px #5c3c2835;
+}
+.map-pin[aria-pressed="true"] { background: #f6dfc4; }
+.map-pin:focus-visible { outline-offset: 1px; }
+.map-tag {
+  position: absolute; left: 45.14%; top: calc(51.29% - 31px); transform: translate(-50%, -100%);
+  border-radius: 5px; padding: 4px 7px; color: #713812; background: #fff4e2; border: 1px solid #d5a174;
+  font-size: clamp(.72rem, 1.9vw, .87rem); font-weight: 800; white-space: nowrap; pointer-events: none;
+}
+.map-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding-top: 11px; color: var(--muted); font-size: .87rem; }
+.map-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.line-key { width: 22px; border-top: 3px solid var(--blue); }
+.line-key.easy { border-top: 3px dashed var(--teal); }
+.flag-key { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #f9e6cb; color: var(--orange); font-style: normal; font-weight: 900; }
+.panel { display: flex; flex-direction: column; padding: clamp(16px, 2.4vw, 24px); }
+.panel h2 { margin: 0 0 6px; font-size: 1.35rem; line-height: 1.25; letter-spacing: -.045em; }
+.panel p { font-size: .96rem; }
+.section-mark { border: 1px solid #dec5a9; background: #fff8ee; border-radius: 12px; padding: 13px; margin: 15px 0 10px; }
+.section-mark strong { color: #663614; display: block; margin-bottom: 4px; }
+.section-mark p { color: #66492f; font-size: .91rem; }
+.section-mark[data-saved="true"] { background: #ebf6ed; border-color: #a0c6ab; }
+.section-mark[data-saved="true"] strong { color: #18563f; }
+.section-mark[data-saved="true"] p { color: #355747; }
+.mark-button, .primary, .secondary { display: block; width: 100%; min-height: 50px; padding: 9px 12px; border-radius: 10px; font-weight: 850; line-height: 1.3; }
+.mark-button { border: 1px solid #c79765; background: #fffaf1; color: #744014; }
+.mark-button[aria-pressed="true"] { border-color: #8db59e; background: #eff8f0; color: var(--teal); }
+.primary { border: 1px solid transparent; background: var(--teal); color: white; }
+.primary:disabled { background: #e9efea; color: #586b63; border-color: #d4dfd6; }
+.secondary { border: 1px solid var(--line); background: #fff; color: var(--teal); }
+.action-area { margin-top: auto; padding-top: 14px; }
+.action-area small { display: block; margin-bottom: 8px; color: var(--muted); font-size: .86rem; line-height: 1.43; }
+.panel > div { flex: 1; }
+.panel > div:not([hidden]) { display: flex; flex-direction: column; }
+fieldset { min-width: 0; border: 0; margin: 12px 0 0; padding: 0; }
+fieldset legend { color: var(--muted); font-size: .86rem; font-weight: 750; margin-bottom: 7px; }
+.route-choice { display: block; position: relative; cursor: pointer; margin-bottom: 7px; }
+.route-choice:last-child { margin-bottom: 0; }
+.route-choice input { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; }
+.route-card { display: grid; grid-template-columns: 20px 1fr auto; gap: 8px; align-items: start; padding: 11px; border: 1px solid #cbd9d2; border-radius: 10px; background: #fbfdfb; }
+.route-choice input:checked + .route-card { border-color: #318068; background: #eaf5ed; box-shadow: inset 0 0 0 1px #318068; }
+.radio-mark { width: 18px; height: 18px; margin-top: 1px; border: 2px solid #677c73; border-radius: 50%; }
+.route-choice input:checked + .route-card .radio-mark { border-color: var(--teal); background: var(--teal); box-shadow: inset 0 0 0 3px #eaf5ed; }
+.route-name { display: block; font-weight: 850; line-height: 1.2; margin-bottom: 5px; }
+.route-reason { display: block; color: var(--muted); font-size: .85rem; line-height: 1.36; }
+.eta { font-weight: 880; white-space: nowrap; font-variant-numeric: tabular-nums; font-size: 1.09rem; }
+.delta { display: block; font-size: .77rem; font-weight: 750; text-align: right; color: var(--teal); margin-top: 3px; }
+.confirmed { margin: 14px 0 0; padding: 13px; border-radius: 10px; background: var(--teal-soft); line-height: 1.45; font-weight: 770; color: var(--teal); }
+.footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 5px 16px; margin: 7px 0; color: var(--muted); font-size: .85rem; }
+.reset { min-height: 42px; padding: 5px 6px; background: transparent; color: var(--muted); text-decoration: underline; text-underline-offset: .2em; border: 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 850px) {
+  .shell { width: min(660px, calc(100% - 28px)); margin-top: 18px; }
+  .layout { grid-template-columns: 1fr; gap: 10px; }
+  .map-panel { padding: 11px; }
+}
+@media (max-width: 420px) {
+  .topline { align-items: flex-start; }
+  .steps { gap: 2px; padding: 3px; }
+  .steps button { padding: 0 8px; font-size: .86rem; }
+  .intro { margin: 17px 0; }
+  .map-pin { width: 45px; height: 45px; }
+  .map-tag { top: calc(51.29% - 25px); }
+  .map svg .place-label { font-size: 27px; }
+}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="topline">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c4 0 4-5 7-5h3c4 0 4-6 4-9M15 8l4-4 3 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="19" r="1.6" fill="currentColor"/></svg>
+      생활길 헬퍼
+    </div>
+    <nav class="steps" aria-label="시연 단계">
+      <button id="arrival-tab" type="button" aria-current="step">1. 병원 도착</button>
+      <button id="compare-tab" type="button" disabled>2. 다음 출발</button>
+    </nav>
+  </header>
+  <div class="intro">
+    <div class="kicker" id="eyebrow">지난번 · 주차 완료</div>
+    <h1 id="heading" tabindex="-1">병원에 도착했어요</h1>
+    <p id="subhead">다음에도 다닐 길이라면, 오늘 불편했던 곳을 기억해 둘 수 있어요.</p>
+  </div>
+  <div class="layout">
+    <section class="surface map-panel" aria-label="경로 지도">
+      <div class="map-head"><strong id="map-heading">지난번에 달린 길</strong><span>집 → 동네병원</span></div>
+      <div class="map" id="map" data-phase="arrival" data-marked="false" data-choice="">
+        <svg viewBox="0 0 720 425" role="img" aria-labelledby="map-title map-description">
+          <title id="map-title">집에서 동네병원까지의 예시 지도</title>
+          <desc id="map-description">파란 실선은 지난번에 달린 길입니다. 가운데 중앙대로 합류 구간을 표시할 수 있습니다.</desc>
+          <defs>
+            <pattern id="city-grid" width="46" height="46" patternUnits="userSpaceOnUse">
+              <path d="M46 0H0V46" fill="none" stroke="#dce6dc" stroke-width="1"/>
+            </pattern>
+            <path id="shared-road" d="M91 335H162Q182 335 196 321L252 265"/>
+            <path id="fast-road" d="M252 265L281 236Q299 218 325 218H405Q430 218 450 198L522 125Q534 113 553 113H574"/>
+            <path id="easy-road" d="M252 265V300Q252 319 271 319H429Q448 319 461 306L534 233Q548 219 548 200V139Q548 113 574 113"/>
+            <path id="arrival-road" d="M574 113H614"/>
+          </defs>
+          <rect width="720" height="425" fill="#e9efe4"/>
+          <rect width="720" height="425" fill="url(#city-grid)"/>
+          <path d="M456-35C425 45 367 67 373 117S456 193 466 245 443 350 386 459L328 450C385 345 404 298 407 251S317 169 317 119 362 27 392-31Z" fill="#cfdfdf"/>
+          <path d="M48 46h160v88H48zM63 158h130v70H63zM515 279h145v96H515zM561 154h94v56H561z" fill="#dce8d5"/>
+          <g fill="none" stroke="#f9fbf6" stroke-width="8" stroke-linecap="round">
+            <path d="M0 90h320m143 0h257M0 260h293m178 0h249M0 377h320m151 0h249M219 0v190m-31 174v61M610 0v88m17 52v285M49 0v425"/>
+          </g>
+          <path d="M116 61h67m-67 17h38m440 231h40m-40 16h53" fill="none" stroke="#c9d9c1" stroke-width="3" stroke-linecap="round"/>
+          <g class="easy-route">
+            <use href="#easy-road" class="route-casing"/>
+            <use href="#easy-road" class="route-line easy"/>
+          </g>
+          <g class="fast-route">
+            <use href="#fast-road" class="route-casing"/>
+            <use href="#fast-road" class="route-line fast"/>
+          </g>
+          <use href="#shared-road" class="route-casing"/>
+          <use href="#shared-road" class="route-line shared"/>
+          <use href="#arrival-road" class="route-casing"/>
+          <use href="#arrival-road" class="route-line shared"/>
+          <g class="last-flag">
+            <circle cx="325" cy="218" r="19" fill="#fff5e1" stroke="#a64f18" stroke-width="2.6"/>
+            <text x="325" y="226" text-anchor="middle" font-size="22" font-weight="900" fill="#913d16">!</text>
+          </g>
+          <g>
+            <circle cx="91" cy="335" r="12" fill="#1f3542" stroke="#fff" stroke-width="4"/>
+            <text class="place-label" x="91" y="309" text-anchor="middle" font-size="22" font-weight="800" fill="#1b333c">집</text>
+          </g>
+          <g>
+            <circle cx="614" cy="113" r="15" fill="#1f3542" stroke="#fff" stroke-width="4"/>
+            <path d="M609 113h10m-5-5v10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+            <text class="place-label" x="614" y="81" text-anchor="middle" font-size="22" font-weight="800" fill="#1b333c">동네병원</text>
+          </g>
+        </svg>
+        <span class="map-tag" id="map-tag">중앙대로 합류</span>
+        <button class="map-pin" id="map-mark" type="button" aria-label="중앙대로 합류 구간 표시" aria-pressed="false">!</button>
+      </div>
+      <div class="map-legend">
+        <span id="fast-legend"><i class="line-key" aria-hidden="true"></i><span id="fast-legend-label">지난번에 달린 길</span></span>
+        <span id="easy-legend" hidden><i class="line-key easy" aria-hidden="true"></i> 편한 길</span>
+        <span id="flag-legend" hidden><i class="flag-key" aria-hidden="true">!</i> 내가 표시한 합류</span>
+      </div>
+    </section>
+    <aside class="surface panel" aria-label="경로 선택">
+      <div id="arrival-panel">
+        <h2>어디가 불편했나요?</h2>
+        <p>지도에서 합류 지점을 누르거나 아래 버튼을 눌러 주세요.</p>
+        <div class="section-mark" id="mark-card" data-saved="false">
+          <strong>중앙대로 합류</strong>
+          <p id="mark-detail">지난번 병원길에서 지나온 구간</p>
+        </div>
+        <button class="mark-button" id="mark-button" type="button" aria-pressed="false">불편했던 구간으로 표시</button>
+        <div class="action-area">
+          <small id="next-hint">표시한 구간을 기준으로 다음 병원길을 비교해요.</small>
+          <button class="primary" id="next" type="button" disabled>다음번 출발로 가기</button>
+        </div>
+      </div>
+      <div id="compare-panel" hidden>
+        <h2>두 길을 비교해 보세요</h2>
+        <p>지난번에 표시한 곳은 <strong>중앙대로 합류</strong>예요.</p>
+        <fieldset>
+          <legend>동네병원까지 가는 방법</legend>
+          <label class="route-choice">
+            <input name="route" id="fast-choice" value="fast" type="radio">
+            <span class="route-card">
+              <span class="radio-mark" aria-hidden="true"></span>
+              <span><span class="route-name">빠른 길</span><span class="route-reason">표시한 합류 구간을 지나요</span></span>
+              <span class="eta">24분</span>
+            </span>
+          </label>
+          <label class="route-choice">
+            <input name="route" id="easy-choice" value="easy" type="radio">
+            <span class="route-card">
+              <span class="radio-mark" aria-hidden="true"></span>
+              <span><span class="route-name">편한 길</span><span class="route-reason">표시한 합류를 피해 큰길로 돌아가요</span></span>
+              <span class="eta">28분<span class="delta">+4분</span></span>
+            </span>
+          </label>
+        </fieldset>
+        <div class="action-area">
+          <button class="primary" id="depart" type="button" disabled>이 길로 출발</button>
+        </div>
+      </div>
+      <div id="started-panel" hidden>
+        <h2>경로 선택 완료</h2>
+        <p>동네병원까지 가는 길을 선택했어요.</p>
+        <div class="confirmed" id="confirmation"></div>
+        <div class="action-area">
+          <button class="secondary" id="back" type="button">두 경로 다시 비교</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+  <footer class="footer">
+    <span>시연용 가상 지도와 소요 시간입니다.</span>
+    <button class="reset" id="reset" type="button">처음부터 다시 보기</button>
+  </footer>
+  <span class="sr-only" id="announcement" role="status"></span>
+</main>
+<script>
+(() => {
+  const get = id => document.getElementById(id);
+  const storageKey = "life-route-helper-demo:v1";
+  const routeInfo = {
+    fast: { name: "빠른 길", minutes: 24, description: "표시한 중앙대로 합류 구간을 지나는 길이에요." },
+    easy: { name: "편한 길", minutes: 28, description: "지난번에 표시한 중앙대로 합류 구간을 피해 가요." }
+  };
+  const initial = () => ({ phase: "arrival", marked: false, route: "" });
+  const phasePanels = {
+    arrival: get("arrival-panel"),
+    compare: get("compare-panel"),
+    started: get("started-panel")
+  };
+  const choices = [...document.querySelectorAll('input[name="route"]')];
+  const map = get("map");
+  let state = restore();
+
+  function restore() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey));
+      if (saved?.marked === true) {
+        const route = saved.route === "fast" || saved.route === "easy" ? saved.route : "";
+        const phase = saved.phase === "started" && route ? "started"
+          : saved.phase === "compare" ? "compare" : "arrival";
+        return { phase, marked: true, route };
+      }
+    } catch {
+      // The demo still works when browser storage is unavailable.
+    }
+    return initial();
+  }
+
+  function update(changes, { focus = false, announce = "" } = {}) {
+    state = { ...state, ...changes };
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    } catch {
+      // Keep state for the current page when the browser blocks persistence.
+    }
+    draw();
+    if (focus) get("heading").focus();
+    if (announce) get("announcement").textContent = announce;
+  }
+
+  function draw() {
+    const arrival = state.phase === "arrival";
+    const started = state.phase === "started";
+    const selected = routeInfo[state.route];
+    for (const [phase, panel] of Object.entries(phasePanels)) panel.hidden = state.phase !== phase;
+    get("arrival-tab").setAttribute("aria-current", arrival ? "step" : "false");
+    get("compare-tab").setAttribute("aria-current", arrival ? "false" : "step");
+    get("compare-tab").disabled = !state.marked;
+    get("next").disabled = !state.marked;
+    get("depart").disabled = !selected;
+    get("map-mark").hidden = !arrival;
+    get("map-mark").setAttribute("aria-pressed", state.marked);
+    get("map-mark").textContent = state.marked ? "✓" : "!";
+    get("map-mark").setAttribute("aria-label", state.marked ? "중앙대로 합류 구간 표시 취소" : "중앙대로 합류 구간 표시");
+    get("map-tag").hidden = started && state.route === "easy";
+    get("mark-button").setAttribute("aria-pressed", state.marked);
+    get("mark-button").textContent = state.marked ? "구간 표시 취소" : "불편했던 구간으로 표시";
+    get("mark-card").dataset.saved = state.marked;
+    get("mark-detail").textContent = state.marked ? "다음 병원길에 반영할 구간으로 저장했어요." : "지난번 병원길에서 지나온 구간";
+    get("next-hint").textContent = state.marked ? "다음 출발 화면에서 이곳을 지나는 길과 피하는 길을 비교해요." : "표시한 구간을 기준으로 다음 병원길을 비교해요.";
+    for (const choice of choices) choice.checked = choice.value === state.route;
+    map.dataset.phase = state.phase;
+    map.dataset.choice = arrival ? "" : state.route;
+    map.dataset.marked = String(state.marked && !arrival && !(started && state.route === "easy"));
+    get("fast-legend").hidden = started && state.route === "easy";
+    get("fast-legend-label").textContent = arrival ? "지난번에 달린 길" : "빠른 길";
+    get("easy-legend").hidden = arrival || (started && state.route === "fast");
+    get("flag-legend").hidden = !state.marked || (started && state.route === "easy");
+
+    get("eyebrow").textContent = arrival ? "지난번 · 주차 완료" : started ? "다음 방문 · 선택 완료" : "다음 방문 · 출발 전";
+    get("heading").textContent = arrival ? "병원에 도착했어요" : started ? `${selected.name}로 출발해요` : "오늘은 어느 길로 갈까요?";
+    get("subhead").textContent = arrival ? "다음에도 다닐 길이라면, 오늘 불편했던 곳을 기억해 둘 수 있어요."
+      : started ? selected.description : "지난번에 남긴 기록을 바탕으로 두 경로를 보여드려요.";
+    get("map-heading").textContent = arrival ? "지난번에 달린 길" : started ? `선택한 ${selected.name}` : "오늘 선택할 수 있는 길";
+    get("map-description").textContent = arrival ? "파란 실선은 지난번에 달린 길입니다. 가운데 중앙대로 합류 구간을 표시할 수 있습니다."
+      : started ? `${selected.name} 경로가 표시됩니다.` : "파란 실선은 빠른 길, 초록 점선은 표시한 합류 구간을 피하는 편한 길입니다.";
+    get("confirmation").textContent = started ? `${selected.name} · 약 ${selected.minutes}분` : "";
+  }
+
+  function toggleMark() {
+    const marked = !state.marked;
+    update({ marked, route: "" }, {
+      announce: marked ? "중앙대로 합류 구간을 저장했어요. 다음번 출발로 갈 수 있어요." : "중앙대로 합류 구간 표시를 취소했어요."
+    });
+  }
+
+  function compare() {
+    if (state.marked) update({ phase: "compare" }, { focus: true });
+  }
+
+  get("map-mark").addEventListener("click", toggleMark);
+  get("mark-button").addEventListener("click", toggleMark);
+  get("next").addEventListener("click", compare);
+  get("compare-tab").addEventListener("click", compare);
+  get("back").addEventListener("click", compare);
+  get("arrival-tab").addEventListener("click", () => update({ phase: "arrival" }, { focus: true }));
+  get("depart").addEventListener("click", () => {
+    if (state.route) update({ phase: "started" }, { focus: true });
+  });
+  get("reset").addEventListener("click", () => update(initial(), { focus: true, announce: "시연을 처음 상태로 되돌렸어요." }));
+  for (const choice of choices) {
+    choice.addEventListener("change", () => update({ route: choice.value }, { announce: routeInfo[choice.value].description }));
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
