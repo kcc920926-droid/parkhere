@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>드라이브 와쳐 · 차량 센터 화면</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="presentation.css">
+  <script src="engine.js" defer></script>
+  <script src="replays.js" defer></script>
+  <script src="course.js" defer></script>
+  <script src="trip-store.js" defer></script>
+  <script src="weekly.js" defer></script>
+  <script src="weekly-history.js" defer></script>
+  <script src="weekly-card.js" defer></script>
+  <script src="console.js" defer></script>
+</head>
+<body>
+  <main class="presentation console-demo">
+    <header class="presentation-mast">
+      <a class="presentation-brand" href="index.html">← 시연 선택</a>
+      <span class="badge">차량 센터 화면 · 웹 모형</span>
+    </header>
+    <div class="console-toolbar">
+      <div><p class="eyebrow">IN-CAR EXPERIENCE</p><h1>차량 센터 화면</h1></div>
+      <div class="console-controls">
+        <div class="display-toggle" role="group" aria-label="화면 배치">
+          <button type="button" id="display-wide" aria-pressed="true">전체 화면</button>
+          <button type="button" id="display-split" aria-pressed="false">분할 화면</button>
+        </div>
+        <button type="button" class="primary" id="console-park">주차하기</button>
+        <button type="button" id="console-reset" hidden>다시 주행</button>
+      </div>
+    </div>
+    <div class="console-trip-picker">
+      <div class="display-toggle" role="group" aria-label="주행 기록 선택">
+        <button type="button" id="trip-manual" aria-pressed="false">내 직접 운전</button>
+        <button type="button" id="trip-example" aria-pressed="true">예시 기록</button>
+      </div>
+      <span id="trip-status"></span>
+    </div>
+    <div class="console-weekly-controls" id="weekly-presenter" hidden>
+      <span class="presenter-label">발표용 조작</span>
+      <div class="display-toggle" role="group" aria-label="주간 기록 선택">
+        <button type="button" id="weekly-scene-steady" aria-pressed="false">한 주만 달랐던 기록</button>
+        <button type="button" id="weekly-scene-changing" aria-pressed="true">변화가 이어진 기록</button>
+      </div>
+      <div class="weekly-step">
+        <button type="button" id="weekly-prev" aria-label="이전 주">←</button>
+        <button type="button" class="primary" id="weekly-play">12주 재생</button>
+        <button type="button" id="weekly-next" aria-label="다음 주">→</button>
+      </div>
+    </div>
+    <p class="console-instruction" id="console-instruction" role="status">가상 주행 중이에요. 주차한 뒤 화면 아래에서 드라이브 와쳐를 열어 보세요.</p>
+
+    <div class="car-display" id="car-display" data-layout="wide">
+      <header class="car-status">
+        <span><b class="car-gear" id="car-gear">D</b> <span id="car-state">주행 중</span></span>
+        <span id="car-trip-source">시연 차량 · 예시 기록</span>
+        <span id="car-time">10:18</span>
+      </header>
+
+      <div class="car-windows">
+        <section class="car-nav" id="car-nav" aria-label="차량 내비게이션">
+          <svg class="navigation-map" viewBox="0 0 600 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+              <pattern id="map-blocks" width="90" height="62" patternUnits="userSpaceOnUse" patternTransform="rotate(-24)">
+                <rect width="90" height="62" fill="#20342f"/>
+                <path d="M0 0H90 M0 0V62" stroke="#344842" stroke-width="9"/>
+                <path d="M45 0V62 M0 31H90" stroke="#293e37" stroke-width="3"/>
+              </pattern>
+            </defs>
+            <rect width="600" height="360" fill="url(#map-blocks)"/>
+            <path d="M-10 130C125 154 91 282 194 380 M515-20C522 69 596 127 613 248" fill="none" stroke="#274b4d" stroke-width="24"/>
+            <path d="M61 258 185 168 281 201 462 58 580 100 M170 381 286 257 326 274 580 75" fill="none" stroke="#50645a" stroke-width="13"/>
+            <path id="nav-route-back" stroke="#142822" stroke-width="13" fill="none" stroke-linejoin="round"/>
+            <path id="nav-route-front" stroke="#72d9b8" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path id="nav-route-highlight" stroke="#ffd383" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round" hidden/>
+            <circle cx="451" cy="55" r="8" fill="#e9f6ef" stroke="#28765e" stroke-width="4"/>
+            <g id="nav-brake-events" hidden></g>
+            <g id="map-car"><circle cx="285" cy="183" r="15" fill="#e8fbf3" stroke="#278269" stroke-width="4"/>
+              <path d="m285 174 7 15-7-4-7 4Z" fill="#216f59"/></g>
+          </svg>
+          <div class="nav-cue">
+            <span class="nav-turn" aria-hidden="true" id="nav-turn">↱</span>
+            <div><strong id="nav-distance">450 m</strong><span id="nav-direction">앞 교차로에서 우회전</span></div>
+          </div>
+          <div class="nav-footer"><strong id="nav-route-label">생활도로 예시 경로</strong><span id="nav-eta">도착까지 3분</span></div>
+        </section>
+
+        <section class="car-media" id="car-media" aria-label="옆 창 음악" hidden>
+          <span aria-hidden="true">♫</span><h2>음악</h2><p>재생 대기</p>
+        </section>
+
+        <section class="car-app" id="car-app" aria-label="드라이브 와쳐 주행 요약" hidden>
+          <div class="car-app-content" id="car-summary">
+            <p class="car-kicker" id="summary-source">드라이브 와쳐 · 오늘의 주행</p>
+            <div class="summary-grid">
+              <div>
+                <h2 id="summary-title" tabindex="-1">평소와 달라요</h2>
+                <p id="summary-copy"></p>
+                <button type="button" class="primary car-action" id="show-segments">어느 구간이었나요?</button>
+                <button type="button" class="car-action" id="show-weekly">이번 주 카드</button>
+              </div>
+              <div class="car-comparison" id="car-comparison" aria-label="2분 구간의 강한 제동 횟수">
+                <span id="comparison-window">2분 구간당 강한 제동</span>
+                <div><span>평소 기준</span><strong id="summary-baseline">—</strong></div>
+                <div class="compare-track"><i id="baseline-bar"></i></div>
+                <div><span>이번 구간 중 가장 잦았을 때</span><strong id="summary-actual">—</strong></div>
+                <div class="compare-track compare-today"><i id="actual-bar"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="car-app-content" id="car-detail" hidden>
+            <p class="car-kicker">드라이브 와쳐 · 구간 확인</p>
+            <h2 id="segment-title" tabindex="-1">강한 제동이 이어진 구간</h2>
+            <p id="segment-copy"></p>
+            <div class="segment-grid">
+              <div class="segment-map">
+                <svg viewBox="150 35 325 320" role="img" aria-label="가상 경로에 표시한 제동 위치와 확인 구간">
+                  <path id="detail-route-base" fill="none" stroke="#50675e" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path id="detail-route-highlight" fill="none" stroke="#ffd383" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <g id="detail-brake-events"></g>
+                  <circle cx="183" cy="333" r="6" fill="#9db2aa"/><circle cx="451" cy="55" r="6" fill="#e8f4ed"/>
+                </svg>
+                <span id="segment-legend">가상 경로 · 강조된 부분이 확인 구간</span>
+              </div>
+              <ul class="segment-list" id="segment-list"></ul>
+            </div>
+            <button type="button" class="car-action" id="back-summary">← 주행 요약으로</button>
+          </div>
+          <div class="car-app-content" id="car-weekly" hidden>
+            <p class="car-kicker">드라이브 와쳐 · 이번 주 · <span id="weekly-week"></span></p>
+            <div class="weekly-head">
+              <h2 id="weekly-title" tabindex="-1">이번 주도 평소처럼 운전하셨어요</h2>
+              <span class="weekly-chip" id="weekly-chip" data-status="stable">안정</span>
+            </div>
+            <p id="weekly-copy"></p>
+            <div class="weekly-body">
+              <div class="weekly-strip-wrap">
+                <span class="weekly-caption">지난 12주</span>
+                <ol class="weekly-strip" id="weekly-strip" aria-label="지난 12주 상태"></ol>
+                <div class="weekly-legend" aria-hidden="true">
+                  <span data-status="stable">안정</span><span data-status="observe">관찰</span><span data-status="talk">대화 권장</span><span data-status="learning">학습·보류</span>
+                </div>
+              </div>
+              <div class="weekly-evidence" id="weekly-evidence"></div>
+            </div>
+            <button type="button" class="car-action" id="weekly-back">← 주행 요약으로</button>
+          </div>
+        </section>
+      </div>
+
+      <nav class="car-dock" aria-label="센터 화면 앱">
+        <button type="button" id="open-nav" aria-current="page">내비</button>
+        <button type="button" id="open-watcher" disabled><span>드라이브 와쳐</span><small id="watcher-hint">주차 후 열기</small></button>
+        <span>공조 22°</span>
+      </nav>
+    </div>
+
+    <section class="weekly-engine" id="weekly-engine" hidden aria-label="주간 판정 엔진이 본 값">
+      <div class="weekly-engine-copy">
+        <p class="eyebrow">ENGINE · 화면 밖 설명</p>
+        <h2>운전자 화면 뒤에서 엔진이 본 값</h2>
+        <p id="weekly-rule"></p>
+      </div>
+      <svg id="weekly-chart" viewBox="0 -6 360 170" role="img" aria-label="12주 동안의 주별 지표와 평소 상한"></svg>
+      <p class="weekly-engine-note">막대는 주별 값, 점선은 그 주의 평소 상한 · 시연용 합성 기록 12주(도심, 주 4회·8km)</p>
+    </section>
+
+    <footer><span>가상 차량 상태와 선택한 기록으로 재현한 센터 화면 흐름</span><a href="engine-demo.html">판단 엔진 보기</a></footer>
+  </main>
+</body>
+</html>

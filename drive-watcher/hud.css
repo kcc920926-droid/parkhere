@@ -1,0 +1,143 @@
+/*
+ * HUD theme for the judge-facing pages (engine demo, tendency model):
+ * instrument-cluster gauges and amber telltales, plus a neural-HUD palette —
+ * cyan for live signal, pink for "outside the usual", amber for warnings.
+ */
+body.hud {
+  --panel: #07111d;
+  --border: #19374a;
+  --subtle: #a3bccb;
+  --muted: #7590a4;
+  --mint: #5ff2ff;
+  --amber: #ffb547;
+  --pink: #ff4fa3;
+  --violet: #8c7cff;
+  --ink: #03060f;
+  color: #e3f6ff;
+  font-family: "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  background-color: var(--ink);
+  background-image:
+    radial-gradient(ellipse at 80% -20%, #0d2a44 0%, transparent 55%),
+    repeating-linear-gradient(0deg, rgba(95, 242, 255, .035) 0 1px, transparent 1px 4px);
+}
+body.hud .eyebrow, body.hud .context, body.hud kbd, body.hud .badge { font-family: "JetBrains Mono", ui-monospace, monospace; }
+body.hud .eyebrow { color: var(--mint); letter-spacing: .16em; }
+body.hud .panel { border-radius: 8px; background: linear-gradient(180deg, #081627, #060d18); border-color: var(--border); box-shadow: inset 0 1px 0 rgba(95, 242, 255, .08); }
+body.hud button { background: #0a1828; border-color: #1f4058; border-radius: 6px; color: #dcf3ff; }
+body.hud button:hover:not(:disabled) { background: #10263a; }
+body.hud .primary { color: var(--ink); background: var(--mint); border-color: var(--mint); box-shadow: 0 0 18px rgba(95, 242, 255, .35); }
+body.hud .primary:hover:not(:disabled) { background: #a8f8ff; }
+body.hud .drive-views [aria-pressed="true"], body.hud .course-controls button[aria-pressed="true"],
+body.hud .profile-toggle [aria-pressed="true"], body.hud .day-picker [aria-pressed="true"] {
+  border-color: var(--mint); background: #0d2a3c; color: var(--mint);
+}
+body.hud kbd { border-color: #2c4d63; color: #dcf3ff; }
+body.hud .badge i { background: var(--pink); box-shadow: 0 0 8px var(--pink); }
+
+/* Chase view and cluster */
+body.hud .windshield { border-radius: 8px; border-color: #1f4058; background: #071423; }
+body.hud .windshield-hud { background: linear-gradient(transparent, rgba(3, 6, 15, .92)); align-items: center; }
+body.hud .speed-gauge { position: relative; display: grid; place-items: center; width: 108px; height: 96px; margin: -10px 0 -6px -4px; }
+body.hud .speed-gauge svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.arc-track { fill: none; stroke: #16293a; stroke-width: 8; stroke-linecap: round; }
+.arc-value { fill: none; stroke: #e3f6ff; stroke-width: 8; stroke-linecap: round; transition: stroke-dasharray .12s linear; filter: drop-shadow(0 0 4px rgba(95, 242, 255, .5)); }
+body.hud .speed-gauge > span { position: relative; display: grid; justify-items: center; line-height: 1; margin-top: 8px; }
+body.hud .windshield-hud #course-speed { font: 700 36px/1 "Rajdhani", ui-monospace, sans-serif; }
+body.hud .windshield-hud small { color: var(--subtle); font: 600 11px "Rajdhani", sans-serif; letter-spacing: .1em; }
+body.hud .road-position b { font-family: "Rajdhani", ui-monospace, sans-serif; font-size: 19px; }
+body.hud .lane-check { border-radius: 6px; }
+body.hud .lane-gauge { background: linear-gradient(90deg, transparent calc(50% - .5px), #3d6178 calc(50% - .5px), #3d6178 calc(50% + .5px), transparent calc(50% + .5px)), #10243a; border-color: #3d6178; }
+
+/* Amber telltale banner */
+body.hud .detect-banner {
+  inset: 12px 12px auto; grid-template-columns: auto 1fr; align-items: center; column-gap: 12px;
+  color: var(--amber); background: rgba(30, 20, 5, .94); border: 2px solid var(--amber); border-radius: 10px;
+  box-shadow: 0 0 30px rgba(255, 181, 71, .35);
+}
+body.hud .detect-banner svg { grid-row: span 2; }
+body.hud .detect-banner b { font-weight: 900; }
+body.hud .detect-banner span { color: #f2d9b0; }
+body.hud .windshield.is-detected { animation-name: hud-detect; }
+@keyframes hud-detect { 0%, 100% { box-shadow: inset 0 0 0 0 transparent; border-color: #1f4058; } 50% { box-shadow: inset 0 0 0 4px var(--amber); border-color: var(--amber); } }
+body.hud .road-toasts { top: auto; bottom: 86px; }
+body.hud .road-toasts span { font: 600 12px "JetBrains Mono", ui-monospace, monospace; color: var(--mint); background: rgba(3, 6, 15, .86); border: 1px solid var(--mint); box-shadow: 0 0 14px rgba(95, 242, 255, .3); }
+body.hud .road-toasts span[data-tone="lead"] { color: var(--pink); border-color: var(--pink); box-shadow: 0 0 14px rgba(255, 79, 163, .3); }
+body.hud .road-toasts span[data-tone="late"] { color: var(--amber); border-color: var(--amber); background: rgba(30, 20, 5, .9); }
+body.hud .speed-badge { font-family: "JetBrains Mono", monospace; border: 1px solid var(--amber); color: var(--amber); background: rgba(3, 6, 15, .8); }
+
+/* Cluster readouts for the six habits */
+body.hud .habit-strip { border-radius: 6px; background: transparent; border-color: var(--border); }
+body.hud .habit-chips div { border: 0; border-left: 3px solid #1f4058; border-radius: 0; background: transparent; padding: 3px 8px; }
+body.hud .habit-chips { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 6px; }
+body.hud .habit-chips b { font: 700 20px "Rajdhani", ui-monospace, sans-serif; white-space: nowrap; }
+body.hud .habit-chips .is-fresh { border-left-color: var(--mint); background: rgba(95, 242, 255, .08); }
+
+/* Trace panel */
+body.hud .plot-grid { stroke: #142a3b; }
+body.hud .plot-labels text { font-family: "JetBrains Mono", monospace; }
+body.hud .plot-speed { stroke: var(--mint); filter: drop-shadow(0 0 3px rgba(95, 242, 255, .6)); }
+body.hud .plot-lead { stroke: #6f8ba0; }
+body.hud .plot-ghost { stroke: #a3bccb; opacity: .22; }
+body.hud #course-brake-points circle { fill: var(--pink); }
+body.hud .plot-legend .legend-brake::before { background: var(--pink); }
+body.hud #course-detect-zone rect { fill: var(--amber); opacity: .12; }
+body.hud .course-windows > div { border-radius: 4px; }
+body.hud .course-windows [data-state="watching"], body.hud .course-windows [data-state="change"] { color: var(--pink); border-color: #7a2752; }
+body.hud .course-result { display: grid; grid-template-columns: 1fr auto; column-gap: 12px; align-items: center; border-radius: 6px; background: #071423; }
+body.hud .course-result > * { grid-column: 1; }
+body.hud .course-result .streak-ring { grid-column: 2; grid-row: 1 / span 3; width: 64px; height: 64px; }
+body.hud .course-result[data-tone="change"] { border-color: var(--amber); background: rgba(30, 20, 5, .7); }
+body.hud .course-result[data-tone="change"] h3, body.hud .course-result[data-tone="watching"] h3 { color: var(--amber); }
+.streak-ring .arc-track { stroke-width: 7; }
+.streak-ring .arc-value { stroke: var(--amber); stroke-width: 7; filter: none; }
+.streak-ring text { fill: #e3f6ff; font: 700 16px "Rajdhani", sans-serif; text-anchor: middle; }
+.streak-ring .ring-label { fill: var(--muted); font: 500 8px "Noto Sans KR", sans-serif; }
+
+/* Decision path: the rule-based judgment drawn as a live signal graph */
+.decision-path { margin: 2px 0 10px; padding: 8px 10px 4px; border: 1px solid var(--border); border-radius: 6px; background: #050d18; }
+.decision-path .eyebrow { margin-bottom: 2px; }
+#decision-graph { display: block; width: 100%; height: auto; }
+.dp-edges path { fill: none; stroke: #1c3a50; stroke-width: 1.6; transition: stroke .2s, opacity .2s; }
+.dp-edges path.is-live { stroke: var(--mint); }
+.dp-edges path.is-firing { stroke: var(--pink); stroke-width: 2.2; stroke-dasharray: 5 6; animation: dp-flow .5s linear 3; }
+@keyframes dp-flow { from { stroke-dashoffset: 22; } to { stroke-dashoffset: 0; } }
+.dp-node { --glow: 0; }
+.dp-node circle { fill: #071423; stroke: #2c5670; stroke-width: 1.6; transition: fill .15s, stroke .15s; }
+.dp-node .dp-halo { fill: var(--mint); stroke: none; opacity: calc(var(--glow) * .35); }
+.dp-node.is-live circle:not(.dp-halo) { stroke: var(--mint); fill: color-mix(in srgb, var(--mint) calc(var(--glow) * 70%), #071423); }
+.dp-node.is-odd circle:not(.dp-halo) { stroke: var(--pink); fill: var(--pink); }
+.dp-node.is-odd .dp-halo { fill: var(--pink); opacity: .4; }
+.dp-node.is-warn circle:not(.dp-halo) { stroke: var(--amber); fill: var(--amber); }
+.dp-node.is-warn .dp-halo { fill: var(--amber); opacity: .4; }
+.dp-label { fill: #cfe6f2; font: 600 15px "Noto Sans KR", sans-serif; }
+.dp-value { fill: var(--muted); font: 700 15px "JetBrains Mono", monospace; }
+.dp-node.is-odd .dp-value { fill: var(--pink); }
+.dp-node.is-warn .dp-value { fill: var(--amber); }
+
+/* Tendency page */
+body.hud .profile-page { --coral: var(--pink); --sand: var(--violet); }
+body.hud .node .core { fill: #071423; stroke: #2c5670; }
+body.hud .node.is-active .core { fill: color-mix(in srgb, var(--mint) calc(var(--glow) * 100%), #071423); stroke: var(--mint); }
+body.hud .node.is-odd .core { fill: var(--pink); stroke: var(--pink); }
+body.hud .node-label { fill: #dcf3ff; }
+body.hud .node-value, body.hud .layer-title { font-family: "JetBrains Mono", monospace; }
+body.hud .latent svg { background: #050d18; border-radius: 6px; }
+body.hud .latent .past { fill: var(--mint); opacity: .55; }
+body.hud .reading-list li, body.hud .validation-stats > div { background: #071423; border-color: #19374a; border-radius: 4px; }
+body.hud .reading-list li[data-odd="true"] { border-color: #7a2752; }
+body.hud .gauge-track { border-radius: 2px; }
+body.hud .verdict-panel h2[data-unusual="true"] { color: var(--pink); text-shadow: 0 0 18px rgba(255, 79, 163, .45); }
+body.hud .validation-stats strong { font-family: "Rajdhani", ui-monospace, sans-serif; font-size: 24px; }
+body.hud .sweep-line { stroke: var(--mint); }
+body.hud .sweep-dot { fill: var(--mint); }
+body.hud .sweep-zone { fill: var(--pink); opacity: .08; }
+body.hud .cases button { background: #071423; }
+body.hud #loss-path { stroke: var(--mint); }
+@media (max-width: 520px) {
+  body.hud .detect-banner { inset: 8px 8px auto; padding: 7px 10px; column-gap: 8px; }
+  body.hud .detect-banner svg { width: 26px; height: 26px; }
+  body.hud .detect-banner b { font-size: 16px; }
+  body.hud .detect-banner span { font-size: 11px; }
+  body.hud .speed-gauge { width: 84px; height: 76px; }
+  body.hud .windshield-hud #course-speed { font-size: 28px; }
+}

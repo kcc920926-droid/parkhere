@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>드라이브 와쳐 · 시연 선택</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="presentation.css">
+</head>
+<body>
+  <main class="presentation landing">
+    <header class="presentation-mast">
+      <a class="presentation-brand" href="index.html">
+        <svg viewBox="0 0 28 28" aria-hidden="true"><path d="M3 15h6l3-7 4 13 3-6h6"/></svg>
+        <span>드라이브 와쳐</span>
+      </a>
+      <span class="badge">공모전 MVP</span>
+    </header>
+    <section class="presentation-intro" aria-labelledby="landing-title">
+      <p class="eyebrow">DRIVE WATCHER</p>
+      <h1 id="landing-title">평소와 달라진 순간</h1>
+      <p>주행 신호로 변화를 판단하는 과정과, 그 결과를 운전자가 확인하는 화면을 각각 체험해 보세요.</p>
+    </section>
+    <div class="entry-grid">
+      <a class="entry" href="engine-demo.html">
+        <div class="entry-art entry-engine" aria-hidden="true">
+          <svg viewBox="0 0 480 144">
+            <path class="entry-gridline" d="M34 31H446 M34 67H446 M34 103H446 M126 22V118 M238 22V118 M350 22V118"/>
+            <path class="entry-signal" d="M35 99 C70 99 78 69 108 69 S149 92 183 91 215 58 246 58 275 99 308 96 344 40 372 41 408 71 445 55"/>
+            <circle cx="246" cy="58" r="5" fill="#ffd383"/><circle cx="372" cy="41" r="5" fill="#ffd383"/>
+          </svg>
+        </div>
+        <div class="entry-copy">
+          <span class="eyebrow">01 / ENGINE DEMO</span>
+          <h2>공모전용 판단 엔진</h2>
+          <p>가상 주행과 공개 실측 CAN 데이터를 비교하며 변화가 어떻게 감지되는지 살펴봐요.</p>
+          <span class="entry-action">판단 엔진 보기 <span aria-hidden="true">↗</span></span>
+        </div>
+      </a>
+      <a class="entry" href="console.html">
+        <div class="entry-art entry-console" aria-hidden="true">
+          <svg viewBox="0 0 480 144">
+            <rect x="77" y="15" width="326" height="114" rx="12" fill="#162923" stroke="#426156"/>
+            <rect x="88" y="28" width="157" height="88" rx="6" fill="#1c352e"/>
+            <path d="M103 103l43-25 37 4 39-43" fill="none" stroke="#5dcaaa" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="183" cy="82" r="6" fill="#d9f9eb" stroke="#28765e" stroke-width="3"/>
+            <rect x="252" y="28" width="140" height="88" rx="6" fill="#2a3325"/>
+            <path d="M269 54h86 M269 66h56" stroke="#a5aa86" stroke-width="3" stroke-linecap="round"/>
+            <path d="M269 83h93 M269 97h39" stroke="#a6dfca" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="entry-copy">
+          <span class="eyebrow">02 / IN-CAR EXPERIENCE</span>
+          <h2>차량 센터 화면</h2>
+          <p>내비로 달리고 주차한 뒤, 드라이브 와쳐에서 어느 구간이 달랐는지 확인해요.</p>
+          <span class="entry-action">센터 화면 체험 <span aria-hidden="true">↗</span></span>
+        </div>
+      </a>
+      <a class="entry" href="profile-demo.html">
+        <div class="entry-art entry-engine" aria-hidden="true">
+          <svg viewBox="0 0 480 144">
+            <g stroke="#3f6b5e" stroke-width="1.2" opacity=".8">
+              <path d="M120 30 200 50M120 30 200 94M120 72 200 50M120 72 200 94M120 114 200 50M120 114 200 94M200 50 240 72M200 94 240 72M240 72 280 50M240 72 280 94M280 50 360 30M280 50 360 72M280 94 360 72M280 94 360 114"/>
+            </g>
+            <g fill="#183530" stroke="#91efd2" stroke-width="1.5">
+              <circle cx="120" cy="30" r="7"/><circle cx="120" cy="72" r="7"/><circle cx="120" cy="114" r="7" fill="#ff9f8a" stroke="#ff9f8a"/>
+              <circle cx="200" cy="50" r="7"/><circle cx="200" cy="94" r="7"/><circle cx="240" cy="72" r="9" fill="#91efd2"/>
+              <circle cx="280" cy="50" r="7"/><circle cx="280" cy="94" r="7"/>
+              <circle cx="360" cy="30" r="7"/><circle cx="360" cy="72" r="7"/><circle cx="360" cy="114" r="7"/>
+            </g>
+          </svg>
+        </div>
+        <div class="entry-copy">
+          <span class="eyebrow">03 / PERSONAL TENDENCY</span>
+          <h2>개인 경향 모델</h2>
+          <p>운전자의 평소 주행으로 경향을 학습하고, 오늘이 그 경향에서 벗어났는지 신경망이 판단하는 과정을 봐요.</p>
+          <span class="entry-action">경향 모델 보기 <span aria-hidden="true">↗</span></span>
+        </div>
+      </a>
+    </div>
+    <footer><span>브라우저에서 체험하는 드라이브 와쳐 MVP</span><a href="PLAYBOOK.MD">MVP 플레이북</a></footer>
+  </main>
+</body>
+</html>
