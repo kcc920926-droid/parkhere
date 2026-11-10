@@ -1,0 +1,21 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 기어, 브레이크 눌림, 조향각 (Pleos Vehicle SDK) -->
+    <uses-permission android:name="pleos.car.permission.CAR_DRIVE" />
+    <!-- 차속 (AAOS Car API). 사용자가 실행 중에 허용해야 한다. -->
+    <uses-permission android:name="android.car.permission.CAR_SPEED" />
+    <!-- 주행 중에는 내비가 화면 앞에 있다. 화면 뒤에서도 신호를 받으려면 포그라운드 서비스여야 한다. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application>
+        <service
+            android:name=".DriveCollectorService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="주행 중 차량 신호를 받아 구간별로 요약한다" />
+        </service>
+    </application>
+</manifest>
