@@ -19,6 +19,7 @@
 ## 구성
 
 - [drivewatch-core](drivewatch-core/README.md) · 구간 판정과 주간 판정을 옮긴 Kotlin 모듈. 웹 MVP와 결과가 같은지 테스트로 확인합니다.
+- [drivewatch-vehicle](drivewatch-vehicle/README.md) · 차량 신호를 받는 Android 라이브러리와 확인용 앱. 수집은 포그라운드 서비스에서 합니다.
 - [family-server](family-server/README.md) · 가족 요약 서버와 자녀 폰 웹 화면. [폰 화면](https://drive.olvend.com/family/) · [REST API 명세](https://drive.olvend.com/api/docs)
 - [Pleos 에뮬레이터 신호 확인 기록](docs/pleos-signal-check.md) · 차속·기어·브레이크·조향·방향지시등을 받는 방법과 확인 결과
 - [시연 데이터와 시연 이벤트](docs/demo-data.md) · 시연에서 무엇이 가짜이고 무엇이 실제 코드인지
