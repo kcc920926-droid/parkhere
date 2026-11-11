@@ -11,6 +11,7 @@ const MAX_DRIVERS = 500;
 const MAX_MEMBERS = 2000;
 const STATUSES = ["learning", "insufficient", "stable", "observe", "talk"];
 const SCOPES = ["status", "evidence"];
+const MAX_TRIPS = 1000;
 
 class StoreError extends Error {
   constructor(code, status) {
@@ -121,6 +122,56 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
       driver.summaries[week] = summary;
       save();
       return { week, status: summary.status, evidenceStored: summary.evidence.length };
+    },
+
+    /* ---- 주행 기록 보관 (운전자가 허락한 경우만) ----
+       횟수만 받는다. 위치·경로·시각은 받지 않는다. 가족(폰)은 이 기록을 읽을 수 없다.
+       보관을 끄면 서버에 있던 기록과 설정을 바로 지운다. */
+    setBackup(driver, enabled) {
+      if (typeof enabled !== "boolean") fail("invalid_backup");
+      driver.backup = enabled;
+      if (!enabled) { delete driver.trips; delete driver.profile; }
+      save();
+      return { enabled, trips: driver.trips?.length ?? 0 };
+    },
+
+    backupView(driver) {
+      return { enabled: Boolean(driver.backup), profile: driver.profile ?? null, trips: driver.trips ?? [] };
+    },
+
+    saveTrip(driver, body = {}) {
+      if (!driver.backup) fail("backup_off", 403);
+      const week = text(body.week, 10);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(week) || Number.isNaN(Date.parse(`${week}T00:00:00Z`))) fail("invalid_week");
+      const count = (value) => (Number.isInteger(value) && value >= 0 && value <= 1000 ? value : fail("invalid_count"));
+      const km = number(body.km);
+      if (km === null || km < 0 || km > 2000) fail("invalid_km");
+      const trip = {
+        week,
+        place: text(body.place, 20),
+        km,
+        night: Boolean(body.night),
+        reroutes: count(body.reroutes),
+        turns: count(body.turns),
+        signals: count(body.signals),
+        hardBrakes: count(body.hardBrakes),
+      };
+      if (trip.signals > trip.turns) fail("invalid_count");
+      driver.trips = [...(driver.trips ?? []), trip].slice(-MAX_TRIPS);
+      save();
+      return { stored: driver.trips.length };
+    },
+
+    saveProfile(driver, body = {}) {
+      if (!driver.backup) fail("backup_off", 403);
+      const promises = (Array.isArray(body.promises) ? body.promises : [])
+        .filter((value) => Number.isInteger(value) && value >= 0 && value < 10).slice(0, 10);
+      const marked = (Array.isArray(body.marked) ? body.marked : []).slice(0, 20)
+        .map((item) => ({ place: text(item?.place, 20), point: text(item?.point, 30) }))
+        .filter((item) => item.place && item.point);
+      driver.profile = { promises: [...new Set(promises)], marked };
+      save();
+      return driver.profile;
     },
 
     /* 차 화면의 가족 카드에 쓴다: 누가 연결됐는지, 최근 요약을 누가 확인했는지. */

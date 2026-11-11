@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DriveWatch 가족 요약 API",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "차량 앱이 주간 요약을 보내고, 연결된 가족이 폰 웹 화면에서 읽는다. 시연용이다.\n\n- 초대 코드는 운전자가 차에서 띄운다. 6자리, 10분, 한 번만 쓸 수 있다.\n- 운전자가 `status`(상태만)를 고르면 숫자 근거는 저장하지도, 내보내지도 않는다.\n- 위치와 경로는 받지 않는다. 요약에서 정해진 항목만 저장한다.\n- 요청과 응답은 JSON이다. 본문은 16KB까지다."
   },
   "servers": [
@@ -810,6 +810,321 @@
           }
         }
       }
+    },
+    "/api/car/backup": {
+      "get": {
+        "tags": [
+          "차량 앱"
+        ],
+        "security": [
+          {
+            "carToken": []
+          }
+        ],
+        "summary": "보관한 주행 기록과 설정 불러오기",
+        "description": "앱을 다시 설치했을 때 복원한다. 가족 토큰으로는 읽을 수 없다.",
+        "responses": {
+          "200": {
+            "description": "보관 상태",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "enabled": true,
+                  "profile": {
+                    "promises": [
+                      0,
+                      1
+                    ],
+                    "marked": [
+                      {
+                        "place": "병원",
+                        "point": "중앙대로 합류"
+                      }
+                    ]
+                  },
+                  "trips": [
+                    {
+                      "week": "2026-11-09",
+                      "place": "병원",
+                      "km": 10,
+                      "night": false,
+                      "reroutes": 2,
+                      "turns": 3,
+                      "signals": 2,
+                      "hardBrakes": 1
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "차량 앱"
+        ],
+        "security": [
+          {
+            "carToken": []
+          }
+        ],
+        "summary": "주행 기록 보관 켜기·끄기",
+        "description": "운전자가 차 화면에서 허락했을 때만 켠다. **끄면 서버에 있던 주행 기록과 설정을 바로 지운다.**",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "enabled"
+                ],
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "example": {
+                "enabled": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "바뀜",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "enabled": true,
+                  "trips": 0
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_backup",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "invalid_backup"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/car/trips": {
+      "post": {
+        "tags": [
+          "차량 앱"
+        ],
+        "security": [
+          {
+            "carToken": []
+          }
+        ],
+        "summary": "주행 한 번 보관",
+        "description": "보관이 켜져 있을 때만 받는다. 운전자당 최근 1000개까지 남긴다.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Trip"
+              },
+              "example": {
+                "week": "2026-11-09",
+                "place": "병원",
+                "km": 10,
+                "night": false,
+                "reroutes": 2,
+                "turns": 3,
+                "signals": 2,
+                "hardBrakes": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "보관함",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "stored": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_week · invalid_km · invalid_count",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "invalid_count"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "backup_off",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "backup_off"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/car/profile": {
+      "put": {
+        "tags": [
+          "차량 앱"
+        ],
+        "security": [
+          {
+            "carToken": []
+          }
+        ],
+        "summary": "운전 약속과 표시한 구간 보관",
+        "description": "보관이 켜져 있을 때만 받는다. 보낼 때마다 통째로 바꾼다.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Profile"
+              },
+              "example": {
+                "promises": [
+                  0,
+                  1
+                ],
+                "marked": [
+                  {
+                    "place": "병원",
+                    "point": "중앙대로 합류"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "보관함",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "promises": [
+                    0,
+                    1
+                  ],
+                  "marked": [
+                    {
+                      "place": "병원",
+                      "point": "중앙대로 합류"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "backup_off",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "backup_off"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -972,6 +1287,117 @@
             "description": "숫자 근거. 범위가 evidence일 때만 저장된다"
           }
         }
+      },
+      "Trip": {
+        "type": "object",
+        "description": "주행 한 번의 횟수 요약. 위치·경로·시각은 받지 않으며, 그 밖의 필드는 버린다.",
+        "required": [
+          "week",
+          "km",
+          "reroutes",
+          "turns",
+          "signals",
+          "hardBrakes"
+        ],
+        "properties": {
+          "week": {
+            "type": "string",
+            "format": "date",
+            "description": "주행한 주의 월요일"
+          },
+          "place": {
+            "type": "string",
+            "maxLength": 20,
+            "description": "목적지 이름(예: 병원). 주소가 아니다"
+          },
+          "km": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2000
+          },
+          "night": {
+            "type": "boolean",
+            "description": "해 진 뒤 주행"
+          },
+          "reroutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000,
+            "description": "경로 재탐색 횟수"
+          },
+          "turns": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000,
+            "description": "회전 안내 횟수"
+          },
+          "signals": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000,
+            "description": "회전 안내 중 방향지시등을 켠 횟수(turns 이하)"
+          },
+          "hardBrakes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000
+          }
+        },
+        "example": {
+          "week": "2026-11-09",
+          "place": "병원",
+          "km": 10,
+          "night": false,
+          "reroutes": 2,
+          "turns": 3,
+          "signals": 2,
+          "hardBrakes": 1
+        }
+      },
+      "Profile": {
+        "type": "object",
+        "properties": {
+          "promises": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9
+            },
+            "maxItems": 10,
+            "description": "고른 운전 약속 번호"
+          },
+          "marked": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "object",
+              "properties": {
+                "place": {
+                  "type": "string",
+                  "maxLength": 20
+                },
+                "point": {
+                  "type": "string",
+                  "maxLength": 30
+                }
+              }
+            },
+            "description": "목적지별로 표시한 불편 구간"
+          }
+        },
+        "example": {
+          "promises": [
+            0,
+            1
+          ],
+          "marked": [
+            {
+              "place": "병원",
+              "point": "중앙대로 합류"
+            }
+          ]
+        }
       }
     }
   },
@@ -991,6 +1417,10 @@
     "rate_limited": "한 주소에서 요청이 너무 많다 (등록 1시간 10번, 연결 10분 10번, 쓰기 1분 120번)",
     "capacity_reached": "시연 서버의 등록 상한에 닿았다",
     "not_found": "그런 주소가 없다",
-    "server_error": "서버 오류"
+    "server_error": "서버 오류",
+    "backup_off": "주행 기록 보관이 꺼져 있다",
+    "invalid_backup": "enabled는 true 또는 false",
+    "invalid_count": "횟수가 정수가 아니거나 범위를 벗어났다(signals는 turns 이하)",
+    "invalid_km": "km가 0~2000이 아니다"
   }
 }
