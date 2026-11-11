@@ -1,8 +1,8 @@
 # 피로 → 휴식 코치 (가칭) · 방향 정리
 
-작성 winter1 · 2026-11-04 · 상태: **방향 합의, 검증 전**. 아직 [PLAYBOOK.MD](../PLAYBOOK.MD)(어디대?)를 대체하지 않는다.
+작성 winter1 · 2026-11-04 · 상태: **방향 합의, 검증 전**. 아직 [PLAYBOOK.MD](../../PLAYBOOK.MD)(어디대?)를 대체하지 않는다.
 
-공모전 규정과 심사 기준 해석은 [judging-criteria.md](judging-criteria.md), 다른 아이디어 후보는 [idea-brainstorm.md](idea-brainstorm.md)에 따로 둔다.
+공모전 규정과 심사 기준 해석은 [judging-criteria.md](../../opinions/judging-criteria.md), 다른 아이디어 후보는 [idea-brainstorm.md](idea-brainstorm.md)에 따로 둔다.
 
 ## 1. 왜 방향을 바꾸나
 

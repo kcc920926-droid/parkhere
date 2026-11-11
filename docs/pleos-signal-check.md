@@ -78,7 +78,7 @@ tools/vconsole.sh drive              # 예시 주행 한 번
 
 **포그라운드 서비스에서 받으면 계속 받는다.** `drivewatch-vehicle`의 `DriveCollectorService`로 옮긴 뒤, 내비가 앞에 있는 동안 48초 주행의 신호를 모두 받았다.
 
-같은 주행을 Virtual Console로 재생해서 수집과 판정이 끝까지 이어지는지 확인했다(`node tools/vconsole-demo.js`).
+같은 주행을 Virtual Console로 재생해서 수집과 판정이 끝까지 이어지는지 확인했다(`node legacy/vconsole-demo.js`).
 
 | 구간 | 보낸 강한 제동 | 앱이 센 횟수 | 판정 |
 | --- | ---: | ---: | --- |

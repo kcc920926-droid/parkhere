@@ -1,6 +1,6 @@
 # 아이디어 브레인스토밍 · 추천 2개
 
-작성 winter1 · 2026-11-05 · [judging-criteria.md](judging-criteria.md)의 채점표로 평가했다. 현재 주력안은 [fatigue-rest-direction.md](fatigue-rest-direction.md)(장거리 운전 플랜 코파일럿)이며, 이 문서는 비교용 대안이다.
+작성 winter1 · 2026-11-05 · [judging-criteria.md](../../opinions/judging-criteria.md)의 채점표로 평가했다. 현재 주력안은 [fatigue-rest-direction.md](fatigue-rest-direction.md)(장거리 운전 플랜 코파일럿)이며, 이 문서는 비교용 대안이다.
 
 고른 기준: *매일 오는 순간 × 차만 아는 신호 × 선명한 불편*, 그리고 1차 Pleos 탑재 차종(그랜저 등 승용) 운전자에게 맞을 것.
 

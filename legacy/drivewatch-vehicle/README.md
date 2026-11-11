@@ -36,7 +36,7 @@ export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
 ./gradlew :harness:assembleDebug
 adb install -r harness/build/outputs/apk/debug/harness-debug.apk
 adb forward tcp:8088 tcp:8088
-node ../tools/vconsole-demo.js      # Virtual Console로 시연 주행을 재생
+node ../vconsole-demo.js      # Virtual Console로 시연 주행을 재생
 adb logcat -s DWCOLLECT
 ```
 

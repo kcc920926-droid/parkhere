@@ -23,10 +23,10 @@
 
 ## 아직 정하지 않은 것
 
-- 이번 주행을 누가 운전하는가: 발표자가 Virtual Console에서 직접, 또는 `node tools/vconsole-demo.js`로 자동. 스크립트는 같은 주행을 매번 똑같이 재생한다.
+- 이번 주행을 누가 운전하는가: 발표자가 Virtual Console에서 직접, 또는 `node legacy/vconsole-demo.js`로 자동. 스크립트는 같은 주행을 매번 똑같이 재생한다.
 - 팀원 프로토타입에 폰 화면이 이미 있다면 그것을 웹으로 옮길지 새로 만들지.
 
 ## 관련 문서
 
 - [Pleos 에뮬레이터 신호 확인 기록](pleos-signal-check.md)
-- [drivewatch-core](../drivewatch-core/README.md)
+- [drivewatch-core](../legacy/drivewatch-core/README.md)

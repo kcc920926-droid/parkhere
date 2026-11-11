@@ -1,6 +1,6 @@
 /*
  * Pre-drives the fixed-seed history and validation days so the tendency page opens instantly.
- * Run from the repository root: node drive-watcher/build-profile-cache.js
+ * Run from the repository root: node legacy/drive-watcher/build-profile-cache.js
  * profile-cache.test.js checks that the file still matches live drives.
  */
 const fs = require("node:fs");

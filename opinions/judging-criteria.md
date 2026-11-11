@@ -1,6 +1,6 @@
 # 공모전 규정과 심사 기준
 
-작성 winter1 · 2026-11-05 · 아이디어를 고르고 기획서를 쓸 때 쓰는 공통 기준. 개별 아이디어는 [fatigue-rest-direction.md](fatigue-rest-direction.md), [idea-brainstorm.md](idea-brainstorm.md)를 본다.
+작성 winter1 · 2026-11-05 · 아이디어를 고르고 기획서를 쓸 때 쓰는 공통 기준. 개별 아이디어는 [fatigue-rest-direction.md](../archive/opinions/fatigue-rest-direction.md), [idea-brainstorm.md](../archive/opinions/idea-brainstorm.md)를 본다.
 
 ## 1. 공모전 핵심 요약
 

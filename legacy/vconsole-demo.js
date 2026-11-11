@@ -2,7 +2,7 @@
 /* Pleos Virtual Console로 시연 주행을 재생한다. drivewatch-core의 DemoDrive와 같은 주행이다:
    8초 구간마다 강한 제동이 1·0·1·4·5·1회 나오고, 끝나면 멈춰서 P단에 넣는다.
    먼저: adb forward tcp:8088 tcp:8088
-   사용: node tools/vconsole-demo.js [구간별 제동 횟수, 예: 1,0,1,4,5,1] */
+   사용: node legacy/vconsole-demo.js [구간별 제동 횟수, 예: 1,0,1,4,5,1] */
 const BASE = process.env.VCONSOLE_URL ?? "http://127.0.0.1:8088";
 const WINDOW_MS = Number(process.env.WINDOW_MS ?? 8000);
 const brakesPerWindow = (process.argv[2] ?? "1,0,1,4,5,1").split(",").map(Number);

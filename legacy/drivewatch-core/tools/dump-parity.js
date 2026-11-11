@@ -1,5 +1,5 @@
 /* 웹 MVP(JS)의 판정 결과를 줄 단위 텍스트로 뽑는다. Kotlin 쪽 ParityDump.kt 와 형식·난수 순서가 같아야 한다.
-   사용: node drivewatch-core/tools/dump-parity.js > drivewatch-core/src/test/resources/parity/expected.txt */
+   사용: node legacy/drivewatch-core/tools/dump-parity.js > legacy/drivewatch-core/src/test/resources/parity/expected.txt */
 const fs = require("fs");
 const path = require("path");
 const dir = path.join(__dirname, "..", "..", "drive-watcher");

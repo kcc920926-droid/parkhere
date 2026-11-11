@@ -1,6 +1,6 @@
 # 보조바퀴 (가칭) · 장롱면허 탈출 코치
 
-작성 winter1 · 2026-11-05 · 상태: **후보 정리, 팀 합의 전**. 평가 기준은 [judging-criteria.md](judging-criteria.md), 다른 후보는 [idea-brainstorm.md](idea-brainstorm.md), [drive-watch.md](drive-watch.md).
+작성 winter1 · 2026-11-05 · 상태: **후보 정리, 팀 합의 전**. 평가 기준은 [judging-criteria.md](../../opinions/judging-criteria.md), 다른 후보는 [idea-brainstorm.md](idea-brainstorm.md), [drive-watch.md](drive-watch.md).
 
 ## 1. 문제 정의
 

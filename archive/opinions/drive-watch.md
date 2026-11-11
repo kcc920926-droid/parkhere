@@ -1,6 +1,6 @@
 # DriveWatch (가제) · 부모님 운전 동반자 심층 검토
 
-작성 winter1 · 2026-11-05 (문제 정의·해결 방안·효과·이름 보강) · 상태: **후보 심층 검토, 팀 합의 전**. 평가 기준은 [judging-criteria.md](judging-criteria.md), 다른 후보는 [idea-brainstorm.md](idea-brainstorm.md).
+작성 winter1 · 2026-11-05 (문제 정의·해결 방안·효과·이름 보강) · 상태: **후보 심층 검토, 팀 합의 전**. 평가 기준은 [judging-criteria.md](../../opinions/judging-criteria.md), 다른 후보는 [idea-brainstorm.md](idea-brainstorm.md).
 
 ## 1. 문제 정의
 

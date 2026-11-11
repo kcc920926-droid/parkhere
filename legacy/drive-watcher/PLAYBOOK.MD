@@ -54,7 +54,7 @@
 
 ## 시연과 구현 참고
 
-로컬에서 확인하려면 저장소 루트에서 아래 명령을 실행하고 [시연 선택](http://127.0.0.1:8774/drive-watcher/)을 연다.
+로컬에서 확인하려면 저장소 루트에서 아래 명령을 실행하고 [시연 선택](http://127.0.0.1:8774/legacy/drive-watcher/)을 연다.
 
 ```sh
 python3 -m http.server 8774 --bind 127.0.0.1
@@ -169,4 +169,4 @@ Pleos에서 속도는 AAOS `PERF_VEHICLE_SPEED`, 핸들 각도는 Vehicle SDK의
 
 Pleos Virtual Console은 변속, 브레이크 페달, 조향각 등의 입력을 바꿀 수 있다. 이 항목을 앱에서 받을 수 있는지와 실제 갱신 주기는 대상 앱 로그에서 확인한다. 제동과 조향 횟수의 정의는 이 검증 뒤에 정한다. [Pleos Virtual Console 가이드](https://document.pleos.ai/en/docs/pleos-only/app-test-guide/virtual-console-guide)
 
-엔진 테스트는 저장소 루트에서 `node --test drive-watcher/*.test.js`로 실행한다.
+엔진 테스트는 저장소 루트에서 `node --test legacy/drive-watcher/*.test.js`로 실행한다.
