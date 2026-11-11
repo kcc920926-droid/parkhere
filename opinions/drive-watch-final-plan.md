@@ -2,7 +2,7 @@
 
 작성 winter1 · 2026-11-08 · 상태: **팀 확정안**
 
-바탕 문서: [drive-watch.md](drive-watch.md)(심층 검토), [driving-helper-idea-dump.md](driving-helper-idea-dump.md)(생활길·안전 연계·Pleos 신호 확인표), [integrated-driving-coach-market.md](integrated-driving-coach-market.md)(시장 분석), [judging-criteria.md](judging-criteria.md)(심사 기준). 이 문서는 접수양식(DOCX)으로 옮길 원본이며, 심사 4항목 순서에 맞춰 구성했다.
+바탕 문서: [drive-watch.md](../archive/opinions/drive-watch.md)(심층 검토), [driving-helper-idea-dump.md](../archive/opinions/driving-helper-idea-dump.md)(생활길·안전 연계·Pleos 신호 확인표), [integrated-driving-coach-market.md](../archive/opinions/integrated-driving-coach-market.md)(시장 분석), [judging-criteria.md](judging-criteria.md)(심사 기준). 이 문서는 접수양식(DOCX)으로 옮길 원본이며, 심사 4항목 순서에 맞춰 구성했다.
 
 ---
 
@@ -266,7 +266,7 @@ Vehicle State와 NaviHelper는 **별도 SDK 신청 없이 사용 가능**으로 
 
 1. **본인 동의가 먼저**: 자녀가 몰래 켤 수 없다. 차에서 부모님이 직접 동의하고 언제든 끈다.
 2. **부모님이 먼저 본다**: 자녀에게는 허락한 요약만.
-3. **위치 추적 아님**: 실시간 위치·경로를 자녀에게 보내지 않는다. 생활길 구간은 부모님 차에만 저장한다.
+3. **위치 추적 아님**: 실시간 위치·경로를 자녀에게 보내지 않는다. 주행 기록과 생활길 구간은 부모님 차에 둔다. **부모님이 허락할 때만** 주행 횟수 요약(회전 안내·깜빡이·재탐색·급제동, 거리, 목적지 이름)과 표시한 구간을 서버에 보관해, 앱을 다시 설치해도 평소 기록이 이어지게 한다. 위치·경로·시각은 보관하지 않고, 가족은 이 기록을 볼 수 없으며, 보관을 끄면 서버에서 바로 지운다.
 4. **막지 않는다**: 출발을 막거나 차량을 제어하지 않는다. 차량 안전 기능의 개입은 차량 시스템이 맡는다.
 5. **칭찬이 기본값**, 경고는 추세가 있을 때만.
 6. **음주 여부를 판정·저장하지 않는다**: "다른 방법으로 가기"는 이유를 묻지 않는다.
@@ -333,7 +333,7 @@ Virtual Console로 시각·기어·방향지시등·주행을 입력한다. 시�
 - [ORIX 출시 발표](https://www.orix.co.jp/grp/company/newsroom/newsrelease/161208_ORIXG.html) · [くるまのニュース – ORIX 高齢者の運転見守り](https://kuruma-news.jp/post/61126)
 - [Life360 Driving Safety](https://intl.life360.com/driving-safety) · [현대차 블루링크 안전 운전 습관](https://www.hyundai.com/kr/ko/digital-customer-support/app/myhyundai/bluelink/bluelink-vehicle-care/safe-driving-habits)
 - [티맵 즐겨찾는 경로](https://www.tmapmobility.com/story/microtip/detail/131) · [티맵 모의주행](https://www.tmapmobility.com/story/microtip/detail/138)
-- 더 많은 사례: [drive-watch.md 9절](drive-watch.md), [integrated-driving-coach-market.md 2절](integrated-driving-coach-market.md)
+- 더 많은 사례: [drive-watch.md 9절](../archive/opinions/drive-watch.md), [integrated-driving-coach-market.md 2절](../archive/opinions/integrated-driving-coach-market.md)
 
 **차량 안전 기능**
 - [현대차 PMSA 설명서](https://ownersmanual.hyundai.com/full_webhelp/NH2/2026/ko_KR/driver_assistance_pmsa.html) · [현대차 DSW 설명서](https://ownersmanual.hyundai.com/full_webhelp/QZ/2026/ko_KR/id8df144211b6.html)
