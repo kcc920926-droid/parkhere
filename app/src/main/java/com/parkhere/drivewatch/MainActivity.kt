@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import java.time.LocalDate
+import java.time.YearMonth
 
 private val Bg = Color(0xFF0F1720)
 private val Panel = Color(0xFF18232F)
@@ -108,6 +110,8 @@ private fun App(speak: (String) -> Unit) {
                     Screen.ARRIVED -> Arrived()
                     Screen.WEEKLY -> WeeklyCard(report)
                     Screen.DETAIL -> Detail(report)
+                    Screen.MONTHLY -> Monthly(report)
+                    Screen.GRADUATE -> Graduate()
                 }
                 if (s.askBackup) BackupPrompt()
             }
@@ -148,6 +152,16 @@ private fun DemoPanel() {
         Button(if (s.night) "☀️ 낮으로" else "🌙 밤 9시로", { s.night = !s.night }, Color(0xFF3B2E5C))
         Button("다음 주로", { s.nextWeek() }, Color(0xFF3B2E5C))
         Button("4주 뒤로", { s.fourWeeksLater() }, Color(0xFF3B2E5C))
+        // Fills the family page's monthly view in one go; each week is still a summary the parent chose to send.
+        Button("최근 4주 요약 보내기", {
+            val p = s.profile
+            val token = p.carToken ?: return@Button
+            if (p.family.isEmpty()) return@Button
+            (0 until minOf(4, weeksRecorded(p))).forEach { k ->
+                FamilyApi.sendSummary(token, mondayOf(k).toString(), weekly(p, reportAt(p.trips, k))) {}
+            }
+            s.update { it.copy(sentWeek = s.week(), ackedBy = emptyList()) }
+        }, Color(0xFF3B2E5C))
         Spacer(Modifier.weight(1f))
         Text("${s.week()} 주 · 자녀 폰: ${FamilyApi.FAMILY_PAGE}", color = Demo_, fontSize = 12.sp)
         Button("↺ 처음부터", { s.reset() }, Color(0xFF3B2E5C))
@@ -299,6 +313,8 @@ private fun Home(r: Report, speak: (String) -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("${p.name} 님, 안녕하세요", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
             if (p.name == Demo.PARENT) Text("과거 기록은 시연용  ", color = Demo_, fontSize = 11.sp)
+            Chip("📅 월별 기록", selected = false) { s.screen = Screen.MONTHLY }
+            Spacer(Modifier.width(8.dp))
             StateChip(r.state, weeksRecorded(p))
         }
         if (nightPromise) Banner("🔊", NIGHT_LINE, "${if (s.night) "21:04" else ""} · 약속 \"해 지면 운전 안 하기\"", Warn) {
@@ -568,6 +584,8 @@ private fun Detail(r: Report) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("←", color = Color.White, fontSize = 22.sp, modifier = Modifier.clickable { s.screen = Screen.HOME }.padding(end = 12.dp))
             Text("${p.name} 님의 운전 · 이번 주 vs 평소(8주)", color = Dim, fontSize = 15.sp, modifier = Modifier.weight(1f))
+            Chip("📅 월별 기록", selected = false) { s.screen = Screen.MONTHLY }
+            Spacer(Modifier.width(8.dp))
             StateChip(r.state, weeksRecorded(p))
         }
         Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -739,3 +757,119 @@ private fun Button(label: String, onClick: () -> Unit, bg: Color = Accent, modif
         label, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 15.sp, textAlign = TextAlign.Center,
         modifier = modifier.background(bg, RoundedCornerShape(10.dp)).clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 10.dp),
     )
+
+// ---------- 월별 운전 기록, 운전 졸업 ----------
+
+private fun stateColor(st: State) = when (st) { State.STABLE -> Ok; State.WATCH -> Warn; State.TALK -> Talk; State.LEARNING -> Dim }
+
+@Composable
+private fun Monthly(r: Report) {
+    val s = AppState
+    val p = s.profile
+    var offset by remember(s.cur) { mutableIntStateOf(0) }
+    val month = YearMonth.from(LocalDate.parse(s.week())).minusMonths(offset.toLong())
+    val rows = remember(p.trips, month, s.weekShift) { monthRows(p, month) }
+    val step = nextStep(p, r)
+    val tone = stateColor(r.state)
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text("←", color = Color.White, fontSize = 22.sp, modifier = Modifier.clickable { s.screen = Screen.HOME }.padding(end = 4.dp))
+            Text("${p.name} 님의 월별 운전 기록", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+            Text("◀", color = Color.White, fontSize = 18.sp, modifier = Modifier.clickable { offset++ }.padding(8.dp))
+            Text("${month.year}년 ${month.monthValue}월", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text("▶", color = if (offset > 0) Color.White else Raised, fontSize = 18.sp, modifier = Modifier.clickable(enabled = offset > 0) { offset-- }.padding(8.dp))
+        }
+        Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(Modifier.weight(1.5f).fillMaxHeight().background(Panel, RoundedCornerShape(12.dp)).padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                val cols = listOf(1.1f, 1f, 1.3f, 1.3f, 1f, 1.3f, 0.7f)
+                @Composable fun Cells(vararg cells: @Composable RowScope.(Modifier) -> Unit) = Row(verticalAlignment = Alignment.CenterVertically) {
+                    cells.forEachIndexed { i, c -> c(Modifier.weight(cols[i])) }
+                }
+                Cells(
+                    { Text("주", color = Dim, fontSize = 12.sp, modifier = it) }, { Text("상태", color = Dim, fontSize = 12.sp, modifier = it) },
+                    { Text("주행", color = Dim, fontSize = 12.sp, modifier = it) }, { Text("재탐색", color = Dim, fontSize = 12.sp, modifier = it) },
+                    { Text("깜빡이", color = Dim, fontSize = 12.sp, modifier = it) }, { Text("급제동", color = Dim, fontSize = 12.sp, modifier = it) },
+                    { Text("밤", color = Dim, fontSize = 12.sp, modifier = it) },
+                )
+                if (rows.isEmpty()) Text("이 달에는 기록이 없어요", color = Dim, fontSize = 15.sp)
+                rows.forEach { row ->
+                    fun cell(m: Metric) = row.report.metrics.first { it.metric == m }.let { mr -> mr.weekly.first()?.let(m::display) ?: "—" }
+                    val st = row.report.state
+                    Cells(
+                        { Text("${row.monday.monthValue}/${row.monday.dayOfMonth} 주" + if (row.k == 0) " (이번 주)" else "", color = Color.White, fontSize = 14.sp, modifier = it) },
+                        { Text(st.label, color = stateColor(st), fontSize = 13.sp, fontWeight = FontWeight.Bold, modifier = it) },
+                        { Text("${row.trips}회 · ${"%.0f".format(row.km)}km", color = Color.White, fontSize = 13.sp, modifier = it) },
+                        { Text(cell(Metric.REROUTE), color = Color.White, fontSize = 13.sp, modifier = it) },
+                        { Text(cell(Metric.SIGNAL), color = Color.White, fontSize = 13.sp, modifier = it) },
+                        { Text(cell(Metric.BRAKE), color = Color.White, fontSize = 13.sp, modifier = it) },
+                        { Text("${row.night}회", color = if (row.night > 0) Warn else Color.White, fontSize = 13.sp, modifier = it) },
+                    )
+                }
+                Spacer(Modifier.weight(1f))
+                if (rows.isNotEmpty()) {
+                    val flow = rows.reversed().map { it.report.state.label }.fold(listOf<String>()) { acc, x -> if (acc.lastOrNull() == x) acc else acc + x }
+                    Text(
+                        "이 달 주행 ${rows.sumOf { it.trips }}회 · ${"%.0f".format(rows.sumOf { it.km })}km · 밤 운전 ${rows.sumOf { it.night }}회 · 상태 ${flow.joinToString(" → ")}",
+                        color = Dim, fontSize = 13.sp,
+                    )
+                    if (p.name == Demo.PARENT || p.name == "박영호") Text("지난 기록은 시연용이에요", color = Demo_, fontSize = 11.sp)
+                }
+            }
+            Column(Modifier.weight(1f).fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Column(
+                    Modifier.fillMaxWidth().background(tone.copy(alpha = 0.12f), RoundedCornerShape(12.dp)).border(1.dp, tone, RoundedCornerShape(12.dp)).padding(14.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Text("지금 운전 상태", color = Dim, fontSize = 12.sp)
+                    Text(step.title, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text(step.body, color = Color.White, fontSize = 14.sp)
+                    Spacer(Modifier.height(2.dp))
+                    Text("다음에 해 볼 수 있는 것", color = Dim, fontSize = 12.sp)
+                    step.steps.forEach { Text("· $it", color = tone, fontSize = 14.sp) }
+                }
+                Text("DriveWatch는 운전 능력을 진단하지 않아요. 평소와 달라진 점을 알려 드릴 뿐이에요.", color = Dim, fontSize = 12.sp)
+                Spacer(Modifier.weight(1f))
+                Text(
+                    "운전을 그만두기로 하셨나요?  운전 졸업 안내 ›", color = Dim, fontSize = 14.sp,
+                    modifier = Modifier.fillMaxWidth().background(Panel, RoundedCornerShape(10.dp)).clickable { s.screen = Screen.GRADUATE }.padding(12.dp),
+                )
+            }
+        }
+    }
+}
+
+/** C13. Reached only when the driver chooses it. Respects the decision and offers other ways to the usual places. */
+@Composable
+private fun Graduate() {
+    val s = AppState
+    val p = s.profile
+    var done by remember { mutableStateOf<String?>(null) }
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("←", color = Color.White, fontSize = 22.sp, modifier = Modifier.clickable { s.screen = Screen.MONTHLY }.padding(end = 12.dp))
+            Text("운전 졸업", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+        }
+        Text("오랫동안 안전하게 운전해 오셨어요. 계속할지, 여기서 마칠지는 ${p.name} 님이 정하시는 일이에요.", color = Color.White, fontSize = 16.sp)
+        Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Tile(Modifier.weight(1f).fillMaxHeight()) {
+                Text("면허를 반납하려면", color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+                Text("가까운 경찰서나 운전면허시험장에서 반납할 수 있어요.", color = Color.White, fontSize = 14.sp)
+                Text("지자체마다 교통비 지원 같은 반납 혜택이 있어요. 주소지 주민센터에서 확인해 보세요.", color = Dim, fontSize = 13.sp)
+                Spacer(Modifier.weight(1f))
+                Text("마음이 바뀌면 언제든 다시 운전 기록을 이어 갈 수 있어요.", color = Dim, fontSize = 13.sp)
+            }
+            Tile(Modifier.weight(1.3f).fillMaxHeight()) {
+                Text("자주 가시던 곳은 이렇게 다녀요", color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+                Demo.PLACES.forEach { (place, _) ->
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(place, color = Color.White, fontSize = 16.sp, modifier = Modifier.weight(1f))
+                        Button("택시 부르기", { done = "$place 택시 부르기" }, Raised)
+                        Button("가족에게 부탁", { done = "$place 가는 길 가족에게 부탁" }, Raised)
+                    }
+                }
+                Spacer(Modifier.weight(1f))
+                Text(done?.let { "$it 연결했어요 (시연용)" } ?: "택시 호출과 가족 알림은 시연용이에요", color = if (done != null) Ok else Dim, fontSize = 13.sp)
+            }
+        }
+    }
+}

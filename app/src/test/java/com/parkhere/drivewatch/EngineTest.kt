@@ -56,4 +56,16 @@ class EngineTest {
         assertEquals("중앙대로 합류 2번 피했어요", weekly(p, analyze(p.trips)).avoided)
         assertEquals("", weekly(p.copy(marked = emptySet()), analyze(p.trips)).avoided)
     }
+
+    /** Monthly view: each past week keeps the status it had then, and the message follows the current state. */
+    @Test fun pastWeeksKeepTheirOwnStatus() {
+        var trips = Demo.seed()
+        repeat(4) { trips = trips.map { it.copy(weekAgo = it.weekAgo + 1) } + Demo.strugglingWeek() }
+        val p = Profile("김정숙", trips)
+        assertEquals(State.STABLE, reportAt(trips, 4).state) // four weeks ago, before the change
+        assertEquals(State.WATCH, reportAt(trips, 2).state)  // two worse weeks by then
+        assertEquals(State.TALK, reportAt(trips, 0).state)
+        assertEquals("몇 주째 평소와 다른 모습이 이어지고 있어요", nextStep(p, analyze(trips)).title)
+        assertEquals("지난 12주 동안 평소대로 잘 운전하고 계세요".substring(0, 3), nextStep(Profile("박영호", Demo.seed()), analyze(Demo.seed())).title.substring(0, 3))
+    }
 }

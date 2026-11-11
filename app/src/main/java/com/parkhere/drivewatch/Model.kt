@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 
 /** Promises a driver can choose (C3). Only the first two change app behaviour in the MVP. */
@@ -51,7 +52,7 @@ data class Drive(
     val report: Report? = null,
 )
 
-enum class Screen { SIGNUP, CONSENT, PROMISES, INVITE, HOME, ROUTE, OTHER_WAY, DRIVE, ARRIVED, WEEKLY, DETAIL }
+enum class Screen { SIGNUP, CONSENT, PROMISES, INVITE, HOME, ROUTE, OTHER_WAY, DRIVE, ARRIVED, WEEKLY, DETAIL, MONTHLY, GRADUATE }
 
 /** Single source of truth shared by the activity and the drive service (both on the main thread). */
 object AppState {
@@ -180,4 +181,56 @@ fun weekly(p: Profile, r: Report): Weekly {
         else -> changes.first()
     }
     return Weekly(r.state, headline, good.take(3), promise, avoided, changes, r.changed)
+}
+
+// ---------- monthly record (월별 운전 기록) ----------
+
+/** The report as it stood k weeks ago: trips from then and earlier, re-aged so that week is "this week". */
+fun reportAt(trips: List<Trip>, k: Int): Report = analyze(trips.filter { it.weekAgo >= k }.map { it.copy(weekAgo = it.weekAgo - k) })
+
+/** Monday of the week k weeks before the demo week. */
+fun mondayOf(k: Int): LocalDate = LocalDate.parse(AppState.week()).minusWeeks(k.toLong())
+
+data class WeekRow(val k: Int, val monday: LocalDate, val trips: Int, val km: Double, val night: Int, val report: Report)
+
+/** Recorded weeks whose Monday falls in the given month, newest first. */
+fun monthRows(p: Profile, month: YearMonth): List<WeekRow> =
+    (0 until weeksRecorded(p)).filter { YearMonth.from(mondayOf(it)) == month }.map { k ->
+        val week = p.trips.filter { it.weekAgo == k }
+        WeekRow(k, mondayOf(k), week.size, week.sumOf { it.km }, week.count { it.night }, reportAt(p.trips, k))
+    }
+
+/** How many weeks in a row, up to now, the driver has been stable. */
+fun stableWeeks(p: Profile): Int = (0 until weeksRecorded(p)).takeWhile { reportAt(p.trips, it).state == State.STABLE }.size
+
+/**
+ * What the car says about the driver's state and what could come next. The app never says
+ * "give up your licence"; it says what it saw and offers steps. Stopping is the driver's choice (졸업).
+ */
+data class NextStep(val title: String, val body: String, val steps: List<String>)
+
+fun nextStep(p: Profile, r: Report): NextStep = when (r.state) {
+    State.LEARNING -> NextStep(
+        "평소 운전을 알아가는 중이에요",
+        "기록이 ${weeksRecorded(p)}주 쌓였어요. 12주가 되면 ${p.name} 님의 평소와 비교해 알려 드려요.",
+        listOf("평소처럼 다니시면 돼요"),
+    )
+    State.STABLE -> {
+        val weeks = stableWeeks(p)
+        NextStep(
+            "지난 ${weeks}주 동안 평소대로 잘 운전하고 계세요",
+            "익숙한 길, 깜빡이, 급제동 모두 ${p.name} 님의 평소 범위 안이에요. 지금처럼 운전하셔도 좋아요.",
+            listOf("약속 하나 더 정해 보기", "불편했던 곳이 있으면 표시해 두기"),
+        )
+    }
+    State.WATCH -> NextStep(
+        "${r.changed.first().metric.label}이 조금 달라졌어요",
+        "2주째 평소와 다른 모습이 보여요. 큰일은 아니에요. 불편했던 길은 피해 가는 방법이 있어요.",
+        listOf("표시한 구간은 편한 길로 다니기", "약속 하나 더 정해 보기"),
+    )
+    State.TALK -> NextStep(
+        "몇 주째 평소와 다른 모습이 이어지고 있어요",
+        "가족과 한번 이야기해 보시고, 공식 점검을 받아 보시는 걸 권해요. 결과가 괜찮으면 약속을 정하고 계속 운전하시면 돼요.",
+        listOf("운전 적성검사 · 고령 운전자 교육 알아보기", "치매안심센터 선별검사 받아 보기", "가족과 한 번 같이 타 보기"),
+    )
 }
