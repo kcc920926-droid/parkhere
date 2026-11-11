@@ -1,0 +1,404 @@
+baseline city hardBrakes 1.000 3.000 5
+baseline city steeringCorrections 3.000 6.000 5
+baseline city minutesSinceBreak 13.000 21.000 5
+baseline highway hardBrakes 1.000 4.000 5
+baseline highway steeringCorrections 2.000 5.000 5
+baseline highway minutesSinceBreak 72.000 80.000 5
+frame city/regular 2.000 typical moving=true parked=false detection=- | hardBrakes:1.000:3.000:false:0 steeringCorrections:2.000:6.000:false:0 minutesSinceBreak:2.000:21.000:false:0
+frame city/regular 4.000 typical moving=true parked=false detection=- | hardBrakes:0.000:3.000:false:0 steeringCorrections:3.000:6.000:false:0 minutesSinceBreak:4.000:21.000:false:0
+frame city/regular 6.000 watching moving=true parked=false detection=- | hardBrakes:4.000:3.000:true:1 steeringCorrections:3.000:6.000:false:0 minutesSinceBreak:6.000:21.000:false:0
+frame city/regular 8.000 typical moving=true parked=false detection=- | hardBrakes:1.000:3.000:false:0 steeringCorrections:2.000:6.000:false:0 minutesSinceBreak:8.000:21.000:false:0
+frame city/regular 10.000 typical moving=true parked=false detection=- | hardBrakes:1.000:3.000:false:0 steeringCorrections:3.000:6.000:false:0 minutesSinceBreak:10.000:21.000:false:0
+frame city/regular 12.000 typical moving=true parked=false detection=- | hardBrakes:0.000:3.000:false:0 steeringCorrections:2.000:6.000:false:0 minutesSinceBreak:12.000:21.000:false:0
+frame city/regular 13.000 idle moving=false parked=true detection=- | hardBrakes:-:3.000:false:0 steeringCorrections:-:6.000:false:0 minutesSinceBreak:-:21.000:false:0
+trip city/regular city 7.400 7.000 15.000 12.000
+frame city/changed 2.000 typical moving=true parked=false detection=- | hardBrakes:1.000:3.000:false:0 steeringCorrections:2.000:6.000:false:0 minutesSinceBreak:2.000:21.000:false:0
+frame city/changed 4.000 typical moving=true parked=false detection=- | hardBrakes:0.000:3.000:false:0 steeringCorrections:3.000:6.000:false:0 minutesSinceBreak:4.000:21.000:false:0
+frame city/changed 6.000 typical moving=true parked=false detection=- | hardBrakes:1.000:3.000:false:0 steeringCorrections:3.000:6.000:false:0 minutesSinceBreak:6.000:21.000:false:0
+frame city/changed 8.000 watching moving=true parked=false detection=- | hardBrakes:4.000:3.000:true:1 steeringCorrections:7.000:6.000:true:1 minutesSinceBreak:8.000:21.000:false:0
+frame city/changed 10.000 change moving=true parked=false detection=10.000/city/hardBrakesx2,steeringCorrectionsx2 | hardBrakes:5.000:3.000:true:2 steeringCorrections:8.000:6.000:true:2 minutesSinceBreak:10.000:21.000:false:0
+frame city/changed 12.000 typical moving=true parked=false detection=10.000/city/hardBrakesx2,steeringCorrectionsx2 | hardBrakes:1.000:3.000:false:0 steeringCorrections:3.000:6.000:false:0 minutesSinceBreak:12.000:21.000:false:0
+frame city/changed 13.000 idle moving=false parked=true detection=10.000/city/hardBrakesx2,steeringCorrectionsx2 | hardBrakes:-:3.000:false:0 steeringCorrections:-:6.000:false:0 minutesSinceBreak:-:21.000:false:0
+trip city/changed city 7.400 12.000 26.000 12.000
+frame highway/regular 74.000 typical moving=true parked=false detection=- | hardBrakes:1.000:4.000:false:0 steeringCorrections:2.000:5.000:false:0 minutesSinceBreak:64.000:80.000:false:0
+frame highway/regular 76.000 typical moving=true parked=false detection=- | hardBrakes:0.000:4.000:false:0 steeringCorrections:2.000:5.000:false:0 minutesSinceBreak:66.000:80.000:false:0
+frame highway/regular 78.000 typical moving=true parked=false detection=- | hardBrakes:1.000:4.000:false:0 steeringCorrections:3.000:5.000:false:0 minutesSinceBreak:68.000:80.000:false:0
+frame highway/regular 80.000 typical moving=true parked=false detection=- | hardBrakes:0.000:4.000:false:0 steeringCorrections:2.000:5.000:false:0 minutesSinceBreak:70.000:80.000:false:0
+frame highway/regular 82.000 typical moving=true parked=false detection=- | hardBrakes:1.000:4.000:false:0 steeringCorrections:2.000:5.000:false:0 minutesSinceBreak:72.000:80.000:false:0
+frame highway/regular 84.000 typical moving=true parked=false detection=- | hardBrakes:0.000:4.000:false:0 steeringCorrections:2.000:5.000:false:0 minutesSinceBreak:74.000:80.000:false:0
+frame highway/regular 85.000 idle moving=false parked=true detection=- | hardBrakes:-:4.000:false:0 steeringCorrections:-:5.000:false:0 minutesSinceBreak:-:80.000:false:0
+trip highway/regular highway 17.200 3.000 13.000 74.000
+frame highway/changed 74.000 typical moving=true parked=false detection=- | hardBrakes:1.000:4.000:false:0 steeringCorrections:2.000:5.000:false:0 minutesSinceBreak:74.000:80.000:false:0
+frame highway/changed 76.000 typical moving=true parked=false detection=- | hardBrakes:0.000:4.000:false:0 steeringCorrections:2.000:5.000:false:0 minutesSinceBreak:76.000:80.000:false:0
+frame highway/changed 78.000 typical moving=true parked=false detection=- | hardBrakes:1.000:4.000:false:0 steeringCorrections:3.000:5.000:false:0 minutesSinceBreak:78.000:80.000:false:0
+frame highway/changed 80.000 typical moving=true parked=false detection=- | hardBrakes:0.000:4.000:false:0 steeringCorrections:2.000:5.000:false:0 minutesSinceBreak:80.000:80.000:false:0
+frame highway/changed 82.000 watching moving=true parked=false detection=- | hardBrakes:1.000:4.000:false:0 steeringCorrections:2.000:5.000:false:0 minutesSinceBreak:82.000:80.000:true:1
+frame highway/changed 84.000 change moving=true parked=false detection=84.000/highway/minutesSinceBreakx2 | hardBrakes:0.000:4.000:false:0 steeringCorrections:2.000:5.000:false:0 minutesSinceBreak:84.000:80.000:true:2
+frame highway/changed 85.000 idle moving=false parked=true detection=84.000/highway/minutesSinceBreakx2 | hardBrakes:-:4.000:false:0 steeringCorrections:-:5.000:false:0 minutesSinceBreak:-:80.000:false:0
+trip highway/changed highway 17.200 3.000 13.000 84.000
+week steady 2026-08-17 learning trips=4 km=32.000 soFar=4 sampled=true evidence=- | hardBrakesPer100km:3.100:-:-:-:false:false:0 steeringPer100km:37.500:-:-:-:false:false:0 longestDriveMinutes:26.000:-:-:-:false:false:0
+week steady 2026-08-24 learning trips=4 km=32.000 soFar=8 sampled=true evidence=- | hardBrakesPer100km:6.300:-:-:-:false:false:0 steeringPer100km:34.400:-:-:-:false:false:0 longestDriveMinutes:26.000:-:-:-:false:false:0
+week steady 2026-08-31 stable trips=4 km=32.000 soFar=12 sampled=true evidence=- | hardBrakesPer100km:6.300:4.700:9.500:2:true:false:0 steeringPer100km:40.600:36.000:42.000:2:true:false:0 longestDriveMinutes:26.000:26.000:41.000:2:true:false:0
+week steady 2026-09-07 stable trips=4 km=32.000 soFar=16 sampled=true evidence=- | hardBrakesPer100km:3.100:6.300:9.300:3:true:false:0 steeringPer100km:37.500:37.500:46.800:3:true:false:0 longestDriveMinutes:26.000:26.000:41.000:3:true:false:0
+week steady 2026-09-14 stable trips=4 km=32.000 soFar=20 sampled=true evidence=- | hardBrakesPer100km:6.300:4.700:9.500:4:true:false:0 steeringPer100km:37.500:37.500:43.500:4:true:false:0 longestDriveMinutes:26.000:26.000:41.000:4:true:false:0
+week steady 2026-09-21 stable trips=4 km=32.000 soFar=24 sampled=true evidence=- | hardBrakesPer100km:6.300:6.300:9.300:5:true:false:0 steeringPer100km:40.600:37.500:43.500:5:true:false:0 longestDriveMinutes:26.000:26.000:41.000:5:true:false:0
+week steady 2026-09-28 stable trips=4 km=32.000 soFar=28 sampled=true evidence=- | hardBrakesPer100km:3.100:6.300:9.300:6:true:false:0 steeringPer100km:34.400:37.500:43.500:6:true:false:0 longestDriveMinutes:26.000:26.000:41.000:6:true:false:0
+week steady 2026-10-05 stable trips=4 km=32.000 soFar=32 sampled=true evidence=- | hardBrakesPer100km:6.300:6.300:9.300:7:true:false:0 steeringPer100km:37.500:37.500:46.800:7:true:false:0 longestDriveMinutes:26.000:26.000:41.000:7:true:false:0
+week steady 2026-10-12 stable trips=4 km=32.000 soFar=36 sampled=true evidence=- | hardBrakesPer100km:18.800:6.300:9.300:8:true:true:1 steeringPer100km:37.500:37.500:43.500:8:true:false:0 longestDriveMinutes:26.000:26.000:41.000:8:true:false:0
+week steady 2026-10-19 stable trips=4 km=32.000 soFar=40 sampled=true evidence=- | hardBrakesPer100km:6.300:6.300:9.300:7:true:false:0 steeringPer100km:40.600:37.500:43.500:8:true:false:0 longestDriveMinutes:26.000:26.000:41.000:8:true:false:0
+week steady 2026-10-26 stable trips=4 km=32.000 soFar=44 sampled=true evidence=- | hardBrakesPer100km:3.100:6.300:9.300:7:true:false:0 steeringPer100km:37.500:37.500:43.500:8:true:false:0 longestDriveMinutes:26.000:26.000:41.000:8:true:false:0
+week steady 2026-11-02 stable trips=4 km=32.000 soFar=48 sampled=true evidence=- | hardBrakesPer100km:6.300:6.300:9.300:7:true:false:0 steeringPer100km:34.400:37.500:43.500:8:true:false:0 longestDriveMinutes:26.000:26.000:41.000:8:true:false:0
+week changing 2026-08-17 learning trips=4 km=32.000 soFar=4 sampled=true evidence=- | hardBrakesPer100km:3.100:-:-:-:false:false:0 steeringPer100km:37.500:-:-:-:false:false:0 longestDriveMinutes:26.000:-:-:-:false:false:0
+week changing 2026-08-24 learning trips=4 km=32.000 soFar=8 sampled=true evidence=- | hardBrakesPer100km:6.300:-:-:-:false:false:0 steeringPer100km:34.400:-:-:-:false:false:0 longestDriveMinutes:26.000:-:-:-:false:false:0
+week changing 2026-08-31 stable trips=4 km=32.000 soFar=12 sampled=true evidence=- | hardBrakesPer100km:6.300:4.700:9.500:2:true:false:0 steeringPer100km:40.600:36.000:42.000:2:true:false:0 longestDriveMinutes:26.000:26.000:41.000:2:true:false:0
+week changing 2026-09-07 stable trips=4 km=32.000 soFar=16 sampled=true evidence=- | hardBrakesPer100km:3.100:6.300:9.300:3:true:false:0 steeringPer100km:37.500:37.500:46.800:3:true:false:0 longestDriveMinutes:26.000:26.000:41.000:3:true:false:0
+week changing 2026-09-14 stable trips=4 km=32.000 soFar=20 sampled=true evidence=- | hardBrakesPer100km:6.300:4.700:9.500:4:true:false:0 steeringPer100km:37.500:37.500:43.500:4:true:false:0 longestDriveMinutes:26.000:26.000:41.000:4:true:false:0
+week changing 2026-09-21 stable trips=4 km=32.000 soFar=24 sampled=true evidence=- | hardBrakesPer100km:6.300:6.300:9.300:5:true:false:0 steeringPer100km:40.600:37.500:43.500:5:true:false:0 longestDriveMinutes:26.000:26.000:41.000:5:true:false:0
+week changing 2026-09-28 stable trips=4 km=32.000 soFar=28 sampled=true evidence=- | hardBrakesPer100km:3.100:6.300:9.300:6:true:false:0 steeringPer100km:34.400:37.500:43.500:6:true:false:0 longestDriveMinutes:26.000:26.000:41.000:6:true:false:0
+week changing 2026-10-05 stable trips=4 km=32.000 soFar=32 sampled=true evidence=- | hardBrakesPer100km:6.300:6.300:9.300:7:true:false:0 steeringPer100km:37.500:37.500:46.800:7:true:false:0 longestDriveMinutes:26.000:26.000:41.000:7:true:false:0
+week changing 2026-10-12 stable trips=4 km=32.000 soFar=36 sampled=true evidence=- | hardBrakesPer100km:18.800:6.300:9.300:8:true:true:1 steeringPer100km:37.500:37.500:43.500:8:true:false:0 longestDriveMinutes:26.000:26.000:41.000:8:true:false:0
+week changing 2026-10-19 observe trips=4 km=32.000 soFar=40 sampled=true evidence=hardBrakesPer100km | hardBrakesPer100km:15.600:6.300:9.300:7:true:true:2 steeringPer100km:40.600:37.500:43.500:8:true:false:0 longestDriveMinutes:26.000:26.000:41.000:8:true:false:0
+week changing 2026-10-26 observe trips=4 km=32.000 soFar=44 sampled=true evidence=hardBrakesPer100km | hardBrakesPer100km:18.800:6.300:9.300:6:true:true:3 steeringPer100km:56.300:37.500:43.500:8:true:true:1 longestDriveMinutes:26.000:26.000:41.000:8:true:false:0
+week changing 2026-11-02 talk trips=4 km=32.000 soFar=48 sampled=true evidence=hardBrakesPer100km,steeringPer100km | hardBrakesPer100km:21.900:6.300:9.300:5:true:true:4 steeringPer100km:59.400:37.500:43.500:7:true:true:2 longestDriveMinutes:26.000:26.000:41.000:8:true:false:0
+rframe 0 2.000 typical moving=true parked=false detection=- | hardBrakes:1.000:10.000:false:0 steeringCorrections:1.000:7.000:false:0 minutesSinceBreak:9.000:11.000:false:0
+rframe 1 6.000 idle moving=false parked=false detection=- | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 2 8.000 idle moving=false parked=false detection=- | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 3 12.000 idle moving=false parked=false detection=- | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 4 14.000 watching moving=true parked=false detection=- | hardBrakes:-:10.000:false:0 steeringCorrections:10.000:7.000:true:1 minutesSinceBreak:8.000:11.000:false:0
+rframe 5 15.000 typical moving=true parked=false detection=- | hardBrakes:9.000:10.000:false:0 steeringCorrections:3.000:7.000:false:0 minutesSinceBreak:9.000:11.000:false:0
+rframe 6 17.000 idle moving=false parked=false detection=- | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 7 19.000 typical moving=true parked=false detection=- | hardBrakes:9.000:10.000:false:0 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:5.000:11.000:false:0
+rframe 8 23.000 typical moving=true parked=false detection=- | hardBrakes:-:10.000:false:0 steeringCorrections:2.000:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 9 25.000 typical moving=true parked=false detection=- | hardBrakes:-:10.000:false:0 steeringCorrections:3.000:7.000:false:0 minutesSinceBreak:6.000:11.000:false:0
+rframe 10 27.000 typical moving=true parked=false detection=- | hardBrakes:7.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:3.000:11.000:false:0
+rframe 11 29.000 watching moving=true parked=false detection=- | hardBrakes:4.000:10.000:false:0 steeringCorrections:11.000:7.000:true:1 minutesSinceBreak:3.000:11.000:false:0
+rframe 12 31.000 typical moving=true parked=false detection=- | hardBrakes:-:10.000:false:0 steeringCorrections:7.000:7.000:false:0 minutesSinceBreak:10.000:11.000:false:0
+rframe 13 33.000 typical moving=true parked=false detection=- | hardBrakes:2.000:10.000:false:0 steeringCorrections:1.000:7.000:false:0 minutesSinceBreak:1.000:11.000:false:0
+rframe 14 34.000 watching moving=true parked=false detection=- | hardBrakes:11.000:10.000:true:1 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:3.000:11.000:false:0
+rframe 15 36.000 change moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:10.000:true:2 steeringCorrections:10.000:7.000:true:1 minutesSinceBreak:8.000:11.000:false:0
+rframe 16 38.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:10.000:false:0 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:9.000:11.000:false:0
+rframe 17 40.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 18 42.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:11.000:11.000:false:0
+rframe 19 44.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:11.000:7.000:true:1 minutesSinceBreak:8.000:11.000:false:0
+rframe 20 46.000 change moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:10.000:false:0 steeringCorrections:8.000:7.000:true:2 minutesSinceBreak:1.000:11.000:false:0
+rframe 21 48.000 change moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:10.000:false:0 steeringCorrections:8.000:7.000:true:3 minutesSinceBreak:5.000:11.000:false:0
+rframe 22 50.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:10.000:false:0 steeringCorrections:7.000:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 23 52.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 24 54.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:10.000:false:0 steeringCorrections:3.000:7.000:false:0 minutesSinceBreak:2.000:11.000:false:0
+rframe 25 56.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:10.000:false:0 steeringCorrections:3.000:7.000:false:0 minutesSinceBreak:6.000:11.000:false:0
+rframe 26 58.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:4.000:10.000:false:0 steeringCorrections:11.000:7.000:true:1 minutesSinceBreak:-:11.000:false:0
+rframe 27 60.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 28 62.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:10.000:false:0 steeringCorrections:9.000:7.000:true:1 minutesSinceBreak:10.000:11.000:false:0
+rframe 29 63.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:11.000:7.000:true:1 minutesSinceBreak:2.000:11.000:false:0
+rframe 30 65.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:10.000:false:0 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:2.000:11.000:false:0
+rframe 31 67.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:10.000:false:0 steeringCorrections:4.000:7.000:false:0 minutesSinceBreak:8.000:11.000:false:0
+rframe 32 69.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:10.000:false:0 steeringCorrections:8.000:7.000:true:1 minutesSinceBreak:1.000:11.000:false:0
+rframe 33 71.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 34 75.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 35 77.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:10.000:false:0 steeringCorrections:1.000:7.000:false:0 minutesSinceBreak:0.000:11.000:false:0
+rframe 36 78.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 37 80.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:10.000:true:1 steeringCorrections:1.000:7.000:false:0 minutesSinceBreak:10.000:11.000:false:0
+rframe 38 82.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 39 84.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:6.000:true:1 steeringCorrections:6.000:9.000:false:0 minutesSinceBreak:1.000:12.000:false:0
+rframe 40 86.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 41 88.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:6.000:false:0 steeringCorrections:4.000:9.000:false:0 minutesSinceBreak:9.000:12.000:false:0
+rframe 42 90.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:10.000:true:1 steeringCorrections:2.000:7.000:false:0 minutesSinceBreak:6.000:11.000:false:0
+rframe 43 92.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:10.000:false:0 steeringCorrections:11.000:7.000:true:1 minutesSinceBreak:6.000:11.000:false:0
+rframe 44 94.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:5.000:10.000:false:0 steeringCorrections:2.000:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 45 96.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 46 98.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:10.000:false:0 steeringCorrections:6.000:7.000:false:0 minutesSinceBreak:11.000:11.000:false:0
+rframe 47 102.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:3.000:11.000:false:0
+rframe 48 104.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:10.000:false:0 steeringCorrections:11.000:7.000:true:1 minutesSinceBreak:10.000:11.000:false:0
+rframe 49 106.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:5.000:10.000:false:0 steeringCorrections:2.000:7.000:false:0 minutesSinceBreak:0.000:11.000:false:0
+rframe 50 108.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 51 110.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:10.000:false:0 steeringCorrections:6.000:7.000:false:0 minutesSinceBreak:5.000:11.000:false:0
+rframe 52 112.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:10.000:false:0 steeringCorrections:1.000:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 53 114.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 54 116.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:6.000:false:0 steeringCorrections:8.000:9.000:false:0 minutesSinceBreak:10.000:12.000:false:0
+rframe 55 118.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:6.000:false:0 steeringCorrections:9.000:9.000:false:0 minutesSinceBreak:11.000:12.000:false:0
+rframe 56 120.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 57 122.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:8.000:9.000:false:0 minutesSinceBreak:7.000:12.000:false:0
+rframe 58 124.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:4.000:9.000:false:0 minutesSinceBreak:7.000:12.000:false:0
+rframe 59 126.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:6.000:false:0 steeringCorrections:2.000:9.000:false:0 minutesSinceBreak:0.000:12.000:false:0
+rframe 60 128.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:6.000:true:1 steeringCorrections:2.000:9.000:false:0 minutesSinceBreak:7.000:12.000:false:0
+rframe 61 130.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 62 132.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:6.000:false:0 steeringCorrections:10.000:9.000:true:1 minutesSinceBreak:2.000:12.000:false:0
+rframe 63 136.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:6.000:true:1 steeringCorrections:-:9.000:false:0 minutesSinceBreak:6.000:12.000:false:0
+rframe 64 138.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 65 142.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:6.000:true:1 steeringCorrections:7.000:9.000:false:0 minutesSinceBreak:2.000:12.000:false:0
+rframe 66 144.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 67 146.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:5.000:6.000:false:0 steeringCorrections:4.000:9.000:false:0 minutesSinceBreak:0.000:12.000:false:0
+rframe 68 148.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:0.000:12.000:false:0
+rframe 69 150.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 70 154.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:6.000:true:1 steeringCorrections:3.000:9.000:false:0 minutesSinceBreak:2.000:12.000:false:0
+rframe 71 156.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 72 158.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:6.000:true:1 steeringCorrections:7.000:9.000:false:0 minutesSinceBreak:10.000:12.000:false:0
+rframe 73 160.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 74 162.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:6.000:false:0 steeringCorrections:10.000:9.000:true:1 minutesSinceBreak:4.000:12.000:false:0
+rframe 75 166.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:3.000:6.000:false:0 steeringCorrections:11.000:9.000:true:1 minutesSinceBreak:5.000:12.000:false:0
+rframe 76 168.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 77 172.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:5.000:6.000:false:0 steeringCorrections:10.000:9.000:true:1 minutesSinceBreak:7.000:12.000:false:0
+rframe 78 174.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:6.000:true:1 steeringCorrections:0.000:9.000:false:0 minutesSinceBreak:2.000:12.000:false:0
+rframe 79 176.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 80 178.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:4.000:6.000:false:0 steeringCorrections:3.000:9.000:false:0 minutesSinceBreak:3.000:12.000:false:0
+rframe 81 180.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:6.000:false:0 steeringCorrections:2.000:9.000:false:0 minutesSinceBreak:7.000:12.000:false:0
+rframe 82 182.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:7.000:6.000:true:1 steeringCorrections:5.000:9.000:false:0 minutesSinceBreak:7.000:12.000:false:0
+rframe 83 184.000 change moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:6.000:true:2 steeringCorrections:11.000:9.000:true:1 minutesSinceBreak:0.000:12.000:false:0
+rframe 84 186.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:6.000:false:0 steeringCorrections:9.000:9.000:false:0 minutesSinceBreak:2.000:12.000:false:0
+rframe 85 188.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:6.000:false:0 steeringCorrections:6.000:9.000:false:0 minutesSinceBreak:4.000:12.000:false:0
+rframe 86 190.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:6.000:false:0 steeringCorrections:0.000:9.000:false:0 minutesSinceBreak:3.000:12.000:false:0
+rframe 87 192.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:6.000:true:1 steeringCorrections:-:9.000:false:0 minutesSinceBreak:11.000:12.000:false:0
+rframe 88 194.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:6.000:false:0 steeringCorrections:0.000:9.000:false:0 minutesSinceBreak:2.000:12.000:false:0
+rframe 89 196.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:6.000:true:1 steeringCorrections:1.000:9.000:false:0 minutesSinceBreak:2.000:12.000:false:0
+rframe 90 200.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:6.000:false:0 steeringCorrections:5.000:9.000:false:0 minutesSinceBreak:4.000:12.000:false:0
+rframe 91 202.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:6.000:true:1 steeringCorrections:2.000:9.000:false:0 minutesSinceBreak:2.000:12.000:false:0
+rframe 92 204.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:6.000:false:0 steeringCorrections:11.000:9.000:true:1 minutesSinceBreak:3.000:12.000:false:0
+rframe 93 206.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 94 210.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 95 212.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 96 214.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:5.000:6.000:false:0 steeringCorrections:3.000:9.000:false:0 minutesSinceBreak:0.000:12.000:false:0
+rframe 97 216.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:4.000:6.000:false:0 steeringCorrections:3.000:9.000:false:0 minutesSinceBreak:1.000:12.000:false:0
+rframe 98 218.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:6.000:true:1 steeringCorrections:11.000:9.000:true:1 minutesSinceBreak:-:12.000:false:0
+rframe 99 220.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:7.000:10.000:false:0 steeringCorrections:3.000:7.000:false:0 minutesSinceBreak:5.000:11.000:false:0
+rframe 100 222.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:6.000:true:1 steeringCorrections:4.000:9.000:false:0 minutesSinceBreak:9.000:12.000:false:0
+rframe 101 224.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 102 226.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:10.000:false:0 steeringCorrections:4.000:7.000:false:0 minutesSinceBreak:10.000:11.000:false:0
+rframe 103 227.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 104 229.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:10.000:false:0 steeringCorrections:3.000:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 105 231.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 106 233.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:10.000:false:0 steeringCorrections:3.000:7.000:false:0 minutesSinceBreak:9.000:11.000:false:0
+rframe 107 234.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 108 236.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:10.000:false:0 steeringCorrections:2.000:7.000:false:0 minutesSinceBreak:6.000:11.000:false:0
+rframe 109 238.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:10.000:false:0 steeringCorrections:1.000:7.000:false:0 minutesSinceBreak:11.000:11.000:false:0
+rframe 110 240.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:10.000:false:0 steeringCorrections:9.000:7.000:true:1 minutesSinceBreak:1.000:11.000:false:0
+rframe 111 242.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:3.000:10.000:false:0 steeringCorrections:5.000:7.000:false:0 minutesSinceBreak:10.000:11.000:false:0
+rframe 112 243.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:10.000:false:0 steeringCorrections:2.000:7.000:false:0 minutesSinceBreak:10.000:11.000:false:0
+rframe 113 245.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:3.000:10.000:false:0 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:6.000:11.000:false:0
+rframe 114 247.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 115 249.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 116 251.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 117 253.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:6.000:7.000:false:0 minutesSinceBreak:8.000:11.000:false:0
+rframe 118 255.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:5.000:10.000:false:0 steeringCorrections:11.000:7.000:true:1 minutesSinceBreak:10.000:11.000:false:0
+rframe 119 257.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:3.000:10.000:false:0 steeringCorrections:3.000:7.000:false:0 minutesSinceBreak:10.000:11.000:false:0
+rframe 120 259.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 121 263.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:5.000:7.000:false:0 minutesSinceBreak:11.000:11.000:false:0
+rframe 122 265.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 123 269.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:10.000:false:0 steeringCorrections:5.000:7.000:false:0 minutesSinceBreak:11.000:11.000:false:0
+rframe 124 271.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:10.000:false:0 steeringCorrections:1.000:7.000:false:0 minutesSinceBreak:0.000:11.000:false:0
+rframe 125 273.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:8.000:7.000:true:1 minutesSinceBreak:11.000:11.000:false:0
+rframe 126 277.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:10.000:false:0 steeringCorrections:3.000:7.000:false:0 minutesSinceBreak:9.000:11.000:false:0
+rframe 127 279.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:0.000:11.000:false:0
+rframe 128 281.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:10.000:false:0 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:2.000:11.000:false:0
+rframe 129 283.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 130 285.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 131 287.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:10.000:true:1 steeringCorrections:9.000:7.000:true:1 minutesSinceBreak:9.000:11.000:false:0
+rframe 132 291.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:7.000:10.000:false:0 steeringCorrections:1.000:7.000:false:0 minutesSinceBreak:6.000:11.000:false:0
+rframe 133 293.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:10.000:false:0 steeringCorrections:3.000:7.000:false:0 minutesSinceBreak:4.000:11.000:false:0
+rframe 134 295.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 135 297.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:10.000:false:0 steeringCorrections:7.000:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 136 299.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:3.000:10.000:false:0 steeringCorrections:4.000:7.000:false:0 minutesSinceBreak:10.000:11.000:false:0
+rframe 137 301.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:3.000:10.000:false:0 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:3.000:11.000:false:0
+rframe 138 303.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 139 305.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:10.000:false:0 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:9.000:11.000:false:0
+rframe 140 307.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 141 309.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 142 311.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:11.000:12.000:false:0
+rframe 143 313.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:6.000:false:0 steeringCorrections:4.000:9.000:false:0 minutesSinceBreak:4.000:12.000:false:0
+rframe 144 317.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:6.000:true:1 steeringCorrections:9.000:9.000:false:0 minutesSinceBreak:4.000:12.000:false:0
+rframe 145 319.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:3.000:9.000:false:0 minutesSinceBreak:9.000:12.000:false:0
+rframe 146 321.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 147 325.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:1.000:9.000:false:0 minutesSinceBreak:10.000:12.000:false:0
+rframe 148 327.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:6.000:false:0 steeringCorrections:6.000:9.000:false:0 minutesSinceBreak:7.000:12.000:false:0
+rframe 149 331.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 150 333.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:6.000:false:0 steeringCorrections:11.000:9.000:true:1 minutesSinceBreak:-:12.000:false:0
+rframe 151 337.000 insufficient moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 152 339.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:7.000:12.000:false:0
+rframe 153 343.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 154 345.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:6.000:false:0 steeringCorrections:7.000:9.000:false:0 minutesSinceBreak:10.000:12.000:false:0
+rframe 155 347.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:6.000:false:0 steeringCorrections:6.000:9.000:false:0 minutesSinceBreak:1.000:12.000:false:0
+rframe 156 349.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:6.000:true:1 steeringCorrections:10.000:9.000:true:1 minutesSinceBreak:1.000:12.000:false:0
+rframe 157 351.000 change moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:6.000:true:2 steeringCorrections:-:9.000:false:0 minutesSinceBreak:2.000:12.000:false:0
+rframe 158 353.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:6.000:false:0 steeringCorrections:4.000:9.000:false:0 minutesSinceBreak:6.000:12.000:false:0
+rframe 159 355.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:6.000:true:1 steeringCorrections:11.000:9.000:true:1 minutesSinceBreak:5.000:12.000:false:0
+rframe 160 357.000 change moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:6.000:true:2 steeringCorrections:1.000:9.000:false:0 minutesSinceBreak:0.000:12.000:false:0
+rframe 161 359.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:10.000:false:0 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:5.000:11.000:false:0
+rframe 162 361.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 163 363.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:10.000:false:0 steeringCorrections:8.000:7.000:true:1 minutesSinceBreak:5.000:11.000:false:0
+rframe 164 365.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:3.000:10.000:false:0 steeringCorrections:4.000:7.000:false:0 minutesSinceBreak:1.000:11.000:false:0
+rframe 165 366.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 166 368.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:3.000:6.000:false:0 steeringCorrections:10.000:9.000:true:1 minutesSinceBreak:6.000:12.000:false:0
+rframe 167 370.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:7.000:6.000:true:1 steeringCorrections:5.000:9.000:false:0 minutesSinceBreak:1.000:12.000:false:0
+rframe 168 372.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 169 374.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:2.000:9.000:false:0 minutesSinceBreak:7.000:12.000:false:0
+rframe 170 378.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:6.000:false:0 steeringCorrections:1.000:9.000:false:0 minutesSinceBreak:6.000:12.000:false:0
+rframe 171 380.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 172 382.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 173 384.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 174 386.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:10.000:false:0 steeringCorrections:2.000:7.000:false:0 minutesSinceBreak:3.000:11.000:false:0
+rframe 175 388.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:10.000:false:0 steeringCorrections:7.000:7.000:false:0 minutesSinceBreak:5.000:11.000:false:0
+rframe 176 390.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 177 392.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 178 394.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 179 396.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:10.000:false:0 steeringCorrections:4.000:7.000:false:0 minutesSinceBreak:8.000:11.000:false:0
+rframe 180 400.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:10.000:false:0 steeringCorrections:2.000:7.000:false:0 minutesSinceBreak:9.000:11.000:false:0
+rframe 181 402.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:10.000:false:0 steeringCorrections:1.000:7.000:false:0 minutesSinceBreak:1.000:11.000:false:0
+rframe 182 404.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:10.000:false:0 steeringCorrections:9.000:7.000:true:1 minutesSinceBreak:4.000:11.000:false:0
+rframe 183 406.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:3.000:10.000:false:0 steeringCorrections:7.000:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 184 408.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:10.000:true:1 steeringCorrections:-:7.000:false:0 minutesSinceBreak:11.000:11.000:false:0
+rframe 185 412.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:10.000:true:1 steeringCorrections:10.000:7.000:true:1 minutesSinceBreak:-:11.000:false:0
+rframe 186 414.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:4.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:11.000:11.000:false:0
+rframe 187 415.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 188 417.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:10.000:false:0 steeringCorrections:3.000:7.000:false:0 minutesSinceBreak:5.000:11.000:false:0
+rframe 189 419.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 190 421.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:10.000:false:0 steeringCorrections:8.000:7.000:true:1 minutesSinceBreak:-:11.000:false:0
+rframe 191 423.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 192 427.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:11.000:7.000:true:1 minutesSinceBreak:8.000:11.000:false:0
+rframe 193 429.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:10.000:true:1 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:7.000:11.000:false:0
+rframe 194 431.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:7.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:5.000:11.000:false:0
+rframe 195 433.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:10.000:true:1 steeringCorrections:-:7.000:false:0 minutesSinceBreak:0.000:11.000:false:0
+rframe 196 435.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:10.000:false:0 steeringCorrections:6.000:7.000:false:0 minutesSinceBreak:3.000:11.000:false:0
+rframe 197 437.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:10.000:false:0 steeringCorrections:11.000:7.000:true:1 minutesSinceBreak:9.000:11.000:false:0
+rframe 198 439.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:10.000:false:0 steeringCorrections:5.000:7.000:false:0 minutesSinceBreak:5.000:11.000:false:0
+rframe 199 440.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:3.000:6.000:false:0 steeringCorrections:6.000:9.000:false:0 minutesSinceBreak:4.000:12.000:false:0
+rframe 200 442.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 201 444.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:4.000:6.000:false:0 steeringCorrections:8.000:9.000:false:0 minutesSinceBreak:11.000:12.000:false:0
+rframe 202 446.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:7.000:6.000:true:1 steeringCorrections:4.000:9.000:false:0 minutesSinceBreak:2.000:12.000:false:0
+rframe 203 450.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 204 452.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 205 454.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:6.000:false:0 steeringCorrections:11.000:9.000:true:1 minutesSinceBreak:0.000:12.000:false:0
+rframe 206 456.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:5.000:6.000:false:0 steeringCorrections:9.000:9.000:false:0 minutesSinceBreak:5.000:12.000:false:0
+rframe 207 458.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 208 460.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:3.000:7.000:false:0 minutesSinceBreak:0.000:11.000:false:0
+rframe 209 462.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:7.000:10.000:false:0 steeringCorrections:9.000:7.000:true:1 minutesSinceBreak:0.000:11.000:false:0
+rframe 210 464.000 change moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:10.000:false:0 steeringCorrections:10.000:7.000:true:2 minutesSinceBreak:9.000:11.000:false:0
+rframe 211 466.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:7.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:7.000:11.000:false:0
+rframe 212 468.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:10.000:false:0 steeringCorrections:5.000:7.000:false:0 minutesSinceBreak:2.000:11.000:false:0
+rframe 213 470.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:5.000:10.000:false:0 steeringCorrections:10.000:7.000:true:1 minutesSinceBreak:9.000:11.000:false:0
+rframe 214 472.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 215 474.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:10.000:7.000:true:1 minutesSinceBreak:6.000:11.000:false:0
+rframe 216 478.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:7.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:11.000:11.000:false:0
+rframe 217 480.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 218 484.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 219 486.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:0.000:11.000:false:0
+rframe 220 488.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 221 490.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:6.000:false:0 steeringCorrections:8.000:9.000:false:0 minutesSinceBreak:5.000:12.000:false:0
+rframe 222 492.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:0.000:9.000:false:0 minutesSinceBreak:0.000:12.000:false:0
+rframe 223 494.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 224 496.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 225 498.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:6.000:false:0 steeringCorrections:6.000:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 226 500.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:10.000:false:0 steeringCorrections:4.000:7.000:false:0 minutesSinceBreak:2.000:11.000:false:0
+rframe 227 502.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:10.000:true:1 steeringCorrections:9.000:7.000:true:1 minutesSinceBreak:6.000:11.000:false:0
+rframe 228 504.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:4.000:10.000:false:0 steeringCorrections:7.000:7.000:false:0 minutesSinceBreak:8.000:11.000:false:0
+rframe 229 506.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:10.000:false:0 steeringCorrections:11.000:7.000:true:1 minutesSinceBreak:1.000:11.000:false:0
+rframe 230 508.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 231 510.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:5.000:6.000:false:0 steeringCorrections:11.000:9.000:true:1 minutesSinceBreak:0.000:12.000:false:0
+rframe 232 512.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 233 516.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:6.000:true:1 steeringCorrections:11.000:9.000:true:1 minutesSinceBreak:3.000:12.000:false:0
+rframe 234 518.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:6.000:false:0 steeringCorrections:7.000:9.000:false:0 minutesSinceBreak:5.000:12.000:false:0
+rframe 235 520.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 236 522.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:6.000:true:1 steeringCorrections:9.000:9.000:false:0 minutesSinceBreak:4.000:12.000:false:0
+rframe 237 523.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 238 525.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:3.000:9.000:false:0 minutesSinceBreak:7.000:12.000:false:0
+rframe 239 527.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:6.000:false:0 steeringCorrections:4.000:9.000:false:0 minutesSinceBreak:9.000:12.000:false:0
+rframe 240 529.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:6.000:9.000:false:0 minutesSinceBreak:7.000:12.000:false:0
+rframe 241 533.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:6.000:false:0 steeringCorrections:7.000:9.000:false:0 minutesSinceBreak:0.000:12.000:false:0
+rframe 242 535.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 243 537.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:5.000:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:3.000:12.000:false:0
+rframe 244 539.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:6.000:true:1 steeringCorrections:3.000:9.000:false:0 minutesSinceBreak:11.000:12.000:false:0
+rframe 245 541.000 change moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:6.000:true:2 steeringCorrections:9.000:9.000:false:0 minutesSinceBreak:8.000:12.000:false:0
+rframe 246 543.000 change moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:6.000:true:3 steeringCorrections:6.000:9.000:false:0 minutesSinceBreak:0.000:12.000:false:0
+rframe 247 545.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:6.000:false:0 steeringCorrections:7.000:9.000:false:0 minutesSinceBreak:1.000:12.000:false:0
+rframe 248 547.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:2.000:9.000:false:0 minutesSinceBreak:8.000:12.000:false:0
+rframe 249 548.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:10.000:12.000:false:0
+rframe 250 552.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:4.000:6.000:false:0 steeringCorrections:4.000:9.000:false:0 minutesSinceBreak:0.000:12.000:false:0
+rframe 251 554.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 252 556.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:6.000:false:0 steeringCorrections:4.000:9.000:false:0 minutesSinceBreak:9.000:12.000:false:0
+rframe 253 558.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:10.000:false:0 steeringCorrections:4.000:7.000:false:0 minutesSinceBreak:11.000:11.000:false:0
+rframe 254 560.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:11.000:7.000:true:1 minutesSinceBreak:2.000:11.000:false:0
+rframe 255 562.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:4.000:10.000:false:0 steeringCorrections:6.000:7.000:false:0 minutesSinceBreak:1.000:11.000:false:0
+rframe 256 564.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 257 566.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:11.000:11.000:false:0
+rframe 258 568.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:10.000:false:0 steeringCorrections:11.000:7.000:true:1 minutesSinceBreak:5.000:11.000:false:0
+rframe 259 570.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:3.000:10.000:false:0 steeringCorrections:2.000:7.000:false:0 minutesSinceBreak:5.000:11.000:false:0
+rframe 260 572.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:10.000:false:0 steeringCorrections:9.000:7.000:true:1 minutesSinceBreak:7.000:11.000:false:0
+rframe 261 574.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:4.000:10.000:false:0 steeringCorrections:2.000:7.000:false:0 minutesSinceBreak:1.000:11.000:false:0
+rframe 262 575.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 263 577.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:4.000:10.000:false:0 steeringCorrections:5.000:7.000:false:0 minutesSinceBreak:5.000:11.000:false:0
+rframe 264 579.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:10.000:false:0 steeringCorrections:10.000:7.000:true:1 minutesSinceBreak:-:11.000:false:0
+rframe 265 581.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:5.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:4.000:11.000:false:0
+rframe 266 583.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 267 585.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:7.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:10.000:11.000:false:0
+rframe 268 587.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 269 589.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:2.000:10.000:false:0 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:3.000:11.000:false:0
+rframe 270 591.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:11.000:11.000:false:0
+rframe 271 592.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:5.000:7.000:false:0 minutesSinceBreak:0.000:11.000:false:0
+rframe 272 594.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:10.000:false:0 steeringCorrections:1.000:7.000:false:0 minutesSinceBreak:2.000:11.000:false:0
+rframe 273 596.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:3.000:10.000:false:0 steeringCorrections:7.000:7.000:false:0 minutesSinceBreak:3.000:11.000:false:0
+rframe 274 600.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 275 602.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 276 604.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 277 606.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 278 608.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:10.000:false:0 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:1.000:11.000:false:0
+rframe 279 610.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:10.000:false:0 steeringCorrections:4.000:7.000:false:0 minutesSinceBreak:10.000:11.000:false:0
+rframe 280 612.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:11.000:10.000:true:1 steeringCorrections:0.000:7.000:false:0 minutesSinceBreak:9.000:11.000:false:0
+rframe 281 614.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:0.000:10.000:false:0 steeringCorrections:9.000:7.000:true:1 minutesSinceBreak:0.000:11.000:false:0
+rframe 282 616.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:10.000:false:0 steeringCorrections:2.000:7.000:false:0 minutesSinceBreak:8.000:11.000:false:0
+rframe 283 618.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:3.000:11.000:false:0
+rframe 284 622.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 285 624.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:1.000:10.000:false:0 steeringCorrections:7.000:7.000:false:0 minutesSinceBreak:8.000:11.000:false:0
+rframe 286 626.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 287 628.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:7.000:10.000:false:0 steeringCorrections:6.000:7.000:false:0 minutesSinceBreak:11.000:11.000:false:0
+rframe 288 630.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:8.000:10.000:false:0 steeringCorrections:10.000:7.000:true:1 minutesSinceBreak:0.000:11.000:false:0
+rframe 289 632.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:5.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:6.000:11.000:false:0
+rframe 290 634.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 291 636.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:6.000:10.000:false:0 steeringCorrections:2.000:7.000:false:0 minutesSinceBreak:0.000:11.000:false:0
+rframe 292 638.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:10.000:9.000:true:1 minutesSinceBreak:-:12.000:false:0
+rframe 293 640.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:-:11.000:false:0
+rframe 294 642.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:4.000:10.000:false:0 steeringCorrections:1.000:7.000:false:0 minutesSinceBreak:5.000:11.000:false:0
+rframe 295 644.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:3.000:10.000:false:0 steeringCorrections:-:7.000:false:0 minutesSinceBreak:10.000:11.000:false:0
+rframe 296 646.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:9.000:6.000:true:1 steeringCorrections:10.000:9.000:true:1 minutesSinceBreak:5.000:12.000:false:0
+rframe 297 648.000 typical moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:1.000:9.000:false:0 minutesSinceBreak:5.000:12.000:false:0
+rframe 298 650.000 idle moving=false parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:-:6.000:false:0 steeringCorrections:-:9.000:false:0 minutesSinceBreak:-:12.000:false:0
+rframe 299 652.000 watching moving=true parked=false detection=36.000/city/hardBrakesx2 | hardBrakes:10.000:6.000:true:1 steeringCorrections:1.000:9.000:false:0 minutesSinceBreak:3.000:12.000:false:0
+rweek city 2026-03-02 learning trips=5 km=35.900 soFar=5 sampled=true evidence=- | hardBrakesPer100km:44.600:-:-:-:false:false:0 steeringPer100km:161.200:-:-:-:false:false:0 longestDriveMinutes:68.000:-:-:-:false:false:0
+rweek city 2026-03-09 learning trips=3 km=33.900 soFar=11 sampled=true evidence=- | hardBrakesPer100km:20.600:-:-:-:false:false:0 steeringPer100km:197.600:-:-:-:false:false:0 longestDriveMinutes:86.000:-:-:-:false:false:0
+rweek city 2026-03-16 stable trips=9 km=104.400 soFar=21 sampled=true evidence=- | hardBrakesPer100km:16.100:32.600:68.600:2:true:false:0 steeringPer100km:147.300:179.400:234.000:2:true:false:0 longestDriveMinutes:89.000:77.000:104.000:2:true:false:0
+rweek city 2026-03-23 stable trips=8 km=65.800 soFar=29 sampled=true evidence=- | hardBrakesPer100km:30.000:20.600:34.100:3:true:false:0 steeringPer100km:136.500:161.200:202.900:3:true:false:0 longestDriveMinutes:67.000:86.000:101.000:3:true:false:0
+rweek city 2026-03-30 stable trips=6 km=81.900 soFar=36 sampled=true evidence=- | hardBrakesPer100km:20.800:25.300:46.200:4:true:false:0 steeringPer100km:127.100:154.300:191.300:4:true:false:0 longestDriveMinutes:86.000:77.000:105.500:4:true:false:0
+rweek city 2026-04-06 stable trips=5 km=52.000 soFar=43 sampled=true evidence=- | hardBrakesPer100km:40.400:20.800:34.900:5:true:true:1 steeringPer100km:80.000:147.300:189.000:5:true:false:0 longestDriveMinutes:79.000:86.000:101.000:5:true:false:0
+rweek city 2026-04-13 stable trips=4 km=56.000 soFar=48 sampled=true evidence=- | hardBrakesPer100km:30.400:20.800:34.900:5:true:false:0 steeringPer100km:153.500:141.900:193.100:6:true:false:0 longestDriveMinutes:83.000:82.500:97.500:6:true:false:0
+rweek city 2026-04-20 stable trips=3 km=31.500 soFar=54 sampled=true evidence=- | hardBrakesPer100km:31.700:25.400:40.100:6:true:false:0 steeringPer100km:161.900:147.300:189.000:7:true:false:0 longestDriveMinutes:85.000:83.000:98.000:7:true:false:0
+rweek city 2026-04-27 stable trips=5 km=56.700 soFar=59 sampled=true evidence=- | hardBrakesPer100km:17.600:30.000:57.600:7:true:false:0 steeringPer100km:47.600:150.400:188.500:8:true:false:0 longestDriveMinutes:86.000:84.000:99.000:8:true:false:0
+rweek city 2026-05-04 stable trips=5 km=61.700 soFar=65 sampled=true evidence=- | hardBrakesPer100km:21.100:20.800:34.900:7:true:false:0 steeringPer100km:186.400:141.900:194.100:8:true:false:0 longestDriveMinutes:80.000:85.500:100.500:8:true:false:0
+rweek city 2026-05-11 stable trips=5 km=47.700 soFar=74 sampled=true evidence=- | hardBrakesPer100km:21.000:21.100:36.100:7:true:false:0 steeringPer100km:134.200:141.900:194.100:8:true:false:0 longestDriveMinutes:87.000:84.000:99.000:8:true:false:0
+rweek city 2026-05-18 stable trips=7 km=59.000 soFar=81 sampled=true evidence=- | hardBrakesPer100km:20.300:21.100:31.600:7:true:false:0 steeringPer100km:186.400:135.400:202.400:8:true:false:0 longestDriveMinutes:67.000:84.000:99.000:8:true:false:0
+rweek city 2026-05-25 stable trips=5 km=51.300 soFar=89 sampled=true evidence=- | hardBrakesPer100km:29.200:21.000:24.000:7:true:true:1 steeringPer100km:148.300:143.900:234.800:8:true:false:0 longestDriveMinutes:69.000:84.000:99.000:8:true:false:0
+rweek city 2026-06-01 observe trips=3 km=27.200 soFar=94 sampled=true evidence=hardBrakesPer100km | hardBrakesPer100km:56.100:21.100:27.400:6:true:true:2 steeringPer100km:244.900:150.900:229.200:8:true:true:1 longestDriveMinutes:109.000:81.500:96.500:8:true:true:1
+rweek city 2026-06-08 talk trips=6 km=53.500 soFar=101 sampled=true evidence=hardBrakesPer100km,steeringPer100km,longestDriveMinutes | hardBrakesPer100km:74.800:21.100:27.400:6:true:true:3 steeringPer100km:534.800:153.500:211.400:7:true:true:2 longestDriveMinutes:103.000:83.000:98.000:7:true:true:2
+rweek city 2026-06-15 talk trips=9 km=70.700 soFar=111 sampled=true evidence=hardBrakesPer100km,steeringPer100km,longestDriveMinutes | hardBrakesPer100km:79.200:21.000:24.000:5:true:true:4 steeringPer100km:418.700:155.100:233.400:6:true:true:3 longestDriveMinutes:123.000:82.500:97.500:6:true:true:3
+rweek city 2026-06-22 talk trips=4 km=61.300 soFar=119 sampled=true evidence=hardBrakesPer100km | hardBrakesPer100km:39.200:20.700:23.700:4:true:true:5 steeringPer100km:215.300:148.300:262.600:5:true:false:0 longestDriveMinutes:86.000:80.000:101.000:5:true:false:0
+rweek city 2026-06-29 talk trips=5 km=44.900 soFar=124 sampled=true evidence=hardBrakesPer100km | hardBrakesPer100km:73.500:21.000:24.000:3:true:true:6 steeringPer100km:367.500:186.400:273.100:5:true:true:1 longestDriveMinutes:118.000:80.000:101.000:5:true:true:1
+rweek city 2026-07-06 talk trips=4 km=51.400 soFar=130 sampled=true evidence=hardBrakesPer100km,steeringPer100km | hardBrakesPer100km:60.800:20.700:23.700:2:true:true:7 steeringPer100km:258.800:167.400:245.700:4:true:true:2 longestDriveMinutes:85.000:77.500:104.500:4:true:false:0
+rweek city 2026-07-13 observe trips=6 km=63.800 soFar=136 sampled=true evidence=steeringPer100km | hardBrakesPer100km:53.100:-:-:-:false:false:0 steeringPer100km:288.400:186.400:273.100:3:true:true:3 longestDriveMinutes:117.000:77.000:102.500:4:true:true:1
+rweek city 2026-07-20 talk trips=9 km=101.900 soFar=150 sampled=true evidence=steeringPer100km,longestDriveMinutes | hardBrakesPer100km:51.500:-:-:-:false:false:0 steeringPer100km:291.800:181.800:282.300:2:true:true:4 longestDriveMinutes:121.000:85.000:100.000:3:true:true:2
+rweek all 2026-03-02 learning trips=5 km=35.900 soFar=5 sampled=true evidence=- | hardBrakesPer100km:44.600:-:-:-:false:false:0 steeringPer100km:161.200:-:-:-:false:false:0 longestDriveMinutes:68.000:-:-:-:false:false:0
+rweek all 2026-03-09 learning trips=6 km=61.300 soFar=11 sampled=true evidence=- | hardBrakesPer100km:19.600:-:-:-:false:false:0 steeringPer100km:176.200:-:-:-:false:false:0 longestDriveMinutes:86.000:-:-:-:false:false:0
+rweek all 2026-03-16 stable trips=10 km=123.700 soFar=21 sampled=true evidence=- | hardBrakesPer100km:13.200:32.100:69.600:2:true:false:0 steeringPer100km:147.300:168.700:191.200:2:true:false:0 longestDriveMinutes:89.000:77.000:104.000:2:true:false:0
+rweek all 2026-03-23 stable trips=8 km=65.800 soFar=29 sampled=true evidence=- | hardBrakesPer100km:30.000:19.600:38.800:3:true:false:0 steeringPer100km:136.500:161.200:202.900:3:true:false:0 longestDriveMinutes:67.000:86.000:101.000:3:true:false:0
+rweek all 2026-03-30 stable trips=7 km=96.300 soFar=36 sampled=true evidence=- | hardBrakesPer100km:17.700:24.800:50.000:4:true:false:0 steeringPer100km:135.300:154.300:191.300:4:true:false:0 longestDriveMinutes:86.000:77.000:105.500:4:true:false:0
+rweek all 2026-04-06 stable trips=7 km=76.200 soFar=43 sampled=true evidence=- | hardBrakesPer100km:31.500:19.600:38.800:5:true:false:0 steeringPer100km:82.200:147.300:183.300:5:true:false:0 longestDriveMinutes:79.000:86.000:101.000:5:true:false:0
+rweek all 2026-04-13 stable trips=5 km=57.800 soFar=48 sampled=true evidence=- | hardBrakesPer100km:29.400:24.800:45.500:6:true:false:0 steeringPer100km:171.700:141.900:180.700:6:true:false:0 longestDriveMinutes:83.000:82.500:97.500:6:true:false:0
+rweek all 2026-04-20 stable trips=6 km=72.200 soFar=54 sampled=true evidence=- | hardBrakesPer100km:22.200:29.400:58.800:7:true:false:0 steeringPer100km:123.000:147.300:189.000:7:true:false:0 longestDriveMinutes:85.000:83.000:98.000:7:true:false:0
+rweek all 2026-04-27 stable trips=5 km=56.700 soFar=59 sampled=true evidence=- | hardBrakesPer100km:17.600:25.800:43.600:8:true:false:0 steeringPer100km:47.600:141.900:199.200:8:true:false:0 longestDriveMinutes:86.000:84.000:99.000:8:true:false:0
+rweek all 2026-05-04 stable trips=6 km=77.900 soFar=65 sampled=true evidence=- | hardBrakesPer100km:21.800:20.900:37.400:8:true:false:0 steeringPer100km:183.000:135.900:209.000:8:true:false:0 longestDriveMinutes:82.000:85.500:100.500:8:true:false:0
+rweek all 2026-05-11 stable trips=9 km=92.700 soFar=74 sampled=true evidence=- | hardBrakesPer100km:23.700:22.000:39.700:8:true:false:0 steeringPer100km:131.600:135.900:209.000:8:true:false:0 longestDriveMinutes:87.000:84.000:99.000:8:true:false:0
+rweek all 2026-05-18 stable trips=7 km=59.000 soFar=81 sampled=true evidence=- | hardBrakesPer100km:20.300:23.000:38.800:8:true:false:0 steeringPer100km:186.400:133.500:206.500:8:true:false:0 longestDriveMinutes:67.000:84.000:99.000:8:true:false:0
+rweek all 2026-05-25 stable trips=8 km=75.400 soFar=89 sampled=true evidence=- | hardBrakesPer100km:21.200:22.000:31.000:8:true:false:0 steeringPer100km:155.900:133.500:265.200:8:true:false:0 longestDriveMinutes:78.000:84.000:99.000:8:true:false:0
+rweek all 2026-06-01 stable trips=5 km=49.100 soFar=94 sampled=true evidence=- | hardBrakesPer100km:62.700:22.000:27.100:8:true:true:1 steeringPer100km:277.100:143.800:244.600:8:true:true:1 longestDriveMinutes:109.000:82.500:97.500:8:true:true:1
+rweek all 2026-06-08 talk trips=7 km=70.900 soFar=101 sampled=true evidence=hardBrakesPer100km,steeringPer100km,longestDriveMinutes | hardBrakesPer100km:67.700:21.800:26.300:7:true:true:2 steeringPer100km:534.800:155.900:237.200:7:true:true:2 longestDriveMinutes:103.000:83.000:98.000:7:true:true:2
+rweek all 2026-06-15 talk trips=10 km=88.400 soFar=111 sampled=true evidence=hardBrakesPer100km,steeringPer100km,longestDriveMinutes | hardBrakesPer100km:69.000:21.500:24.500:6:true:true:3 steeringPer100km:380.200:143.800:233.800:6:true:true:3 longestDriveMinutes:123.000:83.500:98.500:6:true:true:3
+rweek all 2026-06-22 talk trips=8 km=118.500 soFar=119 sampled=true evidence=hardBrakesPer100km,steeringPer100km,longestDriveMinutes | hardBrakesPer100km:41.400:21.200:24.200:5:true:true:4 steeringPer100km:250.600:155.900:237.200:5:true:true:4 longestDriveMinutes:118.000:82.000:97.000:5:true:true:4
+rweek all 2026-06-29 talk trips=5 km=44.900 soFar=124 sampled=true evidence=hardBrakesPer100km,steeringPer100km,longestDriveMinutes | hardBrakesPer100km:73.500:21.500:24.500:4:true:true:5 steeringPer100km:367.500:169.500:215.200:4:true:true:5 longestDriveMinutes:118.000:80.000:95.000:4:true:true:5
+rweek all 2026-07-06 talk trips=6 km=60.500 soFar=130 sampled=true evidence=hardBrakesPer100km,steeringPer100km | hardBrakesPer100km:73.800:21.200:24.200:3:true:true:6 steeringPer100km:333.900:155.900:228.800:3:true:true:6 longestDriveMinutes:85.000:78.000:105.000:3:true:false:0
+rweek all 2026-07-13 talk trips=6 km=63.800 soFar=136 sampled=true evidence=hardBrakesPer100km,steeringPer100km | hardBrakesPer100km:53.100:20.800:23.800:2:true:true:7 steeringPer100km:288.400:171.200:216.900:2:true:true:7 longestDriveMinutes:117.000:78.000:99.000:3:true:true:1
+rweek all 2026-07-20 observe trips=14 km=164.100 soFar=150 sampled=true evidence=longestDriveMinutes | hardBrakesPer100km:53.400:-:-:-:false:false:0 steeringPer100km:265.800:-:-:-:false:false:0 longestDriveMinutes:121.000:81.500:96.500:2:true:true:2

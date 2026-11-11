@@ -1,0 +1,996 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "DriveWatch 가족 요약 API",
+    "version": "0.1.0",
+    "description": "차량 앱이 주간 요약을 보내고, 연결된 가족이 폰 웹 화면에서 읽는다. 시연용이다.\n\n- 초대 코드는 운전자가 차에서 띄운다. 6자리, 10분, 한 번만 쓸 수 있다.\n- 운전자가 `status`(상태만)를 고르면 숫자 근거는 저장하지도, 내보내지도 않는다.\n- 위치와 경로는 받지 않는다. 요약에서 정해진 항목만 저장한다.\n- 요청과 응답은 JSON이다. 본문은 16KB까지다."
+  },
+  "servers": [
+    {
+      "url": "https://drive.olvend.com",
+      "description": "공개 시연 서버"
+    },
+    {
+      "url": "http://127.0.0.1:8795",
+      "description": "로컬"
+    },
+    {
+      "url": "http://10.0.2.2:8795",
+      "description": "Pleos 에뮬레이터 안에서 본 로컬"
+    }
+  ],
+  "tags": [
+    {
+      "name": "차량 앱",
+      "description": "차량 앱이 부른다. 등록할 때 받은 carToken을 `Authorization: Bearer`로 붙인다."
+    },
+    {
+      "name": "가족 폰",
+      "description": "폰 웹 화면이 부른다. 가입할 때 받은 token을 `Authorization: Bearer`로 붙인다."
+    }
+  ],
+  "paths": {
+    "/api/car/drivers": {
+      "post": {
+        "tags": [
+          "차량 앱"
+        ],
+        "summary": "운전자 등록",
+        "description": "운전자 프로필 하나를 등록하고 carToken을 받는다. carToken은 다시 받을 수 없으니 차량 앱이 보관한다.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DriverRegistration"
+              },
+              "example": {
+                "name": "김정숙",
+                "shareScope": "status"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "등록됨",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "driverId": "drv_3f9a1c2b4d5e",
+                  "carToken": "(차량 앱이 보관)",
+                  "shareScope": "status"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "name_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "name_required"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "rate_limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "rate_limited"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "capacity_reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "capacity_reached"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/car/me": {
+      "get": {
+        "tags": [
+          "차량 앱"
+        ],
+        "summary": "연결된 가족과 확인 여부",
+        "description": "차 화면의 가족 카드에 쓴다. 누가 연결됐는지, 최근 요약을 누가 확인했는지 돌려준다.",
+        "security": [
+          {
+            "carToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "현재 상태",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "name": "김정숙",
+                  "shareScope": "evidence",
+                  "family": [
+                    {
+                      "name": "김민수"
+                    }
+                  ],
+                  "latest": {
+                    "week": "2026-11-09",
+                    "status": "talk",
+                    "sentAt": 1794321531724,
+                    "ackedBy": [
+                      "김민수"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/car/share-scope": {
+      "put": {
+        "tags": [
+          "차량 앱"
+        ],
+        "summary": "가족에게 보내는 범위 바꾸기",
+        "description": "`status`는 상태만, `evidence`는 상태와 숫자 근거다. `status`로 바꾸면 이미 저장된 숫자도 가족에게 보이지 않는다.",
+        "security": [
+          {
+            "carToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "shareScope"
+                ],
+                "properties": {
+                  "shareScope": {
+                    "$ref": "#/components/schemas/ShareScope"
+                  }
+                }
+              },
+              "example": {
+                "shareScope": "evidence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "바뀜",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "shareScope": "evidence"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "invalid_scope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/car/invites": {
+      "post": {
+        "tags": [
+          "차량 앱"
+        ],
+        "summary": "초대 코드 발급",
+        "description": "차 화면에 띄울 6자리 코드를 만든다. 10분 동안, 한 번만 쓸 수 있다. 새 코드를 만들면 같은 운전자의 이전 코드는 못 쓴다. QR에는 `https://drive.olvend.com/family/?code=코드`를 담으면 폰 화면에 코드가 미리 채워진다.",
+        "security": [
+          {
+            "carToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "발급됨",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": "482913",
+                  "expiresAt": 1794322131724
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/car/summaries": {
+      "post": {
+        "tags": [
+          "차량 앱"
+        ],
+        "summary": "주간 요약 보내기",
+        "description": "부모님이 주간 카드에서 `가족에게 보내기`를 눌렀을 때 부른다. 같은 주에 다시 보내면 덮어쓰고 가족의 확인 표시가 지워진다. 운전자의 범위가 `status`이면 `evidence`는 버린다. 목록에 없는 항목도 버린다.",
+        "security": [
+          {
+            "carToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SummaryInput"
+              },
+              "example": {
+                "week": "2026-11-09",
+                "status": "talk",
+                "headline": "",
+                "goodPoints": [
+                  "밤 운전 0회"
+                ],
+                "promise": "해 지면 운전 안 하기 · 이번 주 지킴",
+                "avoided": "",
+                "changes": [
+                  "강한 제동이 4주째, 조향 보정이 2주째 평소보다 많았어요"
+                ],
+                "evidence": [
+                  {
+                    "label": "강한 제동",
+                    "unit": "회/100km",
+                    "typical": 6.3,
+                    "value": 21.9,
+                    "weeks": 4
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "저장됨",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "week": "2026-11-09",
+                  "status": "talk",
+                  "evidenceStored": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_week / invalid_status / invalid_json",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "invalid_week"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "body_too_large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "body_too_large"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/family/members": {
+      "post": {
+        "tags": [
+          "가족 폰"
+        ],
+        "summary": "가족으로 가입",
+        "description": "이름만 받는다. 휴대폰 번호와 인증은 없다.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 20
+                  }
+                }
+              },
+              "example": {
+                "name": "김민수"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "가입됨",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "memberId": "mem_8b2c4d6e0f1a",
+                  "token": "(브라우저가 보관)",
+                  "name": "김민수"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "name_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "name_required"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "rate_limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "rate_limited"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "capacity_reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "capacity_reached"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/family/links": {
+      "post": {
+        "tags": [
+          "가족 폰"
+        ],
+        "summary": "초대 코드로 부모님 차와 연결",
+        "description": "차 화면의 코드를 넣는다. 10분 안에 5번 틀리면 그 가족은 10분 동안 막힌다. 한 주소(IP)에서는 10분에 10번까지 시도할 수 있다.",
+        "security": [
+          {
+            "familyToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "pattern": "^[0-9]{6}$"
+                  },
+                  "relation": {
+                    "type": "string",
+                    "maxLength": 10,
+                    "description": "호칭. 비우면 `부모님`"
+                  }
+                }
+              },
+              "example": {
+                "code": "482913",
+                "relation": "엄마"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "연결됨",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "driverId": "drv_3f9a1c2b4d5e",
+                  "name": "김정숙",
+                  "relation": "엄마"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "invalid_code / expired_code",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "invalid_code"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "too_many_attempts / rate_limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "too_many_attempts"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/family/overview": {
+      "get": {
+        "tags": [
+          "가족 폰"
+        ],
+        "summary": "가족 목록",
+        "description": "연결된 운전자와 각자의 최근 요약 상태다. 폰 화면이 4초마다 부른다.",
+        "security": [
+          {
+            "familyToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "목록",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "name": "김민수",
+                  "drivers": [
+                    {
+                      "driverId": "drv_3f9a1c2b4d5e",
+                      "name": "김정숙",
+                      "relation": "엄마",
+                      "latest": {
+                        "week": "2026-11-09",
+                        "status": "talk",
+                        "sentAt": 1794321531724,
+                        "acked": false
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/family/drivers/{driverId}/summary": {
+      "get": {
+        "tags": [
+          "가족 폰"
+        ],
+        "summary": "최근 주간 요약",
+        "description": "연결된 운전자의 최근 요약이다. 아직 없으면 `summary`가 null이다. `evidenceShared`가 false이면 `evidence`는 항상 빈 배열이다.",
+        "security": [
+          {
+            "familyToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/driverId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "요약",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "driverId": "drv_3f9a1c2b4d5e",
+                  "name": "김정숙",
+                  "relation": "엄마",
+                  "summary": {
+                    "week": "2026-11-09",
+                    "status": "talk",
+                    "headline": "",
+                    "goodPoints": [
+                      "밤 운전 0회"
+                    ],
+                    "promise": "해 지면 운전 안 하기 · 이번 주 지킴",
+                    "avoided": "",
+                    "changes": [
+                      "강한 제동이 4주째, 조향 보정이 2주째 평소보다 많았어요"
+                    ],
+                    "evidence": [
+                      {
+                        "label": "강한 제동",
+                        "unit": "회/100km",
+                        "typical": 6.3,
+                        "value": 21.9,
+                        "weeks": 4
+                      }
+                    ],
+                    "evidenceShared": true,
+                    "sentAt": 1794321531724,
+                    "acked": false
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "not_linked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "not_linked"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/family/drivers/{driverId}/ack": {
+      "post": {
+        "tags": [
+          "가족 폰"
+        ],
+        "summary": "요약을 확인했다고 표시",
+        "description": "`확인했어요`를 눌렀을 때 부른다. 차 화면의 가족 카드에 나타난다.",
+        "security": [
+          {
+            "familyToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/driverId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "week"
+                ],
+                "properties": {
+                  "week": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              },
+              "example": {
+                "week": "2026-11-09"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "표시됨",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "week": "2026-11-09",
+                  "acked": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "not_linked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "not_linked"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "no_summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "no_summary"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "carToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "`POST /api/car/drivers`가 돌려준 carToken"
+      },
+      "familyToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "`POST /api/family/members`가 돌려준 token"
+      }
+    },
+    "parameters": {
+      "driverId": {
+        "name": "driverId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "연결할 때 받은 운전자 ID"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "오류 코드"
+          }
+        }
+      },
+      "ShareScope": {
+        "type": "string",
+        "enum": [
+          "status",
+          "evidence"
+        ],
+        "description": "status: 상태만 · evidence: 상태와 숫자 근거"
+      },
+      "WeeklyStatus": {
+        "type": "string",
+        "enum": [
+          "learning",
+          "insufficient",
+          "stable",
+          "observe",
+          "talk"
+        ],
+        "description": "학습 중 · 자료 부족 · 안정 · 관찰 · 대화 권장. drivewatch-core의 주간 판정 결과"
+      },
+      "DriverRegistration": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "shareScope": {
+            "$ref": "#/components/schemas/ShareScope"
+          }
+        }
+      },
+      "Evidence": {
+        "type": "object",
+        "required": [
+          "label",
+          "value"
+        ],
+        "properties": {
+          "label": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "unit": {
+            "type": "string",
+            "maxLength": 20,
+            "description": "예: 회/100km"
+          },
+          "typical": {
+            "type": "number",
+            "nullable": true,
+            "description": "평소 값"
+          },
+          "value": {
+            "type": "number",
+            "description": "이번 주 값"
+          },
+          "weeks": {
+            "type": "integer",
+            "nullable": true,
+            "description": "연속으로 평소를 넘은 주 수"
+          }
+        }
+      },
+      "SummaryInput": {
+        "type": "object",
+        "required": [
+          "week",
+          "status"
+        ],
+        "properties": {
+          "week": {
+            "type": "string",
+            "format": "date",
+            "description": "그 주의 월요일 (YYYY-MM-DD)"
+          },
+          "status": {
+            "$ref": "#/components/schemas/WeeklyStatus"
+          },
+          "headline": {
+            "type": "string",
+            "maxLength": 120,
+            "description": "한 줄 요약. 안정일 때 보인다"
+          },
+          "goodPoints": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            },
+            "description": "잘하신 점"
+          },
+          "promise": {
+            "type": "string",
+            "maxLength": 80,
+            "description": "약속 이행"
+          },
+          "avoided": {
+            "type": "string",
+            "maxLength": 80,
+            "description": "피한 구간. 지명은 운전자가 붙인 이름만 쓴다"
+          },
+          "changes": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "description": "달라진 점을 말로 적은 것. 범위와 무관하게 전달된다"
+          },
+          "evidence": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "description": "숫자 근거. 범위가 evidence일 때만 저장된다"
+          }
+        }
+      }
+    }
+  },
+  "x-error-codes": {
+    "name_required": "이름이 비어 있다",
+    "invalid_scope": "범위가 status나 evidence가 아니다",
+    "invalid_week": "week가 YYYY-MM-DD 날짜가 아니다",
+    "invalid_status": "status가 정해진 다섯 값이 아니다",
+    "invalid_json": "본문이 JSON이 아니다",
+    "body_too_large": "본문이 16KB를 넘는다",
+    "unauthorized": "토큰이 없거나 맞지 않는다",
+    "not_linked": "그 운전자와 연결되지 않은 가족이다",
+    "invalid_code": "그런 초대 코드가 없다",
+    "expired_code": "초대 코드의 10분이 지났다",
+    "no_summary": "그 주의 요약이 없다",
+    "too_many_attempts": "코드를 10분 안에 5번 틀렸다",
+    "rate_limited": "한 주소에서 요청이 너무 많다 (등록 1시간 10번, 연결 10분 10번, 쓰기 1분 120번)",
+    "capacity_reached": "시연 서버의 등록 상한에 닿았다",
+    "not_found": "그런 주소가 없다",
+    "server_error": "서버 오류"
+  }
+}

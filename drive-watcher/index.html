@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="DriveWatch는 차량 신호로 부모님 운전을 본인의 평소와 비교해, 달라진 구간을 주차 후 보여 주는 Pleos 차량 앱입니다.">
+  <title>DriveWatch · 부모님 운전에 차는 스마트워치</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="presentation.css">
+  <link rel="stylesheet" href="landing.css">
+</head>
+<body>
+  <main class="presentation landing">
+    <header class="presentation-mast">
+      <a class="presentation-brand" href="index.html">
+        <svg viewBox="0 0 28 28" aria-hidden="true"><path d="M3 15h6l3-7 4 13 3-6h6"/></svg>
+        <span>DriveWatch <small>드라이브 와쳐</small></span>
+      </a>
+      <span class="badge"><i></i>공모전 MVP · 브라우저 시연</span>
+    </header>
+
+    <section class="hero" aria-labelledby="landing-title">
+      <p class="eyebrow">DRIVEWATCH</p>
+      <h1 id="landing-title">부모님 운전에 차는 스마트워치</h1>
+      <p class="hero-lead">차량 신호로 부모님 운전을 나이가 아니라 <strong>본인의 평소</strong>와 비교해요. 달라진 구간을 주차 후에 보여 주고, 가족에게는 감시가 아닌 요약을 보내는 Pleos 차량 앱이에요.</p>
+      <div class="hero-actions">
+        <a class="cta primary" href="engine-demo.html">판단 엔진 시연</a>
+        <a class="cta" href="console.html">Pleos 화면 바로 보기</a>
+      </div>
+      <p class="hero-note">이 페이지와 시연은 브라우저에서 돌아요. Android 차량 앱은 개발 중이고, 신호 수집과 판정은 Pleos 에뮬레이터에서 확인했어요.</p>
+    </section>
+
+    <section class="act" aria-labelledby="scene-overview">
+      <div class="act-head">
+        <p class="eyebrow">01 / 9초 개요</p>
+        <h2 id="scene-overview">한 번의 이동에서 일어나는 일</h2>
+        <p>달리는 동안에는 조용히 기록만 해요. 같은 신호가 평소 범위를 <strong>두 구간 연속</strong> 넘었을 때만 변화로 남기고, 주차한 뒤에 보여 줘요.</p>
+      </div>
+      <div class="overview" id="overview" data-phase="idle">
+        <div class="overview-top">
+          <span class="gear" id="overview-gear" aria-hidden="true">D</span>
+          <p class="overview-caption" id="overview-caption" aria-live="polite">도심 시연 기록을 재생해요</p>
+          <button type="button" class="replay" id="overview-replay">다시 보기</button>
+        </div>
+        <div class="chart" role="img" id="overview-chart" aria-label="2분 구간별 강한 제동 횟수">
+          <div class="chart-plot" id="overview-plot">
+            <div class="chart-upper" id="overview-upper"><span></span></div>
+          </div>
+        </div>
+        <div class="arrival" id="overview-card" aria-live="polite">
+          <p class="arrival-kicker">주차 후 · 차량 화면</p>
+          <p class="arrival-title" id="overview-card-title"></p>
+          <p class="arrival-evidence" id="overview-card-evidence"></p>
+          <p class="arrival-where" id="overview-card-where"></p>
+        </div>
+        <div class="overview-progress" aria-hidden="true"><i id="overview-progress"></i></div>
+        <p class="act-foot">합성한 도심 시연 기록을 실제 판정 엔진에 넣은 결과예요. 구간 길이와 기준값은 시연용이에요.</p>
+      </div>
+    </section>
+
+    <section class="act" aria-labelledby="scene-engine">
+      <div class="act-head">
+        <p class="eyebrow">02 / 판단 엔진</p>
+        <h2 id="scene-engine">입력이 바뀌면 판정이 바뀌어요</h2>
+        <p>같은 코스를 자동 재생하거나 직접 운전해 보세요. 한 구간만 평소를 넘긴 기록과 두 구간 연속 넘긴 기록이 다르게 판정돼요. 공개 실측 CAN 기록으로도 같은 규칙을 돌려 볼 수 있어요.</p>
+      </div>
+      <div class="act-links">
+        <a class="link-card" href="engine-demo.html">
+          <span class="tag built">구현</span>
+          <strong>판단 엔진 시연 열기</strong>
+          <span>자동 재생이 기본이고, 키보드로 직접 운전할 수도 있어요</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="act" aria-labelledby="scene-car">
+      <div class="act-head">
+        <p class="eyebrow">03 / 차량 화면</p>
+        <h2 id="scene-car">주차하면 카드가 떠요</h2>
+        <p>내비로 달리고, 주차한 뒤에 어느 구간이 달랐는지 확인해요. 분할 화면에서도 보던 내용이 이어지고, 이번 주 카드에서 변화가 돌아왔는지 이어졌는지 봐요.</p>
+      </div>
+      <div class="act-links">
+        <a class="link-card" href="console.html">
+          <span class="tag built">구현</span>
+          <strong>Pleos 화면 시연 열기</strong>
+          <span>주차하기 → 드라이브 와쳐 → 어느 구간이었나요?</span>
+        </a>
+      </div>
+      <figure class="proof">
+        <img id="evidence-image" alt="Pleos 에뮬레이터의 확인용 앱 화면. 평소와 달라요, 강한 제동, 8초 구간당 평소 3회 이하, 이번 최고 5회, 출발 후 24–32초 4회, 32–40초 5회" width="1100" height="458" loading="lazy">
+        <figcaption>
+          <span class="tag checked">에뮬레이터에서 확인</span>
+          Pleos Connect Emulator v2.1.0에서 차속·브레이크·조향·기어 신호를 실제로 받아, 같은 주행을 구간별 1·0·1·4·5·1회로 세고 다섯 번째 구간에서 변화를 감지했어요. 시연 모드라 구간이 8초예요. 실차에서 확인한 것은 아니에요.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="act" aria-labelledby="scene-family">
+      <div class="act-head">
+        <p class="eyebrow">04 / 가족 요약</p>
+        <h2 id="scene-family">부모님이 먼저 보고, 보내기로 한 것만 가요</h2>
+        <p>초대 코드는 부모님이 차에서 띄워요. "상태만"을 고르면 숫자는 차 밖으로 나가지 않고, 위치와 경로는 아예 보내지 않아요. 가족은 휴대폰 브라우저에서 요약을 봐요.</p>
+      </div>
+      <div class="act-links">
+        <a class="link-card" href="https://drive.olvend.com/family/">
+          <span class="tag built">구현</span>
+          <strong>가족 폰 화면 열기</strong>
+          <span>가입 → 코드로 연결 → 주간 요약</span>
+        </a>
+        <a class="link-card" href="https://drive.olvend.com/api/docs">
+          <span class="tag built">구현</span>
+          <strong>REST API 명세</strong>
+          <span>차량 앱과 폰 화면이 쓰는 주소 10개</span>
+        </a>
+      </div>
+      <p class="act-foot">차량 앱에서 코드를 띄우고 요약을 보내는 화면은 개발 중이에요.</p>
+    </section>
+
+    <section class="act" aria-labelledby="scene-status">
+      <div class="act-head">
+        <p class="eyebrow">구현과 설계</p>
+        <h2 id="scene-status">어디까지 만들었나</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>지표</th><th>차량 신호</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td>강한 제동</td><td>브레이크 눌림 + 차속</td><td><span class="tag built">구현</span> <span class="tag checked">에뮬레이터 확인</span></td></tr>
+            <tr><td>조향 보정</td><td>조향각</td><td><span class="tag built">구현</span> <span class="tag checked">에뮬레이터 확인</span></td></tr>
+            <tr><td>쉬지 않고 운전한 시간</td><td>주행·정차 상태</td><td><span class="tag built">구현</span></td></tr>
+            <tr><td>방향지시등 이행</td><td>방향지시등 + 회전 안내 지점</td><td><span class="tag planned">설계</span> 신호 수신만 확인</td></tr>
+            <tr><td>익숙한 길 재탐색</td><td>내비 재탐색·도착 이벤트</td><td><span class="tag planned">설계</span></td></tr>
+            <tr><td>기어 머뭇거림</td><td>기어 상태</td><td><span class="tag planned">설계</span></td></tr>
+            <tr><td>야간·빗길 비중</td><td>조명·와이퍼 + 시각</td><td><span class="tag planned">설계</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="act" aria-labelledby="scene-score">
+      <div class="act-head">
+        <p class="eyebrow">운전점수와 다른 점</p>
+        <h2 id="scene-score">잘하는지가 아니라, 달라졌는지를 봐요</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th></th><th>내비 앱 운전점수</th><th>DriveWatch</th></tr></thead>
+          <tbody>
+            <tr><td>기록되는 주행</td><td>내비를 켠 주행</td><td>차에 타면 항상. 내비 없이 다니는 익숙한 길도</td></tr>
+            <tr><td>비교 기준</td><td>모두에게 같은 잣대, 다른 운전자 평균</td><td>같은 길에서의 본인 과거 기록</td></tr>
+            <tr><td>변화로 보는 때</td><td>주행마다 점수가 바뀜</td><td>두 구간 연속, 2주·4주 연속일 때만</td></tr>
+            <tr><td>결과</td><td>점수, 보험 할인</td><td>어느 구간에서 얼마나, 그리고 가족과 나눌 요약</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="act notes" aria-labelledby="scene-notes">
+      <div class="act-head">
+        <p class="eyebrow">더 보기</p>
+        <h2 id="scene-notes">연구 노트와 문서</h2>
+      </div>
+      <ul class="note-list">
+        <li><a href="profile-demo.html">개인 경향 모델</a> 습관 여러 개가 함께 움직이는 방식을 운전자별로 학습해 보는 실험이에요. 주차 요약과 주간 카드의 판정에는 쓰지 않아요.</li>
+        <li><a href="PLAYBOOK.MD">웹 MVP 플레이북</a> 무엇을 비교하고 언제 알려 주는지, 시연 순서와 검증 단계를 적었어요.</li>
+      </ul>
+    </section>
+
+    <footer>
+      <span>주행 기록은 합성 기록과 공개 실측 데이터예요. 기준값은 시연용이고 실차 검증 전이에요.</span>
+      <span>현대자동차그룹 차량용 앱 개발 공모전 출품작</span>
+    </footer>
+  </main>
+  <script src="engine.js"></script>
+  <script src="replays.js"></script>
+  <script src="landing-data.js"></script>
+  <script src="landing-evidence.js"></script>
+  <script src="landing.js"></script>
+</body>
+</html>

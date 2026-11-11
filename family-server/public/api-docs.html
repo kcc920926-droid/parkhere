@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DriveWatch 가족 요약 API</title>
+<style>
+:root { --bg:#ffffff; --panel:#f5f6f8; --text:#111827; --muted:#5b6472; --line:#dfe3e8; --accent:#2563eb; --code:#eef1f4;
+  --get:#15803d; --get-bg:#dcfce7; --post:#1d4ed8; --post-bg:#dbeafe; --put:#a16207; --put-bg:#fef3c7; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0f1720; --panel:#18222d; --text:#eef1f4; --muted:#9aa5b1; --line:#2b3642; --accent:#60a5fa; --code:#202b37;
+  --get:#4ade80; --get-bg:#14321f; --post:#93c5fd; --post-bg:#172a46; --put:#facc15; --put-bg:#3a2f0b; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 32px 16px 80px; }
+h1 { font-size: 28px; margin: 0 0 4px; }
+h2 { font-size: 20px; margin: 44px 0 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+h3 { font-size: 16px; margin: 0; }
+p { margin: 8px 0; }
+ul, ol { margin: 8px 0; padding-left: 22px; }
+a { color: var(--accent); }
+.muted { color: var(--muted); font-size: 14px; }
+code { font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code); border-radius: 4px; padding: 1px 5px; }
+pre { margin: 6px 0 0; background: var(--code); border-radius: 8px; padding: 12px 14px; overflow-x: auto; }
+pre code { background: none; padding: 0; }
+nav { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 14px 0 0; font-size: 14px; }
+.op { border: 1px solid var(--line); border-radius: 12px; margin: 12px 0; overflow: hidden; }
+.op > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--panel); flex-wrap: wrap; }
+.op > summary::-webkit-details-marker { display: none; }
+.op > div { padding: 4px 14px 14px; }
+.method { font: 600 12px/1 ui-monospace, Menlo, monospace; border-radius: 6px; padding: 6px 8px; min-width: 48px; text-align: center; }
+.GET { color: var(--get); background: var(--get-bg); } .POST { color: var(--post); background: var(--post-bg); } .PUT { color: var(--put); background: var(--put-bg); }
+.path { font: 14px/1.4 ui-monospace, Menlo, monospace; overflow-wrap: anywhere; }
+.auth { margin-left: auto; font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; }
+.label { font-size: 12px; color: var(--muted); margin: 14px 0 0; text-transform: none; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; white-space: nowrap; }
+td:first-child { white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+  <h1 id="title">DriveWatch 가족 요약 API</h1>
+  <p class="muted" id="version"></p>
+  <div id="intro"></div>
+  <nav aria-label="이 페이지에서">
+    <a href="#flow">연결 순서</a><a href="#auth">인증</a><a href="#endpoints">주소 목록</a>
+    <a href="#summary">요약 형식</a><a href="#errors">오류 코드</a><a href="#try">직접 불러 보기</a>
+    <a href="/api/openapi.json">OpenAPI 원본</a><a href="/family/">폰 화면</a>
+  </nav>
+
+  <h2 id="flow">연결 순서</h2>
+  <ol>
+    <li>차량 앱이 운전자를 등록하고 <code>carToken</code>을 받는다. <code>POST /api/car/drivers</code></li>
+    <li>운전자가 차에서 초대 코드를 띄운다. <code>POST /api/car/invites</code></li>
+    <li>가족이 폰 화면에서 가입하고 코드를 넣는다. <code>POST /api/family/members</code> → <code>POST /api/family/links</code></li>
+    <li>부모님이 주간 카드에서 보내기를 누르면 차량 앱이 요약을 보낸다. <code>POST /api/car/summaries</code></li>
+    <li>폰 화면이 요약을 읽고 확인을 표시한다. <code>GET …/summary</code> → <code>POST …/ack</code></li>
+    <li>차량 앱이 가족의 확인 여부를 읽는다. <code>GET /api/car/me</code></li>
+  </ol>
+
+  <h2 id="auth">인증</h2>
+  <div id="auth-body"></div>
+
+  <h2 id="endpoints">주소 목록</h2>
+  <p class="muted">서버: <span id="servers"></span></p>
+  <div id="ops"><p class="muted">명세를 불러오는 중…</p></div>
+
+  <h2 id="summary">요약 형식</h2>
+  <p>차량 앱이 <code>POST /api/car/summaries</code>로 보내는 본문이다. 목록에 없는 항목은 버린다.</p>
+  <div class="scroll" id="summary-table"></div>
+  <p class="label">숫자 근거 한 건 (<code>evidence</code>의 원소)</p>
+  <div class="scroll" id="evidence-table"></div>
+
+  <h2 id="errors">오류 코드</h2>
+  <p>오류는 <code>{"error": "코드"}</code> 형태로 돌아온다.</p>
+  <div class="scroll" id="error-table"></div>
+
+  <h2 id="try">직접 불러 보기</h2>
+  <pre><code id="curl"></code></pre>
+
+  <noscript><p>이 페이지는 <a href="/api/openapi.json">OpenAPI 원본</a>을 읽어서 그린다. 스크립트를 켜거나 원본을 직접 보세요.</p></noscript>
+</main>
+<script>
+(async () => {
+  const $ = (id) => document.getElementById(id);
+  function h(tag, props = {}, ...children) {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(props)) node.setAttribute(key === "class" ? "class" : key, value);
+    for (const child of children.flat(Infinity)) if (child != null && child !== false) node.append(child);
+    return node;
+  }
+  /* 명세의 설명은 `코드` 표기와 '- ' 목록만 쓴다. */
+  const inline = (text) => text.split(/(`[^`]+`)/).map((part) => (part.startsWith("`") ? h("code", {}, part.slice(1, -1)) : part));
+  function prose(text = "") {
+    const out = [];
+    let list = null;
+    for (const line of text.split("\n")) {
+      if (line.startsWith("- ")) { if (!list) out.push(list = h("ul")); list.append(h("li", {}, inline(line.slice(2)))); }
+      else { list = null; if (line.trim()) out.push(h("p", {}, inline(line))); }
+    }
+    return out;
+  }
+  const table = (head, rows) => h("table", {},
+    h("thead", {}, h("tr", {}, head.map((cell) => h("th", {}, cell)))),
+    h("tbody", {}, rows.map((row) => h("tr", {}, row.map((cell) => h("td", {}, typeof cell === "string" ? inline(cell) : cell))))));
+  const json = (value) => h("pre", {}, h("code", {}, JSON.stringify(value, null, 2)));
+
+  let spec;
+  try { spec = await (await fetch("/api/openapi.json", { cache: "no-store" })).json(); }
+  catch { $("ops").replaceChildren(h("p", {}, "명세를 불러오지 못했어요. ", h("a", { href: "/api/openapi.json" }, "원본 열기"))); return; }
+
+  const resolve = (schema) => (schema && schema.$ref ? spec.components.schemas[schema.$ref.split("/").pop()] : schema) || {};
+  const typeOf = (schema) => {
+    const s = resolve(schema);
+    if (s.enum) return s.enum.join(" | ");
+    if (s.type === "array") return `${typeOf(s.items)}[]`;
+    return s.type === "string" && s.format ? `string (${s.format})` : s.type || "object";
+  };
+  const fields = (name) => {
+    const schema = spec.components.schemas[name];
+    return table(["항목", "형식", "필수", "설명"], Object.entries(schema.properties).map(([key, value]) => {
+      const s = resolve(value);
+      const limit = [value.maxLength && `최대 ${value.maxLength}자`, value.maxItems && `최대 ${value.maxItems}개`].filter(Boolean).join(", ");
+      return [h("code", {}, key), typeOf(value), (schema.required || []).includes(key) ? "예" : "", [s.description || value.description || "", limit].filter(Boolean).join(" · ")];
+    }));
+  };
+
+  document.title = spec.info.title;
+  $("title").textContent = spec.info.title;
+  $("version").textContent = `버전 ${spec.info.version} · OpenAPI ${spec.openapi}`;
+  $("intro").replaceChildren(...prose(spec.info.description));
+  $("servers").replaceChildren(...spec.servers.flatMap((server, index) => [index ? " · " : "", h("code", {}, server.url), ` ${server.description}`]));
+  $("auth-body").replaceChildren(
+    h("p", {}, inline("토큰은 등록·가입할 때 한 번 받는다. 그 뒤 요청마다 `Authorization: Bearer 토큰` 헤더를 붙인다.")),
+    table(["누가", "토큰", "받는 곳"], Object.entries(spec.components.securitySchemes).map(([name, scheme]) =>
+      [name === "carToken" ? "차량 앱" : "가족 폰", h("code", {}, name === "carToken" ? "carToken" : "token"), scheme.description])));
+
+  const authLabel = (security) => (!security || !security.length ? "토큰 없음" : security[0].carToken ? "carToken" : "token");
+  $("ops").replaceChildren(...spec.tags.flatMap((tag) => [
+    h("h3", { style: "margin-top:22px" }, tag.name),
+    h("p", { class: "muted" }, inline(tag.description)),
+    ...Object.entries(spec.paths).flatMap(([route, methods]) => Object.entries(methods)
+      .filter(([, op]) => op.tags.includes(tag.name))
+      .map(([method, op]) => {
+        const request = op.requestBody?.content["application/json"];
+        const success = op.responses["200"].content["application/json"];
+        const failures = Object.entries(op.responses).filter(([status]) => status !== "200");
+        return h("details", { class: "op", id: `${method}-${route.replace(/[^a-z]+/gi, "-")}` },
+          h("summary", {}, h("span", { class: `method ${method.toUpperCase()}` }, method.toUpperCase()),
+            h("span", { class: "path" }, route), h("strong", {}, op.summary), h("span", { class: "auth" }, authLabel(op.security))),
+          h("div", {},
+            prose(op.description),
+            request ? [h("p", { class: "label" }, "요청 본문 예시"), json(request.example)] : null,
+            h("p", { class: "label" }, `응답 200 · ${op.responses["200"].description}`), json(success.example),
+            failures.length ? [h("p", { class: "label" }, "오류"),
+              table(["상태", "코드"], failures.map(([status, response]) => [status, response.description.split(" / ").map((code, index) => [index ? ", " : "", h("code", {}, code)])]))] : null));
+      })),
+  ]));
+
+  $("summary-table").replaceChildren(fields("SummaryInput"));
+  $("evidence-table").replaceChildren(fields("Evidence"));
+  $("error-table").replaceChildren(table(["코드", "뜻"], Object.entries(spec["x-error-codes"]).map(([code, meaning]) => [h("code", {}, code), meaning])));
+
+  const base = location.origin;
+  $("curl").textContent = [
+    "# 1. 운전자 등록 (carToken을 받는다)",
+    `curl -s -X POST ${base}/api/car/drivers -H 'content-type: application/json' -d '{"name":"시연","shareScope":"evidence"}'`,
+    "",
+    "# 2. 초대 코드 발급",
+    `curl -s -X POST ${base}/api/car/invites -H 'authorization: Bearer <carToken>'`,
+    "",
+    "# 3. 주간 요약 보내기",
+    `curl -s -X POST ${base}/api/car/summaries -H 'authorization: Bearer <carToken>' -H 'content-type: application/json' \\`,
+    `  -d '${JSON.stringify(spec.paths["/api/car/summaries"].post.requestBody.content["application/json"].example)}'`,
+  ].join("\n");
+
+  if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.setAttribute("open", "");
+})();
+</script>
+</body>
+</html>

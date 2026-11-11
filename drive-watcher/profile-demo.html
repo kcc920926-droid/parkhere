@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>드라이브 와쳐 · 개인 경향 모델</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@500;600;700&family=Rajdhani:wght@600;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="profile.css">
+  <link rel="stylesheet" href="hud.css">
+  <script src="course.js" defer></script>
+  <script src="habits.js" defer></script>
+  <script src="profile-model.js" defer></script>
+  <script src="profile-cache.js" defer></script>
+  <script src="profile-demo.js" defer></script>
+</head>
+<body class="hud">
+  <main class="profile-page">
+    <header class="mast">
+      <div class="wordmark">
+        <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
+          <rect x="1" y="1" width="38" height="38" rx="12" fill="#102b25" stroke="#254c40"/>
+          <path d="M8 21h7l3-7 4 13 3-6h7" fill="none" stroke="#91efd2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div><span class="eyebrow">DRIVE WATCHER</span><h1>드라이브 와쳐</h1></div>
+      </div>
+      <div class="mast-actions">
+        <span class="badge"><i></i> 합성 데이터 · 브라우저 학습</span>
+        <a class="demo-back" href="index.html">← 시연 선택</a>
+      </div>
+    </header>
+
+    <section class="intro" aria-labelledby="profile-intro">
+      <p class="eyebrow">DRIVE WATCHER / PERSONAL TENDENCY</p>
+      <h2 id="profile-intro">왜 오늘은 경향이 다를까</h2>
+      <p>운전자마다 반응·차간 거리·제동이 함께 움직이는 방식이 달라요. 판단 엔진과 같은 코스를 달린 평소 주행 80회로 그 사람의 경향을 학습하고, 오늘이 그 경향에서 벗어났는지 봐요.</p>
+    </section>
+
+    <div class="profile-bar">
+      <div class="profile-toggle" role="group" aria-label="운전자 선택" id="driver-picker"></div>
+      <div class="training" aria-live="polite">
+        <svg viewBox="0 0 120 28" id="loss-line" aria-hidden="true"><path id="loss-path"/></svg>
+        <span id="training-status">경향 학습 준비 중</span>
+      </div>
+    </div>
+
+    <div class="profile-grid">
+      <section class="panel network-panel" aria-labelledby="network-title">
+        <div class="panel-head">
+          <div><p class="eyebrow">01 / NETWORK</p><h2 id="network-title">오늘 주행이 경향 모델을 지나는 모습</h2></div>
+          <span class="context" id="network-shape">6 → 5 → 2 → 5 → 6</span>
+        </div>
+        <svg class="network" id="network" viewBox="0 0 660 330" role="img" aria-label="오늘 주행 습관 6개가 압축됐다가 다시 복원되는 신경망"></svg>
+        <div class="network-legend">
+          <span>왼쪽: 오늘 코스에서 잰 습관</span><span>가운데 2칸: 이 운전자의 경향 좌표</span><span>오른쪽: 경향으로 보면 이래야 하는 값</span>
+        </div>
+        <div class="day-picker" role="group" aria-label="오늘 주행 선택" id="day-picker"></div>
+        <div class="scan-row">
+          <button type="button" class="primary" id="scan">상황 스캔</button>
+          <span id="scan-status">네 가지 날을 연달아 판단해요.</span>
+          <a class="mine-link" href="engine-demo.html">판단 엔진에서 직접 운전하기 ↗</a>
+        </div>
+      </section>
+
+      <section class="panel verdict-panel" aria-labelledby="verdict-title">
+        <p class="eyebrow">02 / VERDICT</p>
+        <h2 id="verdict-title" aria-live="polite">평소 경향 안이에요</h2>
+        <p class="verdict-copy" id="verdict-copy"></p>
+        <div class="gauge">
+          <div class="gauge-track"><i id="gauge-fill"></i><b class="gauge-limit"></b></div>
+          <div class="gauge-labels"><span id="gauge-value"></span><span>경계선</span></div>
+        </div>
+        <div class="verdict-split">
+          <figure class="latent">
+            <svg id="latent" viewBox="0 0 200 200" role="img" aria-label="과거 주행과 오늘 주행의 경향 좌표"></svg>
+            <figcaption>점: 평소 80회 · 빛나는 점: 오늘 · 오른쪽: 차이가 큰 습관 3개</figcaption>
+          </figure>
+          <ul class="reading-list" id="readings"></ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel validation" aria-labelledby="validation-title">
+      <div class="panel-head">
+        <div><p class="eyebrow">03 / VALIDATION</p><h2 id="validation-title">여러 번 돌려 보지 않아도 되는 자동 검증</h2></div>
+        <div class="validate-actions">
+          <button type="button" class="primary" id="validate">학습에 안 쓴 580일 판단하기</button>
+          <button type="button" id="rerun" hidden>브라우저에서 다시 달려 확인</button>
+        </div>
+      </div>
+      <p class="validation-copy">평소 날 300일과 반응이 0.05–0.4초 늦어진 날 280일을 같은 코스에서 새로 달려 같은 모델로 판단해요. 시드를 고정해서 누가 눌러도 같은 결과가 나오고, 틀린 날은 눌러서 위 신경망으로 바로 다시 볼 수 있어요.</p>
+      <p class="validation-source" id="validation-source"></p>
+      <div class="validation-body" id="validation-body" hidden>
+        <div class="validation-stats">
+          <div><span>오탐 · 평소인데 다르다고 판단</span><strong id="false-alarm-rate"></strong></div>
+          <div><span id="miss-label">미탐 · 늦어졌는데 평소라고 판단</span><strong id="miss-rate"></strong></div>
+          <svg id="sweep" viewBox="0 0 300 140" role="img" aria-label="반응 지연 정도별 감지율"></svg>
+        </div>
+        <div class="case-lists">
+          <div><h3>오탐 사례</h3><ol class="cases" id="false-alarms"></ol></div>
+          <div><h3>미탐 사례</h3><ol class="cases" id="misses"></ol></div>
+        </div>
+      </div>
+    </section>
+
+    <footer><span>시연용 합성 주행으로 브라우저에서 학습한 작은 오토인코더예요. 실제 제품의 모델 구조·습관 지표·경계선은 실차 기록으로 다시 정해요.</span><a href="PLAYBOOK.MD">MVP 플레이북</a></footer>
+  </main>
+</body>
+</html>

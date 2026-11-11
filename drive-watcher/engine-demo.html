@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>드라이브 와쳐 · 공모전용 판단 엔진</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@500;600;700&family=Rajdhani:wght@600;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="hud.css">
+  <script src="engine.js" defer></script>
+  <script src="replays.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="course.js" defer></script>
+  <script src="trip-store.js" defer></script>
+  <script src="road.js" defer></script>
+  <script src="engine-audio.js" defer></script>
+  <script src="habits.js" defer></script>
+  <script src="cockpit.js" defer></script>
+  <script src="can-source.js" defer></script>
+  <script src="telemetry.js" defer></script>
+  <script src="pleos-demo.js" defer></script>
+</head>
+<body class="hud">
+  <main>
+    <header class="mast">
+      <div class="wordmark">
+        <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
+          <rect x="1" y="1" width="38" height="38" rx="12" fill="#102b25" stroke="#254c40"/>
+          <path d="M8 21h7l3-7 4 13 3-6h7" fill="none" stroke="#91efd2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div><span class="eyebrow">DRIVE WATCHER</span><h1>드라이브 와쳐</h1></div>
+      </div>
+      <div class="mast-actions">
+        <span class="badge" id="drive-source-badge"><i></i> 시뮬레이션</span>
+        <a class="demo-back" href="index.html">← 시연 선택</a>
+      </div>
+    </header>
+
+    <section aria-labelledby="intro" class="intro">
+      <p class="eyebrow" id="drive-mode-label">DRIVE WATCHER / SIMULATOR</p>
+      <h2 id="intro">평소와 달라진 순간</h2>
+      <p id="drive-intro">차량이 오가는 세 차로를 달리면서 내 차의 위치와 제동 기록을 확인해 보세요.</p>
+    </section>
+
+    <div class="drive-views" role="group" aria-label="데모 입력 선택">
+      <button type="button" id="view-course" aria-pressed="true" aria-controls="drive-course">가상 주행</button>
+      <button type="button" id="view-pleos" aria-pressed="false" aria-controls="drive-pleos">Pleos SDK 시연</button>
+      <button type="button" id="view-can" aria-pressed="false" aria-controls="drive-can">실측 CAN 수신</button>
+    </div>
+
+    <section class="cockpit" id="drive-course" aria-labelledby="cockpit-title">
+      <div class="panel road-panel">
+        <div class="panel-head">
+          <div><p class="eyebrow">01 / CHASE VIEW</p><h2 id="cockpit-title">도심 제동 코스</h2></div>
+          <span class="context" id="course-duration">가상 코스</span>
+        </div>
+        <div class="windshield">
+          <canvas id="road" width="960" height="460" role="img" aria-label="민트색 내 차와 주변 차량을 뒤에서 내려다보는 시점"></canvas>
+          <div class="windshield-hud">
+            <span class="speed-gauge">
+              <svg viewBox="0 0 120 108" aria-hidden="true">
+                <path class="arc-track" d="M24.6 95.4 A50 50 0 1 1 95.4 95.4"/>
+                <path class="arc-value" id="speed-arc" d="M24.6 95.4 A50 50 0 1 1 95.4 95.4" pathLength="100" stroke-dasharray="0 100"/>
+              </svg>
+              <span><b id="course-speed">43</b><small>KM/H</small></span>
+            </span>
+            <span class="road-position">
+              <span><small>차로</small> <b id="course-lane">2 / 3</b></span>
+              <span><small>앞차 간격</small> <b id="course-gap">38 m</b></span>
+            </span>
+          </div>
+          <span class="speed-badge" id="speed-badge" hidden></span>
+          <div class="road-toasts" id="road-toasts" aria-live="polite"></div>
+          <div class="detect-banner" id="detect-banner" hidden>
+            <svg width="40" height="40" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L22 20 H2 Z" fill="#ffb547"/><path d="M12 9v5M12 17v.5" stroke="#1e1405" stroke-width="2.4" stroke-linecap="round"/></svg>
+            <b>평소와 달라요</b><span id="detect-banner-detail"></span>
+          </div>
+        </div>
+        <div class="habit-strip" aria-label="이번 주행에서 재는 습관">
+          <p><b>실시간 습관</b><span>개인 경향 모델에 들어가는 6개 · 앞차가 감속할 때마다 반응을 재요</span></p>
+          <div class="habit-chips" id="habit-chips"></div>
+        </div>
+        <div class="lane-check" id="lane-check">
+          <b>차선 확인</b>
+          <span class="lane-gauge" aria-hidden="true"><i id="lane-gauge-marker"></i></span>
+          <span id="lane-position">차로 중앙</span>
+          <strong id="lane-status">차로 안</strong>
+        </div>
+        <div class="pedals">
+          <div><span><kbd>W</kbd> 가속</span><meter id="throttle" min="0" max="1" value="0" aria-label="가속 페달 깊이"></meter></div>
+          <div><span><kbd>S</kbd> 브레이크</span><meter id="brake" min="0" max="1" value="0" aria-label="브레이크 페달 깊이"></meter></div>
+        </div>
+        <div class="controls course-controls">
+          <button class="primary" type="button" id="course-auto">▶ 자동 재생</button>
+          <button type="button" id="course-manual">직접 운전</button>
+          <button type="button" id="course-pause" hidden>일시정지</button>
+          <button type="button" id="course-reset" hidden>초기화</button>
+          <button type="button" id="course-sound" aria-label="엔진음" aria-pressed="true">엔진음 켜짐</button>
+        </div>
+        <div class="trip-handoff" id="trip-handoff" hidden>
+          <button type="button" id="course-handoff">센터 화면에서 내 기록 보기</button>
+          <p class="rule" id="course-handoff-status" role="status"></p>
+        </div>
+        <div class="trip-handoff" id="course-tendency" hidden>
+          <a class="button-link primary" href="profile-demo.html#mine">내 운전 경향 판단 받기 →</a>
+          <p class="rule" id="course-tendency-status" role="status"></p>
+        </div>
+        <p class="rule">직접 운전에서 <kbd>W</kbd> / <kbd>↑</kbd> 가속, <kbd>S</kbd> / <kbd>↓</kbd> 제동, <kbd>A</kbd> / <kbd>D</kbd> 또는 <kbd>←</kbd> / <kbd>→</kbd> 좌우 이동.</p>
+      </div>
+
+      <div class="panel drive-analysis">
+        <div class="panel-head">
+          <div><p class="eyebrow">02 / DRIVING TRACE</p><h2>이번 주행 기록</h2></div>
+          <span class="context" id="course-clock">0.0초</span>
+        </div>
+        <div class="plot-legend"><span class="legend-car">내 속도</span><span class="legend-lead">기준 차량 속도</span><span class="legend-ghost">평소 5회</span><span class="legend-brake">강한 제동</span></div>
+        <svg id="course-graph" viewBox="0 0 420 142" role="img" aria-label="시간에 따른 내 차와 기준 차량 속도, 강한 제동 시점">
+          <path class="plot-grid" d="M34 14H404 M34 40H404 M34 66H404 M34 92H404 M34 118H404"/>
+          <g class="plot-labels">
+            <text x="28" y="18">80</text><text x="28" y="70">40</text><text x="28" y="122">0</text>
+          </g>
+          <g id="course-detect-zone"></g>
+          <path class="plot-grid" id="course-window-grid"/>
+          <g class="plot-labels plot-time" id="course-time-labels"></g>
+          <g id="course-ghosts"></g>
+          <polyline id="course-lead-line" class="plot-lead"/>
+          <polyline id="course-speed-line" class="plot-speed"/>
+          <g id="course-brake-points"></g>
+        </svg>
+        <div class="window-heading"><b>구간별 강한 제동</b><span>평소 상한 <b id="course-baseline"></b> · 평소 5회 기준</span></div>
+        <div class="course-windows" id="course-windows" aria-label="구간별 강한 제동과 비교 결과"></div>
+        <div class="decision-path" aria-label="입력 신호에서 판정까지의 판단 경로">
+          <p class="eyebrow">03 / DECISION PATH</p>
+          <svg id="decision-graph" viewBox="0 0 440 150" role="img" aria-label="속도, 브레이크, 앞차 감속이 강한 제동, 평소 상한 비교, 연속 구간을 거쳐 판정으로 이어지는 그래프">
+            <g class="dp-edges">
+              <path id="dp-e-speed" d="M94 26 C136 26 140 62 174 62"/>
+              <path id="dp-e-brake" d="M94 62 H174"/>
+              <path id="dp-e-lead" d="M94 98 C136 98 140 62 174 62"/>
+              <path id="dp-e-feature" d="M198 62 H266"/>
+              <path id="dp-e-compare" d="M292 62 H342"/>
+              <path id="dp-e-streak" d="M368 62 H394"/>
+            </g>
+            <g class="dp-node" id="dp-speed" transform="translate(84 26)"><circle class="dp-halo" r="15"/><circle r="9"/><text class="dp-label" x="-16" y="5" text-anchor="end">속도</text></g>
+            <g class="dp-node" id="dp-brake" transform="translate(84 62)"><circle class="dp-halo" r="15"/><circle r="9"/><text class="dp-label" x="-16" y="5" text-anchor="end">브레이크</text></g>
+            <g class="dp-node" id="dp-lead" transform="translate(84 98)"><circle class="dp-halo" r="15"/><circle r="9"/><text class="dp-label" x="-16" y="5" text-anchor="end">앞차 감속</text></g>
+            <g class="dp-node" id="dp-feature" transform="translate(186 62)"><circle class="dp-halo" r="18"/><circle r="12"/><text class="dp-label" y="38" text-anchor="middle">강한 제동</text><text class="dp-value" id="dp-feature-v" y="56" text-anchor="middle">—</text></g>
+            <g class="dp-node" id="dp-compare" transform="translate(280 62)"><circle class="dp-halo" r="18"/><circle r="12"/><text class="dp-label" y="38" text-anchor="middle">평소 상한</text><text class="dp-value" id="dp-compare-v" y="56" text-anchor="middle">—</text></g>
+            <g class="dp-node" id="dp-streak" transform="translate(356 62)"><circle class="dp-halo" r="18"/><circle r="12"/><text class="dp-label" y="38" text-anchor="middle">연속</text><text class="dp-value" id="dp-streak-v" y="56" text-anchor="middle">0/2</text></g>
+            <g class="dp-node" id="dp-verdict" transform="translate(410 62)"><circle class="dp-halo" r="20"/><circle r="14"/><text class="dp-label" y="38" text-anchor="middle">판정</text><text class="dp-value" id="dp-verdict-v" y="56" text-anchor="middle">대기</text></g>
+          </svg>
+        </div>
+        <section class="course-result" id="course-result" data-tone="idle" aria-live="polite">
+          <svg class="streak-ring" viewBox="0 0 64 64" role="img" aria-label="연속 초과 구간">
+            <circle class="arc-track" cx="32" cy="32" r="26"/>
+            <circle class="arc-value" id="streak-arc" cx="32" cy="32" r="26" pathLength="100" stroke-dasharray="0 100" transform="rotate(-90 32 32)"/>
+            <text x="32" y="35" id="streak-text">0/2</text>
+            <text class="ring-label" x="32" y="47">연속 초과</text>
+          </svg>
+          <p class="eyebrow">DRIVE WATCHER</p>
+          <h3 id="course-status">주행을 시작해 보세요</h3>
+          <p id="course-detail">두 모드에서 같은 코스와 개인 기준을 사용해요.</p>
+        </section>
+      </div>
+    </section>
+
+    <section class="panel sdk-panel" id="drive-pleos" aria-labelledby="sdk-title" hidden>
+      <div class="panel-head">
+        <div><p class="eyebrow">PLEOS CONNECT / VEHICLE SIGNALS</p><h2 id="sdk-title">차량 신호가 들어오면</h2></div>
+        <span class="context">SDK 예시 신호</span>
+      </div>
+      <p class="can-intro">차량 앱에서 받을 값을 재생해요. 속도·조향각·브레이크 상태가 들어오면, 드라이브 와쳐가 속도 변화로 감속을 계산해요.</p>
+      <div class="controls">
+        <button type="button" class="primary" id="sdk-play">▶ 예시 신호 재생</button>
+        <span class="context" id="sdk-clock">00.0초 · 입력 0건</span>
+      </div>
+
+      <div class="sdk-flow">
+        <section class="can-card" aria-labelledby="sdk-raw-title">
+          <p class="eyebrow">01 / VEHICLE INPUT</p><h3 id="sdk-raw-title">차량에서 받은 값</h3>
+          <dl class="sdk-channels">
+            <div><dt><a href="https://document.pleos.ai/docs/pleos-only/vehicle-app-developer-guide/vehicle-app-faq#클러스터-속도-조회-방법" target="_blank" rel="noopener">PERF_VEHICLE_SPEED</a></dt><dd id="sdk-speed">—</dd></div>
+            <div><dt><a href="https://document.pleos.ai/en/docs/pleos-only/connect-sdk-pleos/Vehicle/vehicle/ai.pleos.playground.vehicle.api/steering-wheel/register-steering-wheel-angle" target="_blank" rel="noopener">조향각 구독</a></dt><dd id="sdk-angle">—</dd></div>
+            <div><dt><a href="https://document.pleos.ai/en/docs/pleos-only/connect-sdk-pleos/Vehicle/vehicle/ai.pleos.playground.vehicle.api/brake/register-brake-pedal-status" target="_blank" rel="noopener">브레이크 상태 구독</a></dt><dd id="sdk-brake">—</dd></div>
+          </dl>
+        </section>
+
+        <section class="can-card" aria-labelledby="sdk-normal-title">
+          <p class="eyebrow">02 / APP PROCESSING</p><h3 id="sdk-normal-title">단위 변환과 구간 집계</h3>
+          <dl class="sdk-channels">
+            <div><dt>속도 × 3.6</dt><dd id="sdk-kph">—</dd></div>
+            <div><dt>속도 차이 ÷ 시간 차이</dt><dd id="sdk-deceleration">—</dd></div>
+            <div><dt>현재 8초 구간의 강한 제동</dt><dd id="sdk-count">—</dd></div>
+          </dl>
+        </section>
+
+        <section class="can-card can-verdict" aria-labelledby="sdk-verdict-title">
+          <p class="eyebrow">03 / DRIVE WATCHER</p><h3 id="sdk-verdict-title">공통 엔진 판정</h3>
+          <strong id="sdk-verdict">입력 대기</strong>
+          <p id="sdk-evidence" role="status">재생하면 8초 구간을 모아 비교해요.</p>
+          <ol class="sdk-windows" id="sdk-windows" aria-label="완료 구간별 강한 제동"></ol>
+        </section>
+      </div>
+
+      <div class="sdk-trace">
+        <section aria-labelledby="sdk-chart-title">
+          <h3 id="sdk-chart-title">신호가 바뀐 시점</h3>
+          <div class="plot-legend"><span class="legend-car">차량 속도 (km/h)</span><span class="legend-brake">브레이크 눌림</span></div>
+          <svg viewBox="0 0 420 142" role="img" aria-label="시간별 차량 속도와 브레이크 상태">
+            <path class="plot-grid" d="M34 15H402 M34 60H402 M34 105H402 M157 15V105 M279 15V105"/>
+            <g class="plot-labels">
+              <text x="28" y="19">60</text><text x="28" y="64">30</text><text x="28" y="109">0</text>
+              <text x="34" y="129">0초</text><text x="157" y="129">8초</text><text x="279" y="129">16초</text><text x="402" y="129">24초</text>
+            </g>
+            <g id="sdk-brake-zones"></g>
+            <polyline id="sdk-speed-line" class="plot-speed"/>
+          </svg>
+        </section>
+        <section aria-labelledby="sdk-log-title">
+          <h3 id="sdk-log-title">최근 들어온 예시 신호</h3>
+          <p class="rule">시각과 값은 앱이 정리한 표시 형식이에요.</p>
+          <ul class="sdk-log" id="sdk-log"></ul>
+        </section>
+      </div>
+    </section>
+
+    <section class="panel can-panel" id="drive-can" aria-labelledby="can-title" hidden>
+      <div class="panel-head">
+        <div><p class="eyebrow">VEHICLE SIGNALS / CAN REPLAY</p><h2 id="can-title">실측 차량 신호가 판정되기까지</h2></div>
+        <span class="context" id="can-source-status">공개 기록 · 연결 대기</span>
+      </div>
+      <div class="vehicle-sources" aria-label="차량 데이터 출처">
+        <div><strong>공개 CAN 기록</strong><span>comma2k19 · 실제 도로에서 기록한 속도와 조향각</span><b id="can-receipt-progress">HTTP 0 / 4 수신</b></div>
+      </div>
+      <div class="controls can-controls">
+        <button type="button" class="primary" id="can-load">실측 기록 불러오기</button>
+        <button type="button" id="can-play" hidden>▶ 4배속 재생</button>
+        <span id="can-clock">—</span>
+      </div>
+      <p class="rule" id="can-fetch-status" role="status"></p>
+
+      <details class="vehicle-receipts" open>
+        <summary>브라우저가 받은 원본 HTTP 응답</summary>
+        <ul id="can-receipts"></ul>
+      </details>
+
+      <div class="can-grid">
+        <section class="can-card" aria-labelledby="can-raw-title">
+          <p class="eyebrow">01 / RAW</p><h3 id="can-raw-title">받은 CAN 값</h3>
+          <dl class="can-fields">
+            <div><dt>차량 속도</dt><dd id="can-raw-speed">—</dd></div>
+            <div><dt>핸들 각도</dt><dd id="can-raw-angle">—</dd></div>
+          </dl>
+          <p class="rule" id="can-sample-index">원본 채널을 불러오면 값이 표시돼요.</p>
+        </section>
+        <section class="can-card" aria-labelledby="can-normal-title">
+          <p class="eyebrow">02 / NORMALIZE</p><h3 id="can-normal-title">변환과 집계</h3>
+          <dl class="can-fields">
+            <div><dt>속도 × 3.6</dt><dd id="can-kph">—</dd></div>
+            <div><dt>최근 약 0.5초 감속</dt><dd id="can-decel">—</dd></div>
+          </dl>
+          <p class="rule">속도에서 계산한 감속이 4 m/s²에 이르면 이벤트를 세요.</p>
+        </section>
+        <section class="can-card can-verdict" aria-labelledby="can-verdict-title">
+          <p class="eyebrow">03 / DRIVE WATCHER</p><h3 id="can-verdict-title">공통 엔진 판정</h3>
+          <strong id="can-verdict">데이터 대기</strong>
+          <p id="can-evidence" role="status">처음 25초를 이 기록 안의 비교 기준으로 써요.</p>
+        </section>
+      </div>
+
+      <div class="can-chart">
+        <div class="plot-legend"><span class="legend-car">속도 (km/h)</span><span class="legend-angle">핸들 각도 (°)</span></div>
+        <svg id="can-graph" viewBox="0 0 740 152" role="img" aria-label="실측 속도와 조향각을 시간에 따라 그린 그래프">
+          <path class="plot-grid" d="M40 12H715 M40 76H715 M40 134H715 M321.25 12V134"/>
+          <g class="plot-labels can-axis">
+            <text x="33" y="17">80</text><text x="33" y="77">0</text>
+            <text x="33" y="94">+5°</text><text x="33" y="133">−5°</text>
+            <text x="40" y="149">0초</text><text x="321.25" y="149">25초</text><text x="715" y="149">60초</text>
+          </g>
+          <polyline class="can-ghost" id="can-speed-full"/><polyline class="can-ghost" id="can-angle-full"/>
+          <defs><clipPath id="can-elapsed"><rect id="can-elapsed-rect" x="40" y="0" width="0" height="140"/></clipPath></defs>
+          <g clip-path="url(#can-elapsed)">
+            <polyline class="plot-speed" id="can-speed-line"/><polyline class="can-angle" id="can-angle-line"/>
+          </g>
+          <line id="can-playhead" x1="40" x2="40" y1="12" y2="134" hidden/>
+        </svg>
+      </div>
+
+    </section>
+
+    <details id="record-replay" class="record-replay">
+      <summary>도심·고속도로 기록 재생</summary>
+    <nav class="scenes" aria-label="주행 기록 조건" id="scenes"></nav>
+
+    <div class="workspace">
+      <section class="panel trip" aria-labelledby="trip-title">
+        <div class="panel-head">
+          <div><p class="eyebrow">01 / TRIP REPLAY</p><h2 id="trip-title"></h2></div>
+          <span class="context" id="road-context"></span>
+        </div>
+        <div class="telemetry">
+          <span><b id="time">—</b><small>주행 시각</small></span>
+          <span><b id="gear">—</b><small>변속 상태</small></span>
+          <span><b id="speed">—</b><small>km/h</small></span>
+        </div>
+        <div class="trace" id="trace" aria-label="구간별 감지 기록"></div>
+        <div class="trace-caption"><span>주행 시작</span><span>도착 · P</span></div>
+        <div class="controls">
+          <button class="primary" type="button" id="play">▶ 재생</button>
+          <button type="button" id="step">다음 구간</button>
+          <button type="button" id="reset">처음으로</button>
+        </div>
+        <div class="settings">
+          <div class="variant" role="group" aria-label="재생할 기록">
+            <button type="button" data-variant="changed" aria-pressed="true">변화가 있던 날</button>
+            <button type="button" data-variant="regular" aria-pressed="false">평소 주행</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel signals" aria-labelledby="signal-title">
+        <div class="panel-head">
+          <div><p class="eyebrow">02 / SAME ENGINE</p><h2 id="signal-title">평소 범위와 비교</h2></div>
+          <span class="context" id="sample-count"></span>
+        </div>
+        <div id="readings" class="readings"></div>
+        <p class="rule" id="rule"></p>
+      </section>
+
+      <section class="panel outcome" aria-labelledby="outcome-title" data-tone="idle">
+        <div class="outcome-main">
+          <p class="eyebrow">03 / DETECTION LOG</p>
+          <h2 id="outcome-title">재생을 시작해 보세요</h2>
+          <p id="outcome-detail" role="status">주행 기록이 들어오면 평소 범위와 비교해요.</p>
+          <p class="evidence" id="evidence" hidden></p>
+        </div>
+        <span class="context" id="review-state">재생 대기</span>
+      </section>
+    </div>
+
+    </details>
+
+    <footer><span>가상 주행과 공개 실측 기록 · 감지 결과는 시연용</span><a href="PLAYBOOK.MD">MVP 플레이북</a></footer>
+  </main>
+</body>
+</html>
