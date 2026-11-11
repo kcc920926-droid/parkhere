@@ -7,6 +7,7 @@ DriveWatch의 판정 로직을 담은 순수 Kotlin 모듈입니다. 웹 MVP(`dr
 | `TripEngine.kt` | `engine.js` | 2분 구간을 같은 도로 조건의 개인 기준선과 비교하고, 같은 신호가 두 구간 연속 넘으면 변화로 기록 |
 | `WeeklyEngine.kt` | `weekly.js` | 주행 요약을 주별로 모아 학습 중 / 자료 부족 / 안정 / 관찰 / 대화 권장을 판정 |
 | `collect/` | 없음 | 차속·브레이크·조향·기어 신호를 구간 요약으로 묶고 판정까지 잇는다 |
+| `card/Cards.kt` | 없음 | 도착 카드와 주간 카드에 쓸 문구를 만든다. 화면은 이 문구를 그리기만 하면 된다 |
 | `demo/DemoReplays.kt` | `replays.js` | 시연용 도심·고속도로 합성 기록 |
 | `demo/DemoWeeklyHistory.kt` | `weekly-history.js` | 시연용 합성 12주 기록 |
 | `demo/DemoDrive.kt` | 없음 | 시연용 녹화 신호. 구간별 강한 제동이 1·0·1·4·5·1회인 주행 |
@@ -39,6 +40,26 @@ monitor.accept(SpeedSample(timeMs, metersPerSecond))   // 신호가 올 때마�
 
 Android에서 신호를 받는 부분은 [drivewatch-vehicle](../drivewatch-vehicle/README.md)에 있다.
 
+## 카드 문구
+
+화면이 판정 결과를 직접 해석하지 않도록, 문구를 만드는 부분을 따로 뒀다. 어떤 화면 기술을 쓰든 가져다 쓸 수 있다.
+
+```kotlin
+val arrival = Cards.arrival(report)           // 주차 후
+arrival.title        // "평소와 달라요"
+arrival.evidence     // "강한 제동 · 2분 구간당 평소 3회 이하, 이번 최고 5회"
+arrival.where        // "출발 후 6–8분 4회, 8–10분 5회"
+arrival.windows      // 구간 상세에 그릴 막대들
+
+val weekly = Cards.weekly(WeeklyEngine.assess(trips, context = "city"))   // 이번 주 카드
+weekly?.chip         // "안정" | "관찰" | "대화 권장" | "학습 중" | "자료 부족"
+weekly?.headline     // "강한 제동이 4주째, 조향 보정이 2주째 평소보다 많았어요"
+weekly?.evidence     // 숫자 근거. 가족 서버의 evidence 항목과 같은 모양이다
+weekly?.strip        // 지난 주들의 상태 띠
+```
+
+구간이 1분보다 짧으면(시연 모드) 문구가 초 단위로 나온다.
+
 ## 테스트
 
 JDK 17 또는 21이 필요합니다. Gradle 8.10.2는 그보다 새 JDK에서 실행되지 않습니다.
@@ -49,6 +70,7 @@ JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradl
 
 - `TripEngineTest`, `WeeklyEngineTest`: 웹 MVP의 `engine.test.js`, `weekly.test.js`를 옮긴 테스트입니다. 지표 하나가 4주 이어지는 경우는 여기에만 있습니다.
 - `CollectorTest`, `DriveMonitorTest`: 수집기와, 신호에서 도착 결과까지 이어지는 흐름을 확인합니다.
+- `CardsTest`: 카드 문구가 웹 MVP와 기획서의 문구와 같은지 확인합니다.
 - `ParityTest`: 웹 MVP가 낸 결과(`src/test/resources/parity/expected.txt`)와 Kotlin 결과를 한 줄씩 비교합니다. 시연 기록과 고정 시드 난수 기록(구간 300개, 주행 150회)을 씁니다.
 
 웹 MVP의 판정 로직을 고치면 기준 결과를 다시 만듭니다. 난수 순서는 `tools/dump-parity.js`와 `ParityDump.kt`가 같아야 합니다.
