@@ -75,7 +75,7 @@
 | `app/src/main/java/com/parkhere/drivewatch/FamilyApi.kt` | 가족 서버(`drive.olvend.com`) 초대 코드·주간 요약 |
 | `app/src/main/java/com/parkhere/drivewatch/Demo.kt` | 시연용 과거 기록, 목적지별 내비 안내 스크립트 |
 | `app/src/main/java/com/parkhere/drivewatch/DemoDriver.kt` | `▶ 시연 주행 시작` 버튼: Virtual Console로 차를 움직인다 |
-| `app/src/main/java/com/parkhere/drivewatch/MainActivity.kt` | 차량 화면 C1~C11과 시연 패널 |
+| `app/src/main/java/com/parkhere/drivewatch/MainActivity.kt` | 차량 화면 C1~C14(월별 기록·운전 졸업 포함)와 시연 패널 |
 | `app/src/test/java/com/parkhere/drivewatch/EngineTest.kt` | 판정 규칙과 시연 시나리오 테스트 |
 | `tools/demo-drive.py` | 앱 버튼과 같은 시연 주행을 터미널에서 실행 |
 | `docs/mvp-test-guide.md` | 테스트 순서와 확인할 값 |
