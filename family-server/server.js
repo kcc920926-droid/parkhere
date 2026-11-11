@@ -27,6 +27,7 @@ const ROUTES = [
   ["POST", "/api/family/links", "family", (store, who, body) => store.link(who, body)],
   ["GET", "/api/family/overview", "family", (store, who) => ({ name: who.name, drivers: store.overview(who) })],
   ["GET", "/api/family/drivers/{driverId}/summary", "family", (store, who, body, [id]) => store.summaryFor(who, id)],
+  ["GET", "/api/family/drivers/{driverId}/summaries", "family", (store, who, body, [id]) => store.summariesFor(who, id)],
   ["POST", "/api/family/drivers/{driverId}/ack", "family", (store, who, body, [id]) => store.ack(who, id, body.week)],
 ].map(([method, route, auth, handler]) => ({
   method, route, auth, handler,

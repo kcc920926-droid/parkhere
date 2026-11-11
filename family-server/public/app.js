@@ -215,6 +215,7 @@
         h("span", { class: `chip ${status.chip}` }, chipText),
         ...cards,
         h("p", { class: "muted" }, `${dayOf(item.sentAt)}에 ${data.relation}가 보낸 요약이에요`),
+        h("button", { class: "link", onclick: () => show(monthly, driverId) }, "📅 월별 기록 보기 ›"),
         h("div", { class: "spacer" }),
         h("div", { class: "row" }, h("a", { class: "btn", href: "tel:" }, "전화하기"), ack));
     };
@@ -226,6 +227,57 @@
     };
     refresh();
     every(4000, refresh);
+    return [title, body];
+  }
+
+  /* 월별 기록: 부모님이 보낸 주간 요약을 달별로 모은다. 주행 하나하나의 기록은 받지 않는다. */
+  function monthly(driverId) {
+    const body = h("div", { style: "display:contents" });
+    const title = h("button", { class: "back", onclick: () => show(summary, driverId) }, "← 월별 기록");
+    let months = [];
+    let index = 0;
+    let relation = "";
+    const label = (key) => `${Number(key.slice(0, 4))}년 ${Number(key.slice(5, 7))}월`;
+    const render = () => {
+      if (!months.length) {
+        body.replaceChildren(h("p", { class: "muted" }, `아직 ${relation}가 보낸 요약이 없어요.`));
+        return;
+      }
+      const [key, weeks] = months[index];
+      const flow = weeks.slice().reverse().map((w) => STATUS[w.status]?.label ?? w.status)
+        .filter((name, i, all) => i === 0 || all[i - 1] !== name);
+      const nav = h("div", { class: "row month" },
+        h("button", { class: "btn", disabled: index >= months.length - 1, onclick: () => { index++; render(); } }, "◀"),
+        h("strong", { class: "month-title" }, label(key)),
+        h("button", { class: "btn", disabled: index === 0, onclick: () => { index--; render(); } }, "▶"));
+      const rows = weeks.map((w) => {
+        const status = STATUS[w.status] ?? { chip: "", label: w.status };
+        const [, m, d] = w.week.split("-").map(Number);
+        return h("div", { class: "card" },
+          h("span", { class: "label" }, `${m}/${d} 주 · ${w.acked ? "확인함 ✓" : "아직 확인 안 함"}`),
+          h("span", {}, h("span", { class: `state ${status.chip}` }, status.label), w.headline ? ` · ${w.headline}` : ""),
+          w.avoided ? h("span", { class: "muted" }, `피한 구간 · ${w.avoided}`) : null);
+      });
+      body.replaceChildren(
+        nav,
+        h("div", { class: "card tint" }, h("span", { class: "label" }, "이 달 흐름"), h("strong", {}, flow.join(" → ")),
+          h("span", { class: "muted" }, `요약 ${weeks.length}주 · ${relation}가 보내기로 한 것만 보여요`)),
+        ...rows);
+    };
+    (async () => {
+      let data;
+      try { data = await api("GET", `/api/family/drivers/${driverId}/summaries`); } catch { return; }
+      relation = data.relation;
+      title.textContent = `← ${data.relation} 운전 · 월별 기록`;
+      const byMonth = new Map();
+      for (const item of data.summaries) {
+        const key = item.week.slice(0, 7);
+        byMonth.set(key, [...(byMonth.get(key) ?? []), item]);
+      }
+      months = [...byMonth.entries()];
+      render();
+    })();
+    every(60000, () => {});
     return [title, body];
   }
 

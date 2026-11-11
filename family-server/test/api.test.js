@@ -139,3 +139,18 @@ test("trips are kept only while the driver allows backup, never shown to family,
   assert.deepEqual((await call("PUT", "/api/car/backup", { token: car.carToken, body: { enabled: false } })).data, { enabled: false, trips: 0 });
   assert.deepEqual((await call("GET", "/api/car/backup", { token: car.carToken })).data, { enabled: false, profile: null, trips: [] });
 }));
+
+test("the family monthly view lists every week the driver sent, newest first, with the same sharing rule", () => withServer(async (call) => {
+  const car = (await call("POST", "/api/car/drivers", { body: { name: "김정숙", shareScope: "status" } })).data;
+  const invite = (await call("POST", "/api/car/invites", { token: car.carToken })).data;
+  const child = (await call("POST", "/api/family/members", { body: { name: "김민수" } })).data;
+  const stranger = (await call("POST", "/api/family/members", { body: { name: "남" } })).data;
+  await call("POST", "/api/family/links", { token: child.token, body: { code: invite.code, relation: "엄마" } });
+  for (const [week, status] of [["2026-11-02", "stable"], ["2026-11-16", "observe"], ["2026-11-09", "stable"]]) {
+    await call("POST", "/api/car/summaries", { token: car.carToken, body: { week, status, evidence: [{ label: "재탐색", unit: "회/10km", typical: 0.2, value: 0.7, weeks: 2 }] } });
+  }
+  const list = (await call("GET", `/api/family/drivers/${car.driverId}/summaries`, { token: child.token })).data;
+  assert.deepEqual(list.summaries.map((s) => [s.week, s.status]), [["2026-11-16", "observe"], ["2026-11-09", "stable"], ["2026-11-02", "stable"]]);
+  assert.ok(list.summaries.every((s) => s.evidence.length === 0 && s.evidenceShared === false)); // status only
+  assert.equal((await call("GET", `/api/family/drivers/${car.driverId}/summaries`, { token: stranger.token })).status, 403);
+}));

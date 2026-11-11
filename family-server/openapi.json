@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DriveWatch 가족 요약 API",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "차량 앱이 주간 요약을 보내고, 연결된 가족이 폰 웹 화면에서 읽는다. 시연용이다.\n\n- 초대 코드는 운전자가 차에서 띄운다. 6자리, 10분, 한 번만 쓸 수 있다.\n- 운전자가 `status`(상태만)를 고르면 숫자 근거는 저장하지도, 내보내지도 않는다.\n- 위치와 경로는 받지 않는다. 요약에서 정해진 항목만 저장한다.\n- 요청과 응답은 JSON이다. 본문은 16KB까지다."
   },
   "servers": [
@@ -1119,6 +1119,87 @@
                 },
                 "example": {
                   "error": "backup_off"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/family/drivers/{driverId}/summaries": {
+      "get": {
+        "tags": [
+          "가족 폰"
+        ],
+        "summary": "보낸 주간 요약 목록 (월별 화면)",
+        "description": "운전자가 보낸 주간 요약을 최신 순으로 최근 26주까지 돌려준다. 숫자 근거는 운전자가 `evidence`를 골랐을 때만 들어 있다. 주행 하나하나의 기록은 가족에게 주지 않는다.",
+        "security": [
+          {
+            "familyToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/driverId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "요약 목록",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "driverId": "drv_1a2b3c",
+                  "name": "김정숙",
+                  "relation": "엄마",
+                  "summaries": [
+                    {
+                      "week": "2026-11-16",
+                      "status": "observe",
+                      "headline": "요즘 익숙한 길에서 길 안내를 다시 받는 일이 늘었어요.",
+                      "goodPoints": [
+                        "밤 운전 0회"
+                      ],
+                      "promise": "해 지면 안 하기 · 이번 주 지킴",
+                      "avoided": "",
+                      "changes": [
+                        "요즘 익숙한 길에서 길 안내를 다시 받는 일이 늘었어요."
+                      ],
+                      "evidence": [],
+                      "evidenceShared": false,
+                      "sentAt": 1794000000000,
+                      "acked": false
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "not_linked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "not_linked"
                 }
               }
             }

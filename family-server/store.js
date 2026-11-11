@@ -244,6 +244,17 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
       return { driverId, name: driver.name, relation: link.relation, summary: shown(driver, latest(driver), member.memberId) };
     },
 
+    /* 월별 화면: 운전자가 보낸 주간 요약들. 최근 26주까지, 최신 순. 보내는 범위 규칙은 한 주 요약과 같다. */
+    summariesFor(member, driverId) {
+      const link = linkOf(member, driverId);
+      const driver = state.drivers[driverId];
+      const weeks = Object.keys(driver.summaries).sort().reverse().slice(0, 26);
+      return {
+        driverId, name: driver.name, relation: link.relation,
+        summaries: weeks.map((week) => shown(driver, driver.summaries[week], member.memberId)),
+      };
+    },
+
     ack(member, driverId, week) {
       linkOf(member, driverId);
       const summary = state.drivers[driverId].summaries[text(week, 10)] ?? fail("no_summary", 404);
