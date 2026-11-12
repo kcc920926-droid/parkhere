@@ -63,13 +63,27 @@ object FamilyApi {
     fun invite(token: String, done: (String?) -> Unit) =
         call("POST", "/api/car/invites", token, JSONObject()) { done(it?.optString("code")) }
 
-    /** Who is linked, and who acknowledged the latest summary. */
-    fun me(token: String, done: (family: List<String>, ackedBy: List<String>, week: String?) -> Unit) =
+    /** Who is linked, who acknowledged the latest summary, and the latest "가족에게 부탁" with its answer. */
+    fun me(token: String, done: (family: List<String>, ackedBy: List<String>, week: String?, ride: RideRequest?) -> Unit) =
         call("GET", "/api/car/me", token, null) { j ->
             if (j == null) return@call
             val latest = j.optJSONObject("latest")
-            done(names(j.optJSONArray("family")), names(latest?.optJSONArray("ackedBy")), latest?.optString("week"))
+            done(names(j.optJSONArray("family")), names(latest?.optJSONArray("ackedBy")), latest?.optString("week"), ride(j.optJSONObject("request")))
         }
+
+    /**
+     * "가족에게 부탁": the driver chose not to drive today. Only the place name goes (a 생활길 place), never a location.
+     * A linked family member answers on the phone page: pickup (태우러 가기) or taxi (택시를 대신 불러 드리기).
+     */
+    data class RideRequest(val id: String, val place: String, val answer: String?, val answeredBy: String?)
+
+    private fun ride(j: JSONObject?) = j?.optString("requestId")?.takeIf { it.isNotEmpty() }?.let {
+        RideRequest(it, j.optString("place"), j.optString("answer").takeIf { a -> !j.isNull("answer") && a.isNotEmpty() },
+            j.optString("answeredBy").takeIf { b -> !j.isNull("answeredBy") && b.isNotEmpty() })
+    }
+
+    fun askFamily(token: String, place: String, done: (RideRequest?) -> Unit) =
+        call("POST", "/api/car/requests", token, JSONObject().put("place", place)) { done(ride(it)) }
 
     fun sendSummary(token: String, week: String, w: Weekly, done: (Boolean) -> Unit) {
         val evidence = JSONArray()

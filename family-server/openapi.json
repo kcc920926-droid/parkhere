@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DriveWatch 가족 요약 API",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "description": "차량 앱이 주간 요약을 보내고, 연결된 가족이 폰 웹 화면에서 읽는다. 시연용이다.\n\n- 초대 코드는 운전자가 차에서 띄운다. 6자리, 10분, 한 번만 쓸 수 있다.\n- 운전자가 `status`(상태만)를 고르면 숫자 근거는 저장하지도, 내보내지도 않는다.\n- 위치와 경로는 받지 않는다. 요약에서 정해진 항목만 저장한다.\n- 요청과 응답은 JSON이다. 본문은 16KB까지다."
   },
   "servers": [
@@ -1617,6 +1617,222 @@
           }
         }
       }
+    },
+    "/api/car/requests": {
+      "post": {
+        "tags": [
+          "차량 앱"
+        ],
+        "summary": "가족에게 부탁하기",
+        "description": "\"오늘은 다른 방법으로 가기\"에서 `가족에게 부탁`을 눌렀을 때 부른다. 연결된 가족 폰에 뜨고, 답은 `/api/car/me`의 `request`로 돌아온다. 운전자마다 가장 최근 부탁 하나만 둔다.",
+        "security": [
+          {
+            "carToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "place"
+                ],
+                "properties": {
+                  "place": {
+                    "type": "string",
+                    "maxLength": 20
+                  }
+                }
+              },
+              "example": {
+                "place": "병원"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "보냄",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyRequest"
+                },
+                "example": {
+                  "requestId": "req_3f9a1c2b7d10",
+                  "place": "병원",
+                  "createdAt": 1794321531724,
+                  "answer": null,
+                  "answeredBy": null,
+                  "answeredAt": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "place_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "place_required"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/family/drivers/{driverId}/answer": {
+      "post": {
+        "tags": [
+          "가족 폰"
+        ],
+        "summary": "부탁에 답하기",
+        "description": "태우러 가기(`pickup`)나 택시를 대신 불러 드리기(`taxi`). 먼저 답한 가족이 맡고, 같은 사람은 답을 바꿀 수 있다. 택시 호출 자체는 가족이 자기 앱으로 한다.",
+        "security": [
+          {
+            "familyToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/driverId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "requestId",
+                  "answer"
+                ],
+                "properties": {
+                  "requestId": {
+                    "type": "string"
+                  },
+                  "answer": {
+                    "type": "string",
+                    "enum": [
+                      "pickup",
+                      "taxi"
+                    ]
+                  }
+                }
+              },
+              "example": {
+                "requestId": "req_3f9a1c2b7d10",
+                "answer": "pickup"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "답함",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyRequest"
+                },
+                "example": {
+                  "requestId": "req_3f9a1c2b7d10",
+                  "place": "병원",
+                  "createdAt": 1794321531724,
+                  "answer": "pickup",
+                  "answeredBy": "김민수",
+                  "answeredAt": 1794321600000
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_answer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "invalid_answer"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "not_linked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "not_linked"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "no_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "no_request"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "already_answered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "already_answered"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1889,6 +2105,46 @@
               "point": "중앙대로 합류"
             }
           ]
+        }
+      },
+      "FamilyRequest": {
+        "type": "object",
+        "description": "가족에게 부탁. 목적지 이름만 담고 위치는 담지 않는다. 12시간 동안 보인다.",
+        "properties": {
+          "requestId": {
+            "type": "string"
+          },
+          "place": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "createdAt": {
+            "type": "integer"
+          },
+          "answer": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "pickup",
+              "taxi",
+              null
+            ],
+            "description": "pickup 태우러 가기, taxi 택시를 대신 불러 드리기"
+          },
+          "answeredBy": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "answeredAt": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
         }
       }
     }

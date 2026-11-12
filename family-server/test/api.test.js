@@ -188,3 +188,30 @@ test("the latest app build is described and downloadable, and missing builds are
   assert.equal(await apk.text(), "APK");
   server.close();
 });
+
+test("a driver asks the family for a ride and a linked member answers", () => withServer(async (call) => {
+  const car = (await call("POST", "/api/car/drivers", { body: { name: "김정숙" } })).data;
+  const invite = (await call("POST", "/api/car/invites", { token: car.carToken })).data;
+  const child = (await call("POST", "/api/family/members", { body: { name: "김민수" } })).data;
+  await call("POST", "/api/family/links", { token: child.token, body: { code: invite.code, relation: "엄마" } });
+
+  assert.equal((await call("POST", "/api/car/requests", { token: car.carToken, body: {} })).data.error, "place_required");
+  const asked = (await call("POST", "/api/car/requests", { token: car.carToken, body: { place: "병원" } })).data;
+  assert.equal(asked.place, "병원");
+  assert.equal(asked.answer, null);
+
+  const seen = (await call("GET", "/api/family/overview", { token: child.token })).data.drivers[0].request;
+  assert.equal(seen.requestId, asked.requestId);
+  assert.equal((await call("POST", `/api/family/drivers/${car.driverId}/answer`, { token: child.token, body: { requestId: asked.requestId, answer: "fly" } })).data.error, "invalid_answer");
+  assert.equal((await call("POST", `/api/family/drivers/${car.driverId}/answer`, { token: child.token, body: { requestId: "req_old", answer: "pickup" } })).status, 404);
+  const answered = (await call("POST", `/api/family/drivers/${car.driverId}/answer`, { token: child.token, body: { requestId: asked.requestId, answer: "pickup" } })).data;
+  assert.equal(answered.answeredBy, "김민수");
+
+  const other = (await call("POST", "/api/family/members", { body: { name: "김민지" } })).data;
+  const invite2 = (await call("POST", "/api/car/invites", { token: car.carToken })).data;
+  await call("POST", "/api/family/links", { token: other.token, body: { code: invite2.code, relation: "엄마" } });
+  assert.equal((await call("POST", `/api/family/drivers/${car.driverId}/answer`, { token: other.token, body: { requestId: asked.requestId, answer: "taxi" } })).status, 409);
+
+  const me = (await call("GET", "/api/car/me", { token: car.carToken })).data;
+  assert.deepEqual([me.request.answer, me.request.answeredBy], ["pickup", "김민수"]);
+}));

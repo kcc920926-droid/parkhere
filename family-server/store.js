@@ -12,6 +12,8 @@ const MAX_MEMBERS = 2000;
 const STATUSES = ["learning", "insufficient", "stable", "observe", "talk"];
 const SCOPES = ["status", "evidence"];
 const MAX_TRIPS = 1000;
+const REQUEST_MS = 12 * 60 * 60 * 1000;
+const ANSWERS = ["pickup", "taxi"];
 
 class StoreError extends Error {
   constructor(code, status) {
@@ -47,6 +49,14 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
   };
   const linkOf = (member, driverId) => member.links.find((link) => link.driverId === driverId)
     ?? fail("not_linked", 403);
+
+  /* "가족에게 부탁": 운전자가 오늘은 운전하지 않고 가족 도움을 받기로 한 것. 목적지 이름(생활길 장소)만 받고
+     위치는 받지 않는다. 운전자마다 가장 최근 하나만 두고, 12시간이 지나면 보이지 않는다. */
+  const liveRequest = (driver) => (driver.request && driver.request.createdAt > now() - REQUEST_MS ? driver.request : null);
+  const requestView = (request) => request && {
+    requestId: request.requestId, place: request.place, createdAt: request.createdAt,
+    answer: request.answer, answeredBy: request.answeredBy, answeredAt: request.answeredAt,
+  };
 
   /* 가족에게 보이는 요약. 운전자가 '상태만'을 골랐으면 숫자 근거는 내보내지 않는다. */
   const shown = (driver, summary, memberId) => summary && {
@@ -200,6 +210,13 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
       return driver.profile;
     },
 
+    askFamily(driver, { place } = {}) {
+      const where = text(place, 20) || fail("place_required");
+      driver.request = { requestId: id("req"), place: where, createdAt: now(), answer: null, answeredBy: null, answeredAt: null };
+      save();
+      return requestView(driver.request);
+    },
+
     /* 차 화면의 가족 카드에 쓴다: 누가 연결됐는지, 최근 요약을 누가 확인했는지. */
     carView(driver) {
       const members = Object.values(state.members).filter((member) =>
@@ -213,6 +230,7 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
           week: summary.week, status: summary.status, sentAt: summary.sentAt,
           ackedBy: members.filter((member) => summary.acks[member.memberId]).map((member) => member.name),
         },
+        request: requestView(liveRequest(driver)),
       };
     },
 
@@ -260,6 +278,7 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
             week: summary.week, status: summary.status, sentAt: summary.sentAt,
             acked: Boolean(summary.acks[member.memberId]),
           },
+          request: requestView(liveRequest(driver)),
         };
       });
     },
@@ -281,6 +300,18 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
       };
     },
 
+    /* 부탁에 답한다: 태우러 가기(pickup) 또는 택시를 대신 불러 드리기(taxi). 먼저 답한 가족이 맡고, 같은 사람은 답을 바꿀 수 있다. */
+    answerRequest(member, driverId, { requestId, answer } = {}) {
+      linkOf(member, driverId);
+      const request = liveRequest(state.drivers[driverId]);
+      if (!request || request.requestId !== requestId) fail("no_request", 404);
+      if (!ANSWERS.includes(answer)) fail("invalid_answer");
+      if (request.answer && request.answeredBy !== member.name) fail("already_answered", 409);
+      Object.assign(request, { answer, answeredBy: member.name, answeredAt: now() });
+      save();
+      return requestView(request);
+    },
+
     ack(member, driverId, week) {
       linkOf(member, driverId);
       const summary = state.drivers[driverId].summaries[text(week, 10)] ?? fail("no_summary", 404);
@@ -291,4 +322,4 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
   };
 }
 
-module.exports = { createStore, StoreError, INVITE_MS, MAX_FAILED_ATTEMPTS, STATUSES, SCOPES };
+module.exports = { createStore, StoreError, REQUEST_MS, ANSWERS, INVITE_MS, MAX_FAILED_ATTEMPTS, STATUSES, SCOPES };

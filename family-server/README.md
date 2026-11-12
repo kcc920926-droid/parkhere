@@ -46,7 +46,8 @@ Pleos 에뮬레이터 안의 앱은 이 PC의 서버를 `http://10.0.2.2:8795`�
 | `POST /api/car/invites` | 초대 코드 발급. `{code, expiresAt}` |
 | `PUT /api/car/share-scope` `{shareScope}` | `status` 또는 `evidence` |
 | `POST /api/car/summaries` | 주간 요약 보내기 (아래 형식) |
-| `GET /api/car/me` | 연결된 가족과, 최근 요약을 확인한 사람 |
+| `GET /api/car/me` | 연결된 가족, 최근 요약을 확인한 사람, 가장 최근 "가족에게 부탁"과 그 답(`request`) |
+| `POST /api/car/requests` `{place}` | 가족에게 부탁(0.8.0). 오늘은 운전하지 않겠다는 표시로 목적지 이름만 보낸다. 위치는 보내지 않는다. 운전자마다 하나, 12시간 동안 보인다 |
 | `PUT /api/car/backup` `{enabled}` | 주행 기록 보관 켜기·끄기. 운전자가 차에서 허락할 때만 켠다. **끄면 보관한 기록과 설정을 바로 지운다** |
 | `GET /api/car/backup` | 보관한 주행 기록과 설정을 돌려준다. 앱을 다시 설치했을 때 복원에 쓴다 |
 | `POST /api/car/trips` | 주행 한 번의 횟수 요약 `{week, place, km, night, reroutes, turns, signals, hardBrakes}`. 보관이 꺼져 있으면 403 |
@@ -69,11 +70,13 @@ Pleos 에뮬레이터 안의 앱은 이 PC의 서버를 `http://10.0.2.2:8795`�
 
 ## 폰 웹 화면
 
-`public/`에 있습니다. 가입 → 부모님 차와 연결 → 가족 목록 → 주간 요약 → 월별 기록 순서이고, 4초마다 새로 고칩니다. 푸시 알림은 없습니다. 차 화면의 QR에 `http://서버주소/?code=123456`을 담으면 코드가 미리 채워집니다.
+`public/`에 있습니다. 가입 → 가족 차와 연결 → 가족 목록 → 주간 요약 → 월별 기록 순서이고, 4초마다 새로 고칩니다. 푸시 알림은 없습니다. 차 화면의 QR에 `http://서버주소/?code=123456`을 담으면 코드가 미리 채워집니다.
 
 월별 기록은 `GET /api/family/drivers/{driverId}/summaries`로 부모님이 보낸 주간 요약을 모아 보여 줍니다(최근 26주). 주행 하나하나의 기록은 가족에게 주지 않습니다.
 
-화면 문구와 구성은 `opinions/drive-watch-screens.md`의 P1~P5 시안을 따랐습니다. 다른 점은 두 가지입니다. 휴대폰 번호와 인증번호는 받지 않고, 연결할 때 호칭(엄마 / 아빠 / 부모님)을 고릅니다.
+화면 문구와 구성은 `opinions/drive-watch-screens.md`의 P1~P5 시안을 따랐습니다. 다른 점은 두 가지입니다. 휴대폰 번호와 인증번호는 받지 않고, 연결할 때 호칭(엄마 / 아빠 / 부모님 / 배우자)을 고릅니다.
+
+운전자가 차에서 "가족에게 부탁"을 누르면 가족 목록 맨 위에 부탁 카드가 뜹니다. `제가 태우러 갈게요` 또는 `택시를 불러 드릴게요`를 고르면 `POST /api/family/drivers/{driverId}/answer` `{requestId, answer}`로 답하고, 먼저 답한 가족이 맡습니다. 택시는 가족이 자기 폰의 택시 앱으로 부릅니다. 호출 플랫폼 제휴는 다음 단계입니다.
 
 ## 차량 앱 없이 돌려 보기
 

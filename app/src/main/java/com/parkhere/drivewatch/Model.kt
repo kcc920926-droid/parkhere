@@ -84,6 +84,8 @@ object AppState {
     /** Which history scenario the demo panel last applied (Scenarios.HISTORIES). */
     var historyId by mutableStateOf("steady")
     /** A newer build on the family server, if any (checked once per launch), and whether its prompt is open. */
+    /** The current driver's latest "가족에게 부탁" and its answer, refreshed with the family card. */
+    var ride by mutableStateOf<FamilyApi.RideRequest?>(null)
     var update by mutableStateOf<FamilyApi.AppRelease?>(null)
     var showUpdate by mutableStateOf(false)
 

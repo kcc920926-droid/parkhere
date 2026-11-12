@@ -121,3 +121,15 @@ test("the same driver of the same car gets the same server driver back, so famil
   // A malformed key is ignored rather than trusted.
   assert.equal(store.registerDriver({ name: "김정숙", carKey: "VIN-KMH12345" }).reused, false);
 });
+
+test("a ride request stops showing after 12 hours", () => {
+  let clock = 1_000_000;
+  const { createStore: make, REQUEST_MS } = require("../store.js");
+  const store = make({ now: () => clock });
+  const reg = store.registerDriver({ name: "김정숙" });
+  const driver = store.driverByToken(reg.carToken);
+  store.askFamily(driver, { place: "마트" });
+  assert.equal(store.carView(driver).request.place, "마트");
+  clock += REQUEST_MS + 1;
+  assert.equal(store.carView(driver).request, null);
+});

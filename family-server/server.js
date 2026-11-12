@@ -37,6 +37,7 @@ const ROUTES = [
   ["PUT", "/api/car/backup", "car", (store, who, body) => store.setBackup(who, body.enabled)],
   ["POST", "/api/car/trips", "car", (store, who, body) => store.saveTrip(who, body)],
   ["PUT", "/api/car/profile", "car", (store, who, body) => store.saveProfile(who, body)],
+  ["POST", "/api/car/requests", "car", (store, who, body) => store.askFamily(who, body)],
   ["GET", "/api/app/latest", "none", (store, who, body, params, { release, publicBase }) => ({ ...release.latest(), download: `${publicBase}/api/app/download` })],
   ["GET", "/api/app/download", "none", (store, who, body, params, { release }) => ({ [FILE]: release.apk() })],
   ["GET", "/api/demo/scenarios", "none", (store, who, body, params, { demo }) => demo.list()],
@@ -47,6 +48,7 @@ const ROUTES = [
   ["GET", "/api/family/overview", "family", (store, who) => ({ name: who.name, drivers: store.overview(who) })],
   ["GET", "/api/family/drivers/{driverId}/summary", "family", (store, who, body, [id]) => store.summaryFor(who, id)],
   ["GET", "/api/family/drivers/{driverId}/summaries", "family", (store, who, body, [id]) => store.summariesFor(who, id)],
+  ["POST", "/api/family/drivers/{driverId}/answer", "family", (store, who, body, [id]) => store.answerRequest(who, id, body)],
   ["POST", "/api/family/drivers/{driverId}/ack", "family", (store, who, body, [id]) => store.ack(who, id, body.week)],
 ].map(([method, route, auth, handler]) => ({
   method, route, auth, handler,

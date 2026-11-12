@@ -136,11 +136,13 @@ private fun App(speak: (String) -> Unit) {
 
     // Keep the family card current: who linked, who acknowledged.
     LaunchedEffect(s.cur, p.carToken, s.screen) {
+        s.ride = null
         val token = p.carToken ?: return@LaunchedEffect
         while (true) {
             val id = s.profile.id
-            FamilyApi.me(token) { family, acked, week ->
+            FamilyApi.me(token) { family, acked, week, ride ->
                 s.updateId(id) { it.copy(family = family, ackedBy = if (week == it.sentWeek) acked else emptyList()) }
+                if (s.profile.id == id) s.ride = ride
             }
             delay(4_000)
         }
@@ -564,7 +566,7 @@ private fun Invite(speak: (String) -> Unit) {
                             if (!ok) { demo = Phase.IDLE; return@demoChildLinks }
                             demo = Phase.DONE
                             // Don't wait for the 4-second poll: show "연결됐어요" right away.
-                            FamilyApi.me(token) { family, acked, week ->
+                            FamilyApi.me(token) { family, acked, week, _ ->
                                 s.updateId(id) { it.copy(family = family, ackedBy = if (week == it.sentWeek) acked else emptyList()) }
                             }
                         }
@@ -676,7 +678,7 @@ private fun Route() {
         // These used to be small grey links; they are real choices, so they get real buttons.
         Row(Modifier.fillMaxWidth(0.85f), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Button("홈으로", { s.drive = null; s.screen = Screen.HOME }, Raised, icon = Ic.ARROW_LEFT)
-            Button("오늘은 다른 방법으로 가기", { s.screen = Screen.OTHER_WAY }, Raised, icon = Ic.TAXI)
+            Button("오늘은 다른 방법으로 가기", { s.screen = Screen.OTHER_WAY }, Raised, icon = Ic.FAMILY)
             Spacer(Modifier.weight(1f))
             Text("두 길의 시간과 경로는 시연용이에요", color = Dim, fontSize = 14.sp)
         }
@@ -686,25 +688,57 @@ private fun Route() {
 @Composable
 private fun OtherWay() {
     val s = AppState
-    var done by remember { mutableStateOf<String?>(null) }
+    val place = s.drive?.place
+    var valet by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp, Alignment.CenterVertically)) {
-        Text(s.drive?.place?.let { "${it}까지 다른 방법으로 가요" } ?: "오늘은 다른 방법으로 가요", color = Ink, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-        Row(Modifier.fillMaxWidth(0.8f), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            listOf(Triple(Ic.TAXI, "택시 부르기", "가까운 택시를 불러요"), Triple(Ic.CAR, "대리운전", "내 차로 데려다줘요"),
-                Triple(Ic.FAMILY, "가족에게 부탁", s.profile.family.firstOrNull()?.let { "$it 님에게 알려요" } ?: "연결된 가족에게 알려요")).forEach { (icon, title, sub) ->
-                Column(
-                    Modifier.weight(1f).background(Raised, RoundedCornerShape(12.dp)).clickable { done = title }.padding(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Glyph(icon, Accent, 36.dp)
-                    Text(title, color = Ink, fontSize = 17.sp, fontWeight = FontWeight.Bold)
-                    Text(sub, color = Dim, fontSize = 12.sp)
-                }
+        Text(place?.let { "${it}까지 다른 방법으로 가요" } ?: "오늘은 다른 방법으로 가요", color = Ink, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        // In the car, only ways that fit being in the car: a valet driver brings this car, family comes or calls a taxi
+        // from their phone. Calling a taxi from the screen of the car you are sitting in would leave the car behind.
+        Row(Modifier.fillMaxWidth(0.7f), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            WayCard(Ic.CAR, "대리운전", "내 차로 데려다줘요", Modifier.weight(1f)) { valet = true }
+            WayCard(Ic.FAMILY, "가족에게 부탁", "태우러 오거나 택시를 불러 드려요", Modifier.weight(1f)) {
+                if (s.profile.family.isEmpty() || s.profile.carToken == null) s.screen = Screen.INVITE else askFamily(place ?: OUTING)
             }
         }
-        Text(done?.let { "$it 연결했어요 (시연용)" } ?: "이유는 묻지 않고, 저장하지 않아요", color = if (done != null) Ok else Dim, fontSize = 14.sp)
+        RideStatus(place ?: OUTING, if (valet) "대리운전 호출은 제휴 뒤에 열려요 (시연용)" else "이유는 묻지 않아요. 가족에게는 목적지 이름만 가요")
         Button("돌아가기", { s.screen = Screen.HOME }, Raised)
     }
+}
+
+/** Sent as the place when the driver gives up a trip from the home screen, before choosing where to go. */
+private const val OUTING = "외출"
+
+private fun askFamily(place: String) {
+    val s = AppState
+    val token = s.profile.carToken ?: return
+    FamilyApi.askFamily(token, place) { r -> if (r != null) s.ride = r }
+}
+
+@Composable
+private fun WayCard(icon: Ic, title: String, sub: String, modifier: Modifier, enabled: Boolean = true, onClick: () -> Unit) =
+    Column(
+        modifier.clip(RoundedCornerShape(12.dp)).background(Raised).clickable(enabled = enabled, onClick = onClick).padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Glyph(icon, if (enabled) Accent else Dim, 36.dp)
+        Text(title, color = if (enabled) Ink else Dim, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+        Text(sub, color = Dim, fontSize = 12.sp)
+    }
+
+/** Where "가족에게 부탁" for [place] stands: sent, then who is coming or calling a taxi. Otherwise [idle]. */
+@Composable
+private fun RideStatus(place: String, idle: String) {
+    val s = AppState
+    val r = s.ride?.takeIf { it.place == place }
+    val family = s.profile.family
+    val (line, color) = when {
+        family.isEmpty() -> "가족을 연결하면 부탁할 수 있어요 · 눌러서 연결해요" to Dim
+        r == null -> idle to Dim
+        r.answer == "pickup" -> "${r.answeredBy} 님이 태우러 와요" to Ok
+        r.answer == "taxi" -> "${r.answeredBy} 님이 택시를 불러 드려요" to Ok
+        else -> "보냈어요 · ${family.joinToString()} 님의 답을 기다려요" to Ink
+    }
+    IconLabel(if (r?.answer != null) Ic.CHECK else null, line, color, 15.sp, if (r != null) FontWeight.Bold else FontWeight.Normal, iconTint = Ok)
 }
 
 // ---------- C8 driving, C9 arrival ----------
@@ -1305,7 +1339,7 @@ private fun Monthly(r: Report) {
 private fun Graduate() {
     val s = AppState
     val p = s.profile
-    var done by remember { mutableStateOf<String?>(null) }
+    var asked by remember { mutableStateOf<String?>(null) }
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             BackButton { s.screen = Screen.MONTHLY }
@@ -1325,12 +1359,19 @@ private fun Graduate() {
                 Demo.PLACES.forEach { (place, _) ->
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         IconLabel(placeIcon(place), place, Ink, 16.sp, modifier = Modifier.weight(1f), iconTint = Accent)
-                        Button("택시 부르기", { done = "$place 택시 부르기" }, Raised)
-                        Button("가족에게 부탁", { done = "$place 가는 길 가족에게 부탁" }, Raised)
+                        Button("가족에게 부탁", { if (p.family.isEmpty()) s.screen = Screen.INVITE else { asked = place; askFamily(place) } }, Raised)
                     }
                 }
                 Spacer(Modifier.weight(1f))
-                Text(done?.let { "$it 연결했어요 (시연용)" } ?: "택시 호출과 가족 알림은 시연용이에요", color = if (done != null) Ok else Dim, fontSize = 13.sp)
+                RideStatus(asked ?: "", "가족이 태우러 오거나, 폰에서 택시를 불러 드려요")
+            }
+            // Offered only here, on a screen the driver opened: a change in driving is never handed to sales.
+            Tile(Modifier.weight(1f).fillMaxHeight()) {
+                Text("차와 이동은 이렇게 이어져요", color = Ink, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+                Text("차는 인증중고차로 정리하고, 그 일부를 이동 크레딧으로 받아요.", color = Ink, fontSize = 14.sp)
+                Text("자주 가시던 곳은 수요응답 버스(셔클)나 택시로 이어 가요.", color = Ink, fontSize = 14.sp)
+                Spacer(Modifier.weight(1f))
+                Text("제휴 예정이에요. 이 안내는 이 화면을 여신 분에게만 보여요.", color = Dim, fontSize = 13.sp)
             }
         }
     }

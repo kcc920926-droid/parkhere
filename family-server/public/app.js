@@ -200,8 +200,36 @@
   }
 
   /* P4 가족 목록 */
+  /* 차에서 "가족에게 부탁"을 누른 운전자. 목적지 이름만 오고, 태우러 갈지 택시를 불러 드릴지 답한다.
+     택시는 자녀가 자기 폰의 택시 앱으로 부른다(호출 플랫폼 제휴는 다음 단계). */
+  function askCard(driver, refresh) {
+    const r = driver.request;
+    const trip = r.place === "외출" ? "오늘 외출" : `${r.place} 가는 길`;
+    const answer = async (kind) => {
+      try { await api("POST", `/api/family/drivers/${driver.driverId}/answer`, { requestId: r.requestId, answer: kind }); } catch { /* 다음 새로 고침에서 다시 보인다 */ }
+      refresh();
+    };
+    if (!r.answer) {
+      return h("div", { class: "card tint" },
+        h("strong", {}, `${ig(driver.relation)} ${trip}에 도움을 부탁했어요`),
+        h("span", { class: "muted" }, "오늘은 운전하지 않기로 하셨어요. 이유는 묻지 말아 주세요."),
+        h("div", { class: "row" },
+          h("button", { class: "btn primary", onclick: () => answer("pickup") }, "제가 태우러 갈게요"),
+          h("button", { class: "btn", onclick: () => answer("taxi") }, "택시를 불러 드릴게요")));
+    }
+    const mine = r.answeredBy === session?.name;
+    const what = r.answer === "pickup" ? "태우러 가기로" : "택시를 불러 드리기로";
+    return h("div", { class: "card" },
+      h("span", { class: "label" }, `${driver.relation} · ${trip}`),
+      h("strong", {}, mine ? `${what} 했어요` : `${r.answeredBy} 님이 ${what} 했어요`),
+      mine ? h("span", { class: "muted" }, r.answer === "taxi"
+        ? `쓰시는 택시 앱으로 ${driver.relation}께 불러 드려 주세요. 차 화면에는 "택시를 불러 드려요"로 떠요.`
+        : `차 화면에 "${r.answeredBy} 님이 태우러 와요"로 떠요.`) : null);
+  }
+
   function home() {
     const banner = h("div");
+    const asks = h("div", { style: "display:contents" });
     const list = h("div", { style: "display:contents" });
     const refresh = async () => {
       let data;
@@ -209,6 +237,7 @@
       if (!data.drivers.length) { show(connect); return; }
       const fresh = data.drivers.find((driver) => driver.latest && !driver.latest.acked);
       banner.replaceChildren(fresh ? h("div", { class: "banner" }, `${fresh.relation}의 이번 주 운전 요약이 도착했어요`) : "");
+      asks.replaceChildren(...data.drivers.filter((driver) => driver.request).map((driver) => askCard(driver, refresh)));
       list.replaceChildren(...data.drivers.map((driver) => {
         const status = driver.latest ? STATUS[driver.latest.status] : null;
         const note = !driver.latest ? "아직 요약이 없어요" : driver.latest.acked ? "확인함" : "요약 도착";
@@ -221,7 +250,7 @@
     every(4000, refresh);
     return [
       h("h1", {}, "가족 운전"),
-      banner, list,
+      asks, banner, list,
       h("div", { class: "spacer" }),
       h("button", { class: "link", onclick: () => show(connect) }, "+ 가족 차 추가"),
     ];
