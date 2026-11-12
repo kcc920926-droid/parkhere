@@ -130,6 +130,20 @@
     targets.forEach((t) => { t.classList.add("reveal"); rio.observe(t); });
   }
 
+  /* 1-1. 영상: 표지의 재생 버튼과 첫 화면의 "영상 보기"는 누를 때만 영상을 받는다 */
+  const film = document.querySelector(".film");
+  const video = document.querySelector("[data-film]");
+  if (film && video) {
+    const play = () => { film.classList.add("playing"); video.play().catch(() => {}); };
+    document.querySelector("[data-film-play]").addEventListener("click", play);
+    video.addEventListener("play", () => film.classList.add("playing"));
+    document.querySelectorAll("[data-film-link]").forEach((a) => a.addEventListener("click", (e) => {
+      e.preventDefault();
+      film.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+      play();
+    }));
+  }
+
   /* 차량 앱 APK: 게시된 버전과 크기 */
   fetch("/api/app/latest", { cache: "no-store" })
     .then((r) => (r.ok ? r.json() : null))

@@ -21,6 +21,7 @@ const types = {
   ".jpg": "image/jpeg",
   ".ico": "image/x-icon",
   ".woff2": "font/woff2",
+  ".mp4": "video/mp4",
 };
 const files = new Map();
 const load = (dir, prefix) => {
@@ -52,7 +53,23 @@ const server = http.createServer((request, response) => {
     return;
   }
   const cache = url.startsWith("/assets/") ? "public, max-age=3600" : "no-cache";
-  response.writeHead(200, { "Content-Type": file.type, "Content-Length": file.body.length, "Cache-Control": cache });
+  const size = file.body.length;
+  const headers = { "Content-Type": file.type, "Cache-Control": cache, "Accept-Ranges": "bytes" };
+  /* 영상은 브라우저(특히 Safari)가 구간을 나눠 요청한다. bytes=시작-끝 한 구간만 받는다. */
+  const range = /^bytes=(\d*)-(\d*)$/.exec(request.headers.range || "");
+  if (range && (range[1] || range[2])) {
+    let start = range[1] ? Number(range[1]) : size - Number(range[2]);
+    let end = range[1] && range[2] ? Math.min(Number(range[2]), size - 1) : size - 1;
+    if (start < 0) start = 0;
+    if (start >= size || start > end) {
+      response.writeHead(416, { ...headers, "Content-Range": `bytes */${size}` }).end();
+      return;
+    }
+    response.writeHead(206, { ...headers, "Content-Range": `bytes ${start}-${end}/${size}`, "Content-Length": end - start + 1 });
+    response.end(request.method === "HEAD" ? undefined : file.body.subarray(start, end + 1));
+    return;
+  }
+  response.writeHead(200, { ...headers, "Content-Length": size });
   response.end(request.method === "HEAD" ? undefined : file.body);
 });
 
