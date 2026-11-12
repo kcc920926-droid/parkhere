@@ -92,7 +92,7 @@
 
 ## APK
 
-`./gradlew :app:assembleRelease` → `app/build/outputs/apk/release/app-release.apk`. 제출용은 팀명이 정해지면 `apk/팀명_DriveWatch_release.apk`로 복사한다.
+`./gradlew :app:assembleRelease` → `app/build/outputs/apk/release/app-release.apk`. 제출용은 `apk/M92_DriveWatch_release.apk`다(팀명 M92). 최종본은 main에 병합한 뒤 다시 빌드해 이 이름으로 넣는다.
 
 - **버전**: versionCode는 git 커밋 수, versionName은 `0.2.0+<커밋>`이다. 시연 패널에 표시된다.
 - **서명**: `~/.drivewatch/signing.properties`가 있으면 팀 공용 키로 서명한다(저장소 밖에 두고 팀원에게 따로 전달). 없으면 디버그 키로 서명하고, 이때는 팀 키로 설치된 앱 위에 덮어 설치할 수 없다.
