@@ -1,0 +1,185 @@
+{
+ "id": "church-comfortable",
+ "title": "성당 · 편한 길",
+ "place": "성당",
+ "comfortable": true,
+ "expect": {
+  "turns": 3,
+  "signals": 3,
+  "reroutes": 0,
+  "hardBrakes": 0
+ },
+ "events": [
+  {
+   "at": 0,
+   "brake": true,
+   "speed": 0
+  },
+  {
+   "at": 0,
+   "gear": "D"
+  },
+  {
+   "at": 0.5,
+   "speed": 40,
+   "brake": false
+  },
+  {
+   "at": 0.8,
+   "signal": true
+  },
+  {
+   "at": 2,
+   "turn": {
+    "dir": "우회전",
+    "point": "큰길 진입"
+   }
+  },
+  {
+   "at": 2.8,
+   "signal": false
+  },
+  {
+   "at": 4.8,
+   "signal": true
+  },
+  {
+   "at": 6,
+   "turn": {
+    "dir": "우회전",
+    "point": "성당 방면 큰길"
+   }
+  },
+  {
+   "at": 6.8,
+   "signal": false
+  },
+  {
+   "at": 8.8,
+   "signal": true
+  },
+  {
+   "at": 10,
+   "turn": {
+    "dir": "우회전",
+    "point": "성당 주차장 진입"
+   }
+  },
+  {
+   "at": 10.8,
+   "signal": false
+  },
+  {
+   "at": 13,
+   "arrive": 11.0
+  },
+  {
+   "at": 13.75,
+   "speed": 38,
+   "brake": true
+  },
+  {
+   "at": 14.0,
+   "speed": 36,
+   "brake": true
+  },
+  {
+   "at": 14.25,
+   "speed": 34,
+   "brake": true
+  },
+  {
+   "at": 14.5,
+   "speed": 32,
+   "brake": true
+  },
+  {
+   "at": 14.75,
+   "speed": 30,
+   "brake": true
+  },
+  {
+   "at": 15.0,
+   "speed": 28,
+   "brake": true
+  },
+  {
+   "at": 15.25,
+   "speed": 26,
+   "brake": true
+  },
+  {
+   "at": 15.5,
+   "speed": 24,
+   "brake": true
+  },
+  {
+   "at": 15.75,
+   "speed": 22,
+   "brake": true
+  },
+  {
+   "at": 16.0,
+   "speed": 20,
+   "brake": true
+  },
+  {
+   "at": 16.25,
+   "speed": 18,
+   "brake": true
+  },
+  {
+   "at": 16.5,
+   "speed": 16,
+   "brake": true
+  },
+  {
+   "at": 16.75,
+   "speed": 14,
+   "brake": true
+  },
+  {
+   "at": 17.0,
+   "speed": 12,
+   "brake": true
+  },
+  {
+   "at": 17.25,
+   "speed": 10,
+   "brake": true
+  },
+  {
+   "at": 17.5,
+   "speed": 8,
+   "brake": true
+  },
+  {
+   "at": 17.75,
+   "speed": 6,
+   "brake": true
+  },
+  {
+   "at": 18.0,
+   "speed": 4,
+   "brake": true
+  },
+  {
+   "at": 18.25,
+   "speed": 2,
+   "brake": true
+  },
+  {
+   "at": 18.5,
+   "speed": 0,
+   "brake": true
+  },
+  {
+   "at": 19.5,
+   "gear": "P"
+  },
+  {
+   "at": 20.5,
+   "brake": false
+  }
+ ]
+}

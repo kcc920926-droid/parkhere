@@ -154,3 +154,64 @@ test("the family monthly view lists every week the driver sent, newest first, wi
   assert.ok(list.summaries.every((s) => s.evidence.length === 0 && s.evidenceShared === false)); // status only
   assert.equal((await call("GET", `/api/family/drivers/${car.driverId}/summaries`, { token: stranger.token })).status, 403);
 }));
+
+test("demo scenarios are listed and served without a login, and unknown ones are 404", () => withServer(async (call) => {
+  const list = (await call("GET", "/api/demo/scenarios")).data;
+  assert.equal(list.drives.length, 6);
+  assert.deepEqual(list.histories.map((h) => h.id).sort(), ["steady", "talk", "watch"]);
+  const drive = (await call("GET", "/api/demo/drives/hospital-fast")).data;
+  assert.equal(drive.place, "병원");
+  assert.deepEqual(drive.events.filter((e) => e.gear).map((e) => e.gear), ["D", "P"]);
+  assert.ok(drive.events.every((e, i, all) => i === 0 || all[i - 1].at <= e.at), "events are in time order");
+  const history = (await call("GET", "/api/demo/histories/talk")).data;
+  assert.equal(history.expect, "대화 권장");
+  assert.equal((await call("GET", "/api/demo/drives/nope")).status, 404);
+}));
+
+test("the latest app build is described and downloadable, and missing builds are 404", async () => {
+  const os = require("node:os");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "dw-app-"));
+  const { loadRelease } = require("../release.js");
+  const none = createApp(createStore(), { release: loadRelease(null) });
+  await new Promise((resolve) => none.listen(0, "127.0.0.1", resolve));
+  assert.equal((await fetch(`http://127.0.0.1:${none.address().port}/api/app/latest`)).status, 404);
+  none.close();
+  fs.writeFileSync(path.join(dir, "latest.json"), JSON.stringify({ versionCode: 7, versionName: "0.2.0+abc1234", commit: "abc1234", notes: "QR", sha256: "x", size: 3 }));
+  fs.writeFileSync(path.join(dir, "DriveWatch.apk"), "APK");
+  const server = createApp(createStore(), { release: loadRelease(dir), publicBase: "https://drive.example" });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const latest = await (await fetch(`${base}/api/app/latest`)).json();
+  assert.deepEqual([latest.versionCode, latest.download], [7, "https://drive.example/api/app/download"]);
+  const apk = await fetch(`${base}/api/app/download`);
+  assert.equal(apk.headers.get("content-type"), "application/vnd.android.package-archive");
+  assert.equal(await apk.text(), "APK");
+  server.close();
+});
+
+test("a driver asks the family for a ride and a linked member answers", () => withServer(async (call) => {
+  const car = (await call("POST", "/api/car/drivers", { body: { name: "김정숙" } })).data;
+  const invite = (await call("POST", "/api/car/invites", { token: car.carToken })).data;
+  const child = (await call("POST", "/api/family/members", { body: { name: "김민수" } })).data;
+  await call("POST", "/api/family/links", { token: child.token, body: { code: invite.code, relation: "엄마" } });
+
+  assert.equal((await call("POST", "/api/car/requests", { token: car.carToken, body: {} })).data.error, "place_required");
+  const asked = (await call("POST", "/api/car/requests", { token: car.carToken, body: { place: "병원" } })).data;
+  assert.equal(asked.place, "병원");
+  assert.equal(asked.answer, null);
+
+  const seen = (await call("GET", "/api/family/overview", { token: child.token })).data.drivers[0].request;
+  assert.equal(seen.requestId, asked.requestId);
+  assert.equal((await call("POST", `/api/family/drivers/${car.driverId}/answer`, { token: child.token, body: { requestId: asked.requestId, answer: "fly" } })).data.error, "invalid_answer");
+  assert.equal((await call("POST", `/api/family/drivers/${car.driverId}/answer`, { token: child.token, body: { requestId: "req_old", answer: "pickup" } })).status, 404);
+  const answered = (await call("POST", `/api/family/drivers/${car.driverId}/answer`, { token: child.token, body: { requestId: asked.requestId, answer: "pickup" } })).data;
+  assert.equal(answered.answeredBy, "김민수");
+
+  const other = (await call("POST", "/api/family/members", { body: { name: "김민지" } })).data;
+  const invite2 = (await call("POST", "/api/car/invites", { token: car.carToken })).data;
+  await call("POST", "/api/family/links", { token: other.token, body: { code: invite2.code, relation: "엄마" } });
+  assert.equal((await call("POST", `/api/family/drivers/${car.driverId}/answer`, { token: other.token, body: { requestId: asked.requestId, answer: "taxi" } })).status, 409);
+
+  const me = (await call("GET", "/api/car/me", { token: car.carToken })).data;
+  assert.deepEqual([me.request.answer, me.request.answeredBy], ["pickup", "김민수"]);
+}));

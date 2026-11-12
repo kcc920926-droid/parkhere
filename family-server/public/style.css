@@ -45,7 +45,10 @@ button.card { border: 0; font: inherit; color: inherit; text-align: left; cursor
 .card strong { font-size: 18px; }
 .banner { background: var(--tint); border-radius: 14px; padding: 12px 16px; }
 .chip { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 12px; font-size: 14px; font-weight: 600; background: var(--neutral-bg); color: var(--muted); }
-.chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+/* 시계 차 캐릭터(clockcar.js): 바늘 위치·칸 색·표정이 상태 글자를 함께 받쳐 준다. */
+.clockcar { flex: none; border-radius: 26%; }
+.with-car { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.status-head { display: flex; align-items: center; gap: 12px; }
 .chip.stable { background: var(--stable-bg); color: var(--stable); }
 .chip.observe { background: var(--observe-bg); color: var(--observe); }
 .chip.talk { background: var(--talk-bg); color: var(--talk); }
@@ -56,3 +59,9 @@ button.card { border: 0; font: inherit; color: inherit; text-align: left; cursor
 .month { align-items: center; }
 .month .btn { flex: 0 0 56px; padding: 10px; }
 .month-title { flex: 1; text-align: center; font-size: 20px; }
+.icon { width: 1.2em; height: 1.2em; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: -0.25em; }
+.back, .link, .btn { display: inline-flex; align-items: center; justify-content: center; gap: .35em; }
+.back, .link { justify-content: flex-start; }
+.label .icon { width: 1.1em; height: 1.1em; margin-right: .15em; }
+.btn.big { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 18px 20px; font-size: 18px; text-align: left; }
+.btn.big small { font-size: 14px; font-weight: 400; opacity: .85; }

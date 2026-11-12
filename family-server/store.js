@@ -12,6 +12,8 @@ const MAX_MEMBERS = 2000;
 const STATUSES = ["learning", "insufficient", "stable", "observe", "talk"];
 const SCOPES = ["status", "evidence"];
 const MAX_TRIPS = 1000;
+const REQUEST_MS = 12 * 60 * 60 * 1000;
+const ANSWERS = ["pickup", "taxi"];
 
 class StoreError extends Error {
   constructor(code, status) {
@@ -48,6 +50,14 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
   const linkOf = (member, driverId) => member.links.find((link) => link.driverId === driverId)
     ?? fail("not_linked", 403);
 
+  /* "가족에게 부탁": 운전자가 오늘은 운전하지 않고 가족 도움을 받기로 한 것. 목적지 이름(생활길 장소)만 받고
+     위치는 받지 않는다. 운전자마다 가장 최근 하나만 두고, 12시간이 지나면 보이지 않는다. */
+  const liveRequest = (driver) => (driver.request && driver.request.createdAt > now() - REQUEST_MS ? driver.request : null);
+  const requestView = (request) => request && {
+    requestId: request.requestId, place: request.place, createdAt: request.createdAt,
+    answer: request.answer, answeredBy: request.answeredBy, answeredAt: request.answeredAt,
+  };
+
   /* 가족에게 보이는 요약. 운전자가 '상태만'을 골랐으면 숫자 근거는 내보내지 않는다. */
   const shown = (driver, summary, memberId) => summary && {
     week: summary.week,
@@ -65,15 +75,33 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
 
   return {
     /* ---- 차량 앱 ---- */
-    registerDriver({ name, shareScope } = {}) {
+    /* 같은 차(carKey)의 같은 운전자가 다시 등록하면 새로 만들지 않고 그 운전자를 돌려준다:
+       같은 앱 안의 운전자(profileId)이거나, 앱을 다시 설치해 profileId가 바뀌었어도 이름이 같으면.
+       그래야 재설치나 동의 화면을 다시 거쳐도 가족 연결과 보관 기록이 이어진다.
+       carKey는 차량 앱이 차대번호(없으면 기기 ID)를 해시한 값이다. 차대번호 자체는 받지 않는다. */
+    registerDriver({ name, shareScope, carKey, profileId } = {}) {
+      const driverName = text(name, 20) || fail("name_required");
+      const key = typeof carKey === "string" && /^[0-9a-f]{32,64}$/.test(carKey) ? carKey : null;
+      const local = text(profileId, 40) || null;
+      if (key) {
+        const same = Object.values(state.drivers).filter((driver) => driver.carKey === key);
+        const found = same.find((driver) => local && driver.profileId === local) ?? same.find((driver) => driver.name === driverName);
+        if (found) {
+          if (local) found.profileId = local;
+          if (SCOPES.includes(shareScope)) found.shareScope = shareScope;
+          save();
+          return { driverId: found.driverId, carToken: found.carToken, shareScope: found.shareScope, reused: true, backup: found.backup ?? null };
+        }
+      }
       if (Object.keys(state.drivers).length >= maxDrivers) fail("capacity_reached", 503);
       const driver = {
-        driverId: id("drv"), carToken: token(), name: text(name, 20) || fail("name_required"),
+        driverId: id("drv"), carToken: token(), name: driverName,
         shareScope: SCOPES.includes(shareScope) ? shareScope : "status", summaries: {},
+        ...(key ? { carKey: key } : {}), ...(local ? { profileId: local } : {}),
       };
       state.drivers[driver.driverId] = driver;
       save();
-      return { driverId: driver.driverId, carToken: driver.carToken, shareScope: driver.shareScope };
+      return { driverId: driver.driverId, carToken: driver.carToken, shareScope: driver.shareScope, reused: false, backup: null };
     },
     driverByToken: (value) => byToken("drivers", "carToken", value),
 
@@ -94,6 +122,14 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
       state.invites[code] = { driverId: driver.driverId, expiresAt: now() + INVITE_MS };
       save();
       return { code, expiresAt: state.invites[code].expiresAt };
+    },
+
+    /* 문자로 보낼 초대: 이 운전자가 띄운, 아직 유효한 코드만. */
+    activeInvite(driver, code) {
+      const key = text(String(code ?? ""), 12).replace(/\D/g, "");
+      const invite = state.invites[key];
+      if (!invite || invite.driverId !== driver.driverId || invite.expiresAt <= now()) fail("invalid_code", 404);
+      return { code: key, expiresAt: invite.expiresAt };
     },
 
     saveSummary(driver, body = {}) {
@@ -174,6 +210,13 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
       return driver.profile;
     },
 
+    askFamily(driver, { place } = {}) {
+      const where = text(place, 20) || fail("place_required");
+      driver.request = { requestId: id("req"), place: where, createdAt: now(), answer: null, answeredBy: null, answeredAt: null };
+      save();
+      return requestView(driver.request);
+    },
+
     /* 차 화면의 가족 카드에 쓴다: 누가 연결됐는지, 최근 요약을 누가 확인했는지. */
     carView(driver) {
       const members = Object.values(state.members).filter((member) =>
@@ -187,6 +230,7 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
           week: summary.week, status: summary.status, sentAt: summary.sentAt,
           ackedBy: members.filter((member) => summary.acks[member.memberId]).map((member) => member.name),
         },
+        request: requestView(liveRequest(driver)),
       };
     },
 
@@ -234,6 +278,7 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
             week: summary.week, status: summary.status, sentAt: summary.sentAt,
             acked: Boolean(summary.acks[member.memberId]),
           },
+          request: requestView(liveRequest(driver)),
         };
       });
     },
@@ -255,6 +300,18 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
       };
     },
 
+    /* 부탁에 답한다: 태우러 가기(pickup) 또는 택시를 대신 불러 드리기(taxi). 먼저 답한 가족이 맡고, 같은 사람은 답을 바꿀 수 있다. */
+    answerRequest(member, driverId, { requestId, answer } = {}) {
+      linkOf(member, driverId);
+      const request = liveRequest(state.drivers[driverId]);
+      if (!request || request.requestId !== requestId) fail("no_request", 404);
+      if (!ANSWERS.includes(answer)) fail("invalid_answer");
+      if (request.answer && request.answeredBy !== member.name) fail("already_answered", 409);
+      Object.assign(request, { answer, answeredBy: member.name, answeredAt: now() });
+      save();
+      return requestView(request);
+    },
+
     ack(member, driverId, week) {
       linkOf(member, driverId);
       const summary = state.drivers[driverId].summaries[text(week, 10)] ?? fail("no_summary", 404);
@@ -265,4 +322,4 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
   };
 }
 
-module.exports = { createStore, StoreError, INVITE_MS, MAX_FAILED_ATTEMPTS, STATUSES, SCOPES };
+module.exports = { createStore, StoreError, REQUEST_MS, ANSWERS, INVITE_MS, MAX_FAILED_ATTEMPTS, STATUSES, SCOPES };

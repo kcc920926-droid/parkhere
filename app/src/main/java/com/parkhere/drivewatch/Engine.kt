@@ -11,6 +11,8 @@ data class Trip(
     val signalsUsed: Int,
     val hardBrakes: Int,
     val place: String = "",
+    /** 시연용 synthetic history: never uploaded, replaced when another history scenario is chosen. */
+    val demo: Boolean = false,
 )
 
 /** Change-detection metrics. All are "lower is better" internally; signal is shown as compliance %. */

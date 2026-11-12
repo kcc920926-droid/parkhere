@@ -46,7 +46,8 @@ Pleos 에뮬레이터 안의 앱은 이 PC의 서버를 `http://10.0.2.2:8795`�
 | `POST /api/car/invites` | 초대 코드 발급. `{code, expiresAt}` |
 | `PUT /api/car/share-scope` `{shareScope}` | `status` 또는 `evidence` |
 | `POST /api/car/summaries` | 주간 요약 보내기 (아래 형식) |
-| `GET /api/car/me` | 연결된 가족과, 최근 요약을 확인한 사람 |
+| `GET /api/car/me` | 연결된 가족, 최근 요약을 확인한 사람, 가장 최근 "가족에게 부탁"과 그 답(`request`) |
+| `POST /api/car/requests` `{place}` | 가족에게 부탁(0.8.0). 오늘은 운전하지 않겠다는 표시로 목적지 이름만 보낸다. 위치는 보내지 않는다. 운전자마다 하나, 12시간 동안 보인다 |
 | `PUT /api/car/backup` `{enabled}` | 주행 기록 보관 켜기·끄기. 운전자가 차에서 허락할 때만 켠다. **끄면 보관한 기록과 설정을 바로 지운다** |
 | `GET /api/car/backup` | 보관한 주행 기록과 설정을 돌려준다. 앱을 다시 설치했을 때 복원에 쓴다 |
 | `POST /api/car/trips` | 주행 한 번의 횟수 요약 `{week, place, km, night, reroutes, turns, signals, hardBrakes}`. 보관이 꺼져 있으면 403 |
@@ -69,11 +70,13 @@ Pleos 에뮬레이터 안의 앱은 이 PC의 서버를 `http://10.0.2.2:8795`�
 
 ## 폰 웹 화면
 
-`public/`에 있습니다. 가입 → 부모님 차와 연결 → 가족 목록 → 주간 요약 → 월별 기록 순서이고, 4초마다 새로 고칩니다. 푸시 알림은 없습니다. 차 화면의 QR에 `http://서버주소/?code=123456`을 담으면 코드가 미리 채워집니다.
+`public/`에 있습니다. 가입 → 가족 차와 연결 → 가족 목록 → 주간 요약 → 월별 기록 순서이고, 4초마다 새로 고칩니다. 푸시 알림은 없습니다. 차 화면의 QR에 `http://서버주소/?code=123456`을 담으면 코드가 미리 채워집니다.
 
 월별 기록은 `GET /api/family/drivers/{driverId}/summaries`로 부모님이 보낸 주간 요약을 모아 보여 줍니다(최근 26주). 주행 하나하나의 기록은 가족에게 주지 않습니다.
 
-화면 문구와 구성은 `opinions/drive-watch-screens.md`의 P1~P5 시안을 따랐습니다. 다른 점은 두 가지입니다. 휴대폰 번호와 인증번호는 받지 않고, 연결할 때 호칭(엄마 / 아빠 / 부모님)을 고릅니다.
+화면 문구와 구성은 `opinions/drive-watch-screens.md`의 P1~P5 시안을 따랐습니다. 다른 점은 두 가지입니다. 휴대폰 번호와 인증번호는 받지 않고, 연결할 때 호칭(엄마 / 아빠 / 부모님 / 배우자)을 고릅니다.
+
+운전자가 차에서 "가족에게 부탁"을 누르면 가족 목록 맨 위에 부탁 카드가 뜹니다. `제가 태우러 갈게요` 또는 `택시를 불러 드릴게요`를 고르면 `POST /api/family/drivers/{driverId}/answer` `{requestId, answer}`로 답하고, 먼저 답한 가족이 맡습니다. 택시는 가족이 자기 폰의 택시 앱으로 부릅니다. 호출 플랫폼 제휴는 다음 단계입니다.
 
 ## 차량 앱 없이 돌려 보기
 
@@ -86,6 +89,29 @@ node tools/car-sim.js me                      # 가족이 확인했는지
 ```
 
 공개 서버를 상대로 돌리려면 `FAMILY_SERVER=https://drive.olvend.com`을 앞에 붙인다. 공개 서버에 남긴 기록은 지우는 주소가 없으니, 시연 직전이 아니면 로컬에서 한다.
+
+## 초대 링크 문자 (0.4.0)
+
+차 화면의 초대 코드 링크(`/family/?code=코드`)를 자녀 휴대폰 번호로 보낸다(`POST /api/car/invites/sms`). 번호는 보내는 데만 쓰고 기록 파일에 저장하지 않는다. 로그에는 가운데를 가린 번호(`010-****-5678`)만 남는다. 한 주소에서 한 시간에 5통까지 보낼 수 있다.
+
+| 환경 변수 | 뜻 |
+| --- | --- |
+| `SMS_PROVIDER=solapi` | 실제로 보낸다. 없으면 보내지 않고 `mode: "dry-run"`으로 답하는 시연 모드 |
+| `SOLAPI_API_KEY`, `SOLAPI_API_SECRET` | [SOLAPI](https://solapi.com/developers/api/authentication-api-key) 키. `message:send` 권한이 있어야 한다 |
+| `SMS_FROM` | SOLAPI에 미리 등록한 발신번호 |
+| `PUBLIC_BASE` | 문자에 넣을 주소. 기본값 `https://drive.olvend.com` |
+
+SOLAPI는 키마다 허용한 IP에서만 발송을 받는다. 이 Mac에서 보내려면 이 Mac의 공인 IP를 키에 등록해야 한다. 키와 발신번호는 LaunchAgent plist의 `EnvironmentVariables`에 넣고 저장소에는 올리지 않는다.
+
+## 차량 앱 새 버전 게시 (0.7.0)
+
+차량 앱은 켜질 때 `GET /api/app/latest`를 보고, 자기보다 `versionCode`가 크면 작업표시줄 옆에 "새 버전" 표시와 내려받기 QR(`GET /api/app/download`)을 띄운다. 앱이 스스로 설치하지는 않는다.
+
+```sh
+APP_DIR=~/.local/share/drive-watcher/family/app tools/publish-apk.sh ../app/build/outputs/apk/release/app-release.apk "바뀐 점 한 줄"
+```
+
+`APP_DIR`에 `DriveWatch.apk`와 `latest.json`이 생긴다. 서버의 LaunchAgent에도 같은 `APP_DIR`을 준다(게시만 할 때는 재시작이 필요 없다). 앱의 `versionCode`는 커밋 수라서, 새 커밋에서 빌드한 APK가 항상 더 새 버전이다. 팀이 같은 앱 위에 덮어 설치하려면 release를 팀 공용 키(`~/.drivewatch/signing.properties`)로 서명해야 한다.
 
 ## 배포
 

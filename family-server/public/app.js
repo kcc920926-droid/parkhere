@@ -1,4 +1,4 @@
-/* DriveWatch 자녀 폰 웹 화면: 가입 → 부모님 차와 연결 → 가족 목록 → 주간 요약. */
+/* DriveWatch 가족 폰 웹 화면: 가입 → 가족 차와 연결 → 가족 목록 → 주간 요약. */
 (() => {
   const app = document.getElementById("app");
   const KEY = "dw.family";
@@ -8,6 +8,11 @@
     stable: { chip: "stable", label: "안정" },
     observe: { chip: "observe", label: "관찰" },
     talk: { chip: "talk", label: "대화 권장" },
+  };
+  /* 받침에 맞춘 주격 조사: 엄마가, 부모님이, 배우자가. */
+  const ig = (word = "") => {
+    const code = word.charCodeAt(word.length - 1) - 0xac00;
+    return word + (code >= 0 && code <= 11171 && code % 28 ? "이" : "가");
   };
   const ERRORS = {
     name_required: "이름을 입력해 주세요.",
@@ -28,6 +33,9 @@
 
   /* 차 화면의 QR로 들어오면 코드가 주소에 붙어 온다. 읽은 뒤 주소에서 지운다. */
   const query = new URLSearchParams(location.search);
+  /* 차 화면에서 동의를 받고 넣은 자녀 번호는 주소의 # 뒤(#to=)에 온다. # 뒤는 서버로 가지 않아
+     번호가 서버·터널 로그에 남지 않는다. 국내 휴대폰 번호 형식만 쓰고, 읽은 뒤 주소에서 지운다. */
+  const childPhone = ((new URLSearchParams(location.hash.slice(1)).get("to") || "").replace(/\D/g, "").match(/^01[016789]\d{7,8}$/) || [""])[0];
   let pendingCode = (query.get("code") || "").replace(/\D/g, "").slice(0, 6);
   if (query.has("code")) history.replaceState(null, "", location.pathname);
 
@@ -58,6 +66,20 @@
     for (const child of children.flat()) if (child != null && child !== false) node.append(child);
     return node;
   }
+  /* Icons from the car app's set (icons.js, generated from app/design/icons). Drawn in the text colour. */
+  function icon(name) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("class", "icon");
+    svg.setAttribute("aria-hidden", "true");
+    for (const [d, filled] of window.DW_ICONS?.[name] ?? []) {
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", d);
+      if (filled) path.setAttribute("fill", "currentColor");
+      svg.append(path);
+    }
+    return svg;
+  }
   const card = (label, body, extra = "") => h("div", { class: `card ${extra}` }, h("span", { class: "label" }, label), body);
   const dayOf = (ms) => new Date(ms).toLocaleDateString("ko-KR", { month: "long", day: "numeric" });
 
@@ -66,6 +88,48 @@
     app.replaceChildren(...screen(...args));
     app.querySelector("[autofocus]")?.focus();
     window.scrollTo(0, 0);
+  }
+
+  /* 차 화면의 QR은 부모님이 자기 폰으로 찍기도 한다. 그때 부모님이 자기 차의 '가족'으로 가입하지 않도록
+     먼저 누가 열었는지 묻고, 부모님이면 같은 링크를 자녀에게 보내게 한다(문자 비용 없이 카카오톡·문자 공유). */
+  const invitedCode = pendingCode;
+  const inviteLink = () => `${location.origin}/family/?code=${invitedCode}`;
+
+  function who() {
+    return [
+      h("h1", {}, "가족 연결 링크예요"),
+      h("p", { class: "muted" }, "이 링크를 연 분은 누구세요?"),
+      h("div", { class: "spacer" }),
+      h("button", { class: "btn primary big", onclick: () => show(join) }, "가족이에요", h("small", {}, "가족의 운전 요약을 받을게요")),
+      h("button", { class: "btn big", onclick: () => show(forDriver) }, "제가 운전하는 사람이에요", h("small", {}, "가족에게 이 링크를 보낼게요")),
+    ];
+  }
+
+  function forDriver() {
+    const note = h("p", { class: "muted", role: "status" }, "가족분이 링크를 열면 바로 연결돼요. 10분 안에 보내 주세요.");
+    const message = "내 차 운전 요약을 같이 봐 줘. 10분 안에 눌러 줘.";
+    /* sms: 링크는 폰의 문자 앱을 본문이 채워진 채로 연다(받는 사람은 부모님이 고른다). 서버 문자 비용도,
+       번호 수집도 없다. '?&body='는 iPhone과 안드로이드 모두에서 본문을 채우는 형태다. */
+    const smsHref = `sms:${childPhone}?&body=${encodeURIComponent(`${message} ${inviteLink()}`)}`;
+    const shown = childPhone && `${childPhone.slice(0, 3)}-${childPhone.slice(3, -4)}-${childPhone.slice(-4)}`;
+    const send = async () => {
+      const url = inviteLink();
+      const data = { title: "DriveWatch 가족 연결", text: message, url };
+      try {
+        if (navigator.share) { await navigator.share(data); note.textContent = "보냈어요. 가족분이 열면 차 화면이 '연결됐어요'로 바뀌어요."; return; }
+      } catch (problem) { if (problem?.name === "AbortError") return; }
+      try { await navigator.clipboard.writeText(url); note.textContent = "링크를 복사했어요. 카카오톡이나 문자에 붙여 넣어 가족분께 보내 주세요."; }
+      catch { note.textContent = `이 주소를 가족분께 보내 주세요: ${url}`; }
+    };
+    return [
+      h("h1", {}, "가족분께 이 링크를 보내 주세요"),
+      note,
+      h("div", { class: "spacer" }),
+      h("a", { class: "btn primary big", href: smsHref, onclick: () => { note.textContent = "문자 앱에서 가족분을 골라 보내 주세요. 가족분이 열면 차 화면이 '연결됐어요'로 바뀌어요."; } }, "문자로 보내기", h("small", {}, childPhone ? `${shown}에게 보낼 문자가 채워져서 열려요` : "문자 앱이 링크를 채워서 열려요")),
+      h("button", { class: "btn big", onclick: send }, "카카오톡 등으로 보내기", h("small", {}, "보낼 앱을 골라요")),
+      h("p", { class: "muted" }, "또는 가족분 폰으로 차 화면의 QR을 찍어도 돼요."),
+      h("button", { class: "link", onclick: () => show(who) }, icon("arrow_left"), "처음으로"),
+    ];
   }
 
   /* P1 가입 */
@@ -81,7 +145,7 @@
     };
     return [h("form", { class: "form", onsubmit: submit, style: "display:contents" },
       h("h1", {}, "가족으로 가입"),
-      h("p", { class: "muted" }, "부모님의 운전 요약을 받아보세요"),
+      h("p", { class: "muted" }, "가족의 운전 요약을 받아보세요"),
       h("label", { class: "field" }, h("span", {}, "이름"), name),
       error,
       h("div", { class: "spacer" }),
@@ -89,14 +153,14 @@
       h("button", { class: "btn primary", type: "submit" }, "다음"))];
   }
 
-  /* P2 부모님 차와 연결 */
+  /* P2 가족 차와 연결 */
   function connect() {
     let relation = "부모님";
     const code = h("input", { name: "code", inputmode: "numeric", autocomplete: "one-time-code", maxlength: 6, pattern: "[0-9]{6}", value: pendingCode, autofocus: true, "aria-label": "6자리 코드" });
     pendingCode = "";
     code.addEventListener("input", () => { code.value = code.value.replace(/\D/g, "").slice(0, 6); });
     const error = h("p", { class: "error", role: "alert" });
-    const chips = ["엄마", "아빠", "부모님"].map((label) => h("button", {
+    const chips = ["엄마", "아빠", "부모님", "배우자"].map((label) => h("button", {
       type: "button", "aria-pressed": String(label === relation),
       onclick: (event) => {
         relation = label;
@@ -110,8 +174,8 @@
       catch (problem) { error.textContent = problem.message; }
     };
     return [h("form", { onsubmit: submit, style: "display:contents" },
-      h("h1", {}, "부모님 차와 연결"),
-      h("p", { class: "muted" }, "부모님 차 화면의 6자리 코드를 입력하세요"),
+      h("h1", {}, "가족 차와 연결"),
+      h("p", { class: "muted" }, "운전하시는 분 차 화면의 6자리 코드를 입력하세요"),
       h("label", { class: "field code" }, code),
       h("p", { class: "muted" }, "어떻게 부르시나요?"),
       h("div", { class: "chips" }, chips),
@@ -127,17 +191,45 @@
     return [
       h("div", { class: "center" },
         h("h1", {}, `${link.relation}(${link.name}) 차와`, h("br"), "연결됐어요"),
-        h("p", { class: "muted" }, "매주 금요일에 운전 요약이 와요."),
-        h("p", { class: "muted" }, "처음 2주는 평소 운전을 배우는 기간이에요."),
-        h("p", { class: "muted" }, `${link.relation}가 보내기로 한 것만 보여요.`)),
+        h("p", { class: "muted" }, `${ig(link.relation)} 차에서 주간 요약을 보내면 여기로 와요.`),
+        h("p", { class: "muted" }, "처음 12주는 평소 운전을 알아가는 기간이에요."),
+        h("p", { class: "muted" }, `${ig(link.relation)} 보내기로 한 것만 보여요.`)),
       h("div", { class: "spacer" }),
       h("button", { class: "btn primary", autofocus: true, onclick: () => show(home) }, "시작하기"),
     ];
   }
 
   /* P4 가족 목록 */
+  /* 차에서 "가족에게 부탁"을 누른 운전자. 목적지 이름만 오고, 태우러 갈지 택시를 불러 드릴지 답한다.
+     택시는 자녀가 자기 폰의 택시 앱으로 부른다(호출 플랫폼 제휴는 다음 단계). */
+  function askCard(driver, refresh) {
+    const r = driver.request;
+    const trip = r.place === "외출" ? "오늘 외출" : `${r.place} 가는 길`;
+    const answer = async (kind) => {
+      try { await api("POST", `/api/family/drivers/${driver.driverId}/answer`, { requestId: r.requestId, answer: kind }); } catch { /* 다음 새로 고침에서 다시 보인다 */ }
+      refresh();
+    };
+    if (!r.answer) {
+      return h("div", { class: "card tint" },
+        h("strong", {}, `${ig(driver.relation)} ${trip}에 도움을 부탁했어요`),
+        h("span", { class: "muted" }, "오늘은 운전하지 않기로 하셨어요. 이유는 묻지 말아 주세요."),
+        h("div", { class: "row" },
+          h("button", { class: "btn primary", onclick: () => answer("pickup") }, "제가 태우러 갈게요"),
+          h("button", { class: "btn", onclick: () => answer("taxi") }, "택시를 불러 드릴게요")));
+    }
+    const mine = r.answeredBy === session?.name;
+    const what = r.answer === "pickup" ? "태우러 가기로" : "택시를 불러 드리기로";
+    return h("div", { class: "card" },
+      h("span", { class: "label" }, `${driver.relation} · ${trip}`),
+      h("strong", {}, mine ? `${what} 했어요` : `${r.answeredBy} 님이 ${what} 했어요`),
+      mine ? h("span", { class: "muted" }, r.answer === "taxi"
+        ? `쓰시는 택시 앱으로 ${driver.relation}께 불러 드려 주세요. 차 화면에는 "택시를 불러 드려요"로 떠요.`
+        : `차 화면에 "${r.answeredBy} 님이 태우러 와요"로 떠요.`) : null);
+  }
+
   function home() {
     const banner = h("div");
+    const asks = h("div", { style: "display:contents" });
     const list = h("div", { style: "display:contents" });
     const refresh = async () => {
       let data;
@@ -145,34 +237,35 @@
       if (!data.drivers.length) { show(connect); return; }
       const fresh = data.drivers.find((driver) => driver.latest && !driver.latest.acked);
       banner.replaceChildren(fresh ? h("div", { class: "banner" }, `${fresh.relation}의 이번 주 운전 요약이 도착했어요`) : "");
+      asks.replaceChildren(...data.drivers.filter((driver) => driver.request).map((driver) => askCard(driver, refresh)));
       list.replaceChildren(...data.drivers.map((driver) => {
         const status = driver.latest ? STATUS[driver.latest.status] : null;
         const note = !driver.latest ? "아직 요약이 없어요" : driver.latest.acked ? "확인함" : "요약 도착";
         return h("button", { class: "card", onclick: () => show(summary, driver.driverId) },
           h("span", { class: "label" }, `${driver.relation} · ${driver.name}`),
-          h("span", {}, status ? h("span", { class: `state ${status.chip}` }, status.label) : "", status ? " · " : "", note));
+          h("span", { class: "with-car" }, status ? [clockCar(driver.latest.status, 28), h("span", { class: `state ${status.chip}` }, status.label), " · "] : "", note));
       }));
     };
     refresh();
     every(4000, refresh);
     return [
       h("h1", {}, "가족 운전"),
-      banner, list,
+      asks, banner, list,
       h("div", { class: "spacer" }),
-      h("button", { class: "link", onclick: () => show(connect) }, "+ 부모님 차 추가"),
+      h("button", { class: "link", onclick: () => show(connect) }, "+ 가족 차 추가"),
     ];
   }
 
   /* P5 주간 요약 */
   function summary(driverId) {
     const body = h("div", { style: "display:contents" });
-    const title = h("button", { class: "back", onclick: () => show(home) }, "← 가족 운전");
+    const title = h("button", { class: "back", onclick: () => show(home) }, icon("arrow_left"), "가족 운전");
     let shownKey = "";
     const render = (data) => {
-      title.textContent = `← ${data.relation} 운전 · 이번 주`;
+      title.replaceChildren(icon("arrow_left"), `${data.relation} 운전 · 이번 주`);
       const item = data.summary;
       if (!item) {
-        body.replaceChildren(h("p", { class: "muted" }, "아직 도착한 요약이 없어요. 요약은 매주 금요일에 와요."));
+        body.replaceChildren(h("p", { class: "muted" }, `아직 도착한 요약이 없어요. ${ig(data.relation)} 차에서 보내면 여기에 와요.`));
         return;
       }
       const status = STATUS[item.status];
@@ -186,12 +279,12 @@
       });
       const changes = item.changes.map((line) => h("span", {}, line));
       const hidden = !item.evidenceShared && (item.status === "observe" || item.status === "talk")
-        ? h("span", { class: "muted" }, `자세한 숫자는 ${data.relation}가 보내기로 한 경우에만 보여요`) : null;
+        ? h("span", { class: "muted" }, `자세한 숫자는 ${ig(data.relation)} 보내기로 한 경우에만 보여요`) : null;
       const cards = [];
       if (item.status === "talk") {
         cards.push(card("근거", [...changes, ...numbers, hidden]));
         cards.push(card("이렇게 물어보세요", [
-          h("strong", {}, `"${data.relation === "부모님" ? "" : `${data.relation}, `}요즘 운전하다가 깜짝 놀란 적 있어?"`),
+          h("strong", {}, `"${data.relation === "엄마" || data.relation === "아빠" ? `${data.relation}, ` : ""}요즘 운전하다가 깜짝 놀란 적 있어?"`),
           h("span", { class: "muted" }, '"나이", "위험해서", "그만"은 피해 주세요'),
         ], "tint"));
         cards.push(card("함께 할 일", h("span", {}, "한 번 동승하기 · 약속 같이 정하기 · 치매안심센터 선별검사 같이 가기")));
@@ -205,17 +298,17 @@
       }
       if (item.promise) cards.push(card("약속", h("span", {}, item.promise)));
       if (item.avoided) cards.push(card("피한 구간", h("span", {}, item.avoided)));
-      const ack = h("button", { class: "btn primary", disabled: item.acked }, item.acked ? "확인했어요 ✓" : "확인했어요");
+      const ack = h("button", { class: "btn primary", disabled: item.acked }, item.acked ? [icon("check"), "확인했어요"] : "확인했어요");
       ack.addEventListener("click", async () => {
         ack.disabled = true;
         try { await api("POST", `/api/family/drivers/${driverId}/ack`, { week: item.week }); shownKey = ""; refresh(); }
         catch { ack.disabled = false; }
       });
       body.replaceChildren(
-        h("span", { class: `chip ${status.chip}` }, chipText),
+        h("div", { class: "status-head" }, clockCar(item.status, 64), h("span", { class: `chip ${status.chip}` }, chipText)),
         ...cards,
-        h("p", { class: "muted" }, `${dayOf(item.sentAt)}에 ${data.relation}가 보낸 요약이에요`),
-        h("button", { class: "link", onclick: () => show(monthly, driverId) }, "📅 월별 기록 보기 ›"),
+        h("p", { class: "muted" }, `${dayOf(item.sentAt)}에 ${ig(data.relation)} 보낸 요약이에요`),
+        h("button", { class: "link", onclick: () => show(monthly, driverId) }, icon("calendar"), "월별 기록 보기", icon("chevron_right")),
         h("div", { class: "spacer" }),
         h("div", { class: "row" }, h("a", { class: "btn", href: "tel:" }, "전화하기"), ack));
     };
@@ -230,45 +323,45 @@
     return [title, body];
   }
 
-  /* 월별 기록: 부모님이 보낸 주간 요약을 달별로 모은다. 주행 하나하나의 기록은 받지 않는다. */
+  /* 월별 기록: 운전하는 가족이 보낸 주간 요약을 달별로 모은다. 주행 하나하나의 기록은 받지 않는다. */
   function monthly(driverId) {
     const body = h("div", { style: "display:contents" });
-    const title = h("button", { class: "back", onclick: () => show(summary, driverId) }, "← 월별 기록");
+    const title = h("button", { class: "back", onclick: () => show(summary, driverId) }, icon("arrow_left"), "월별 기록");
     let months = [];
     let index = 0;
     let relation = "";
     const label = (key) => `${Number(key.slice(0, 4))}년 ${Number(key.slice(5, 7))}월`;
     const render = () => {
       if (!months.length) {
-        body.replaceChildren(h("p", { class: "muted" }, `아직 ${relation}가 보낸 요약이 없어요.`));
+        body.replaceChildren(h("p", { class: "muted" }, `아직 ${ig(relation)} 보낸 요약이 없어요.`));
         return;
       }
       const [key, weeks] = months[index];
       const flow = weeks.slice().reverse().map((w) => STATUS[w.status]?.label ?? w.status)
         .filter((name, i, all) => i === 0 || all[i - 1] !== name);
       const nav = h("div", { class: "row month" },
-        h("button", { class: "btn", disabled: index >= months.length - 1, onclick: () => { index++; render(); } }, "◀"),
+        h("button", { class: "btn", disabled: index >= months.length - 1, onclick: () => { index++; render(); } }, icon("chevron_left")),
         h("strong", { class: "month-title" }, label(key)),
-        h("button", { class: "btn", disabled: index === 0, onclick: () => { index--; render(); } }, "▶"));
+        h("button", { class: "btn", disabled: index === 0, onclick: () => { index--; render(); } }, icon("chevron_right")));
       const rows = weeks.map((w) => {
         const status = STATUS[w.status] ?? { chip: "", label: w.status };
         const [, m, d] = w.week.split("-").map(Number);
         return h("div", { class: "card" },
-          h("span", { class: "label" }, `${m}/${d} 주 · ${w.acked ? "확인함 ✓" : "아직 확인 안 함"}`),
-          h("span", {}, h("span", { class: `state ${status.chip}` }, status.label), w.headline ? ` · ${w.headline}` : ""),
+          h("span", { class: "label" }, `${m}/${d} 주 · `, w.acked ? [icon("check"), "확인함"] : "아직 확인 안 함"),
+          h("span", { class: "with-car" }, clockCar(w.status, 28), h("span", { class: `state ${status.chip}` }, status.label), w.headline ? ` · ${w.headline}` : ""),
           w.avoided ? h("span", { class: "muted" }, `피한 구간 · ${w.avoided}`) : null);
       });
       body.replaceChildren(
         nav,
         h("div", { class: "card tint" }, h("span", { class: "label" }, "이 달 흐름"), h("strong", {}, flow.join(" → ")),
-          h("span", { class: "muted" }, `요약 ${weeks.length}주 · ${relation}가 보내기로 한 것만 보여요`)),
+          h("span", { class: "muted" }, `요약 ${weeks.length}주 · ${ig(relation)} 보내기로 한 것만 보여요`)),
         ...rows);
     };
     (async () => {
       let data;
       try { data = await api("GET", `/api/family/drivers/${driverId}/summaries`); } catch { return; }
       relation = data.relation;
-      title.textContent = `← ${data.relation} 운전 · 월별 기록`;
+      title.replaceChildren(icon("arrow_left"), `${data.relation} 운전 · 월별 기록`);
       const byMonth = new Map();
       for (const item of data.summaries) {
         const key = item.week.slice(0, 7);
@@ -281,5 +374,5 @@
     return [title, body];
   }
 
-  show(!session ? join : session.linked && !pendingCode ? home : connect);
+  show(!session ? (pendingCode ? who : join) : session.linked && !pendingCode ? home : connect);
 })();

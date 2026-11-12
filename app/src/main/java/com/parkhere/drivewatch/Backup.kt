@@ -25,7 +25,7 @@ object Backup {
     fun persist() {
         val drivers = JSONArray()
         AppState.profiles.filter { it.name.isNotBlank() }.forEach { p ->
-            drivers.put(JSONObject().put("name", p.name).put("token", p.carToken ?: JSONObject.NULL)
+            drivers.put(JSONObject().put("id", p.id).put("name", p.name).put("token", p.carToken ?: JSONObject.NULL)
                 .put("onboarded", p.onboarded).put("scope", p.shareScope)
                 .put("backup", p.backup ?: JSONObject.NULL).put("promises", JSONArray(p.promises.toList())))
         }
@@ -67,6 +67,7 @@ object Backup {
                 promises = o.optJSONArray("promises")?.let { p -> (0 until p.length()).map { p.getInt(it) }.toSet() } ?: setOf(0, 1),
                 carToken = o.optString("token").takeIf { it.isNotEmpty() && !o.isNull("token") },
                 backup = if (o.isNull("backup")) null else o.optBoolean("backup"),
+                id = o.optString("id").ifEmpty { java.util.UUID.randomUUID().toString() }, // older saves had no id
             )
         }
         if (restored.isEmpty()) return
@@ -75,6 +76,13 @@ object Backup {
         AppState.cur = restored.indexOfFirst { it.onboarded }.coerceAtLeast(0)
         AppState.screen = if (restored[AppState.cur].onboarded) Screen.HOME else Screen.SIGNUP
         restored.forEach { p -> if (p.backup == true && p.carToken != null) fetch(p.name, p.carToken) }
+    }
+
+    /** After the server handed back an existing driver that keeps drives: bring them back, as on a restart. */
+    fun restoreFromServer(id: String) {
+        val p = AppState.byId(id) ?: return
+        val token = p.carToken ?: return
+        fetch(p.name, token)
     }
 
     /** Bring back the drives and marks the server kept for this driver. */

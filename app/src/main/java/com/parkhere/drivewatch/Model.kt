@@ -11,12 +11,21 @@ import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 
 /** Promises a driver can choose (C3). Only the first two change app behaviour in the MVP. */
+/**
+ * What the engine watches and which promises it offers, as one named set. The engine itself compares each driver
+ * with their own usual weeks, not with an age group, so another kind of driver (new, returning after a long break,
+ * long-haul) is another pack on the same engine. Only 어르신 팩 exists today; the UI names it so that is visible.
+ */
+data class Pack(val label: String, val signals: List<String>)
+
+val ELDER_PACK = Pack("어르신 팩", listOf("익숙한 길에서 길 안내를 다시 받은 횟수", "회전할 때 깜빡이", "급제동", "밤 운전"))
+
 val PROMISES = listOf(
-    "🌙" to "해 지면 운전 안 하기",
-    "📍" to "표시한 구간 피하기",
-    "🛣" to "고속도로 줄이기",
-    "⏱" to "1시간 넘게 연속 운전 안 하기",
-    "🌧" to "비 오는 날은 가까운 곳만",
+    Ic.MOON to "해 지면 운전 안 하기",
+    Ic.PIN to "표시한 구간 피하기",
+    Ic.HIGHWAY to "고속도로 줄이기",
+    Ic.TIMER to "1시간 넘게 연속 운전 안 하기",
+    Ic.RAIN to "비 오는 날은 가까운 곳만",
 )
 
 /** One driver of the car. Records, promises and family links are per profile. */
@@ -33,6 +42,8 @@ data class Profile(
     val sentWeek: String? = null,
     val ackedBy: List<String> = emptyList(),
     val backup: Boolean? = null, // keep drive counts on the server? null = not asked yet
+    /** Stable identity. Async callbacks find their driver by this, never by list position, which shifts. */
+    val id: String = java.util.UUID.randomUUID().toString(),
 )
 
 /** A drive in progress or just finished. */
@@ -50,6 +61,8 @@ data class Drive(
     val km: Double = 0.0,
     val banner: String? = null,
     val report: Report? = null,
+    /** Set while a 시연 재생 plays this drive: the scenario title and where it came from. */
+    val replay: String? = null,
 )
 
 enum class Screen { SIGNUP, CONSENT, PROMISES, INVITE, HOME, ROUTE, OTHER_WAY, DRIVE, ARRIVED, WEEKLY, DETAIL, MONTHLY, GRADUATE }
@@ -68,6 +81,13 @@ object AppState {
     var vehicleNote by mutableStateOf("차량 신호 확인 중")
     /** Show the "keep drive records on the server?" prompt (after consent). */
     var askBackup by mutableStateOf(false)
+    /** Which history scenario the demo panel last applied (Scenarios.HISTORIES). */
+    var historyId by mutableStateOf("steady")
+    /** A newer build on the family server, if any (checked once per launch), and whether its prompt is open. */
+    /** The current driver's latest "가족에게 부탁" and its answer, refreshed with the family card. */
+    var ride by mutableStateOf<FamilyApi.RideRequest?>(null)
+    var update by mutableStateOf<FamilyApi.AppRelease?>(null)
+    var showUpdate by mutableStateOf(false)
 
     val profile get() = profiles[cur]
     fun update(i: Int = cur, f: (Profile) -> Profile) {
@@ -76,6 +96,18 @@ object AppState {
         profiles[i] = new
         Backup.changed(old, new)
     }
+
+    /**
+     * For callbacks that finish later (server answers, a drive ending): the driver they started for,
+     * wherever it now sits in the list. If that driver was removed meanwhile, the change is dropped
+     * instead of landing on whoever took its place.
+     */
+    fun updateId(id: String, f: (Profile) -> Profile) {
+        val i = profiles.indexOfFirst { it.id == id }
+        if (i >= 0) update(i, f) else runCatching { android.util.Log.w("DriveWatch", "dropped an update for a driver that is gone") }
+    }
+
+    fun byId(id: String) = profiles.firstOrNull { it.id == id }
 
     private fun pending(p: Profile) = !p.onboarded && p.name.isBlank()
 

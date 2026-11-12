@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DriveWatch 가족 요약 API",
-    "version": "0.3.0",
+    "version": "0.8.0",
     "description": "차량 앱이 주간 요약을 보내고, 연결된 가족이 폰 웹 화면에서 읽는다. 시연용이다.\n\n- 초대 코드는 운전자가 차에서 띄운다. 6자리, 10분, 한 번만 쓸 수 있다.\n- 운전자가 `status`(상태만)를 고르면 숫자 근거는 저장하지도, 내보내지도 않는다.\n- 위치와 경로는 받지 않는다. 요약에서 정해진 항목만 저장한다.\n- 요청과 응답은 JSON이다. 본문은 16KB까지다."
   },
   "servers": [
@@ -27,6 +27,10 @@
     {
       "name": "가족 폰",
       "description": "폰 웹 화면이 부른다. 가입할 때 받은 token을 `Authorization: Bearer`로 붙인다."
+    },
+    {
+      "name": "시연",
+      "description": "시연용 주행 신호 시간표와 합성 기록. 사람의 기록이 아니다."
     }
   ],
   "paths": {
@@ -36,18 +40,30 @@
           "차량 앱"
         ],
         "summary": "운전자 등록",
-        "description": "운전자 프로필 하나를 등록하고 carToken을 받는다. carToken은 다시 받을 수 없으니 차량 앱이 보관한다.",
+        "description": "운전자 프로필 하나를 등록하고 carToken을 받는다. carToken은 다시 받을 수 없으니 차량 앱이 보관한다. 같은 `carKey`(차대번호를 해시한 값, 없으면 기기 ID 해시)에 같은 `profileId`나 같은 이름의 운전자가 이미 있으면 새로 만들지 않고 그 운전자와 토큰을 돌려준다(`reused: true`). 재설치나 동의를 다시 거쳐도 가족 연결과 보관 기록이 이어진다. 시연용 설계이며, 실제 서비스에서는 차량 인증이 더 필요하다.",
         "security": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DriverRegistration"
+                "$ref": "#/components/schemas/DriverRegistration",
+                "properties": {
+                  "carKey": {
+                    "type": "string",
+                    "description": "차를 가리키는 32~64자 소문자 16진수 해시. 차대번호 원문은 보내지 않는다"
+                  },
+                  "profileId": {
+                    "type": "string",
+                    "description": "차량 앱 안의 운전자 id(재설치하면 바뀐다)"
+                  }
+                }
               },
               "example": {
                 "name": "김정숙",
-                "shareScope": "status"
+                "shareScope": "status",
+                "carKey": "3f2a9c0e7b6d4a1f8e5c2b9a0d7e6f13",
+                "profileId": "5d5b0eca-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
               }
             }
           }
@@ -63,7 +79,9 @@
                 "example": {
                   "driverId": "drv_3f9a1c2b4d5e",
                   "carToken": "(차량 앱이 보관)",
-                  "shareScope": "status"
+                  "shareScope": "status",
+                  "reused": false,
+                  "backup": null
                 }
               }
             }
@@ -278,6 +296,136 @@
                 },
                 "example": {
                   "error": "unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/car/invites/sms": {
+      "post": {
+        "tags": [
+          "차량 앱"
+        ],
+        "summary": "초대 링크를 문자로 보내기",
+        "description": "차 화면에서 번호 수집·이용 동의(`consent: true`)를 받은 뒤, 차 화면에 띄운 초대 코드의 링크(`/family/?code=코드`)를 자녀 휴대폰 번호로 보낸다. 번호는 보내는 데만 쓰고 기록 파일과 로그에 남기지 않는다(로그는 가운데를 가린 번호만). 한 주소에서 한 시간에 5통까지. 서버에 SOLAPI 키가 없으면 보내지 않고 `mode: dry-run`으로 답한다(시연 모드).",
+        "security": [
+          {
+            "carToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "phone",
+                  "consent"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "이 운전자가 띄운, 아직 유효한 6자리 코드"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "description": "국내 휴대폰 번호. 하이픈·공백·+82 허용"
+                  },
+                  "consent": {
+                    "type": "boolean",
+                    "description": "번호 주인(자녀)이 이 문자 한 통을 위한 수집·이용에 동의했다는 차 화면의 체크. true가 아니면 보내지 않는다"
+                  }
+                }
+              },
+              "example": {
+                "code": "482913",
+                "phone": "010-1234-5678",
+                "consent": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "보냄 또는 시연 모드",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "sent": true,
+                  "mode": "solapi",
+                  "to": "010-****-5678"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "휴대폰 번호 형식이 아니거나(invalid_phone) 동의가 없음(consent_required)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "invalid_phone"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "이 운전자의 유효한 코드가 아님",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "invalid_code"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "한 시간에 5통을 넘음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "rate_limited"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "문자 업체가 거절함",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "sms_failed"
                 }
               }
             }
@@ -1206,6 +1354,485 @@
           }
         }
       }
+    },
+    "/api/demo/scenarios": {
+      "get": {
+        "tags": [
+          "시연"
+        ],
+        "summary": "시연 시나리오 목록",
+        "description": "차량 앱의 시연 재생이 쓰는 주행 시간표와 기록 묶음 목록. 인증 없음.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "목록",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "drives": [
+                    {
+                      "id": "hospital-fast",
+                      "title": "병원 · 빠른 길",
+                      "place": "병원",
+                      "comfortable": false,
+                      "seconds": 24.75,
+                      "expect": {
+                        "turns": 3,
+                        "signals": 2,
+                        "reroutes": 2,
+                        "hardBrakes": 1
+                      }
+                    }
+                  ],
+                  "histories": [
+                    {
+                      "id": "talk",
+                      "title": "4주째 성당 길 재탐색이 늘어남",
+                      "expect": "대화 권장",
+                      "trips": 56
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/demo/drives/{scenarioId}": {
+      "get": {
+        "tags": [
+          "시연"
+        ],
+        "summary": "주행 한 번의 신호 시간표",
+        "description": "`events`는 시작부터의 초(`at`)와 그때의 값이다: `gear`(D·P), `speed`(km/h), `brake`, `signal`(방향지시등), `turn`(회전 안내), `reroute`(재탐색 지점), `arrive`(주행 거리 km). 차량 앱은 이것을 차량 신호와 같은 경로로 재생한다.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "scenarioId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "hospital-fast"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "시간표",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "id": "hospital-fast",
+                  "place": "병원",
+                  "events": [
+                    {
+                      "at": 0,
+                      "gear": "D"
+                    },
+                    {
+                      "at": 0.5,
+                      "speed": 40,
+                      "brake": false
+                    },
+                    {
+                      "at": 2,
+                      "turn": {
+                        "dir": "우회전",
+                        "point": "첫 사거리"
+                      }
+                    },
+                    {
+                      "at": 8,
+                      "reroute": "중앙대로 합류"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "없는 시나리오",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "no_scenario"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/demo/histories/{scenarioId}": {
+      "get": {
+        "tags": [
+          "시연"
+        ],
+        "summary": "몇 주치 합성 기록",
+        "description": "`trips`의 `weekAgo`는 0이 이번 주다. 차량 앱은 시연용 표시를 붙여 지금 운전자의 지난 기록으로 쓴다. 서버에 보관하지 않는다.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "scenarioId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "talk"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "기록 묶음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "id": "talk",
+                  "expect": "대화 권장",
+                  "trips": [
+                    {
+                      "weekAgo": 1,
+                      "km": 10.0,
+                      "familiar": true,
+                      "night": false,
+                      "reroutes": 1,
+                      "turns": 7,
+                      "signals": 7,
+                      "hardBrakes": 0,
+                      "place": "성당"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "없는 시나리오",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "no_scenario"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/app/latest": {
+      "get": {
+        "tags": [
+          "차량 앱"
+        ],
+        "summary": "차량 앱 최신 빌드 정보",
+        "description": "차량 앱이 켜질 때 확인한다. `versionCode`가 자기보다 크면 시연 패널 옆에 새 버전 알림과 내려받기 QR을 띄운다. 앱이 스스로 설치하지는 않는다.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "최신 빌드",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "versionCode": 42,
+                  "versionName": "0.2.0",
+                  "commit": "895ecc4",
+                  "notes": "초대 화면에 QR",
+                  "sha256": "f569…",
+                  "size": 44470282,
+                  "publishedAt": "2026-11-12T05:00:00Z",
+                  "download": "https://drive.olvend.com/api/app/download"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "게시된 빌드 없음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "no_release"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/app/download": {
+      "get": {
+        "tags": [
+          "차량 앱"
+        ],
+        "summary": "차량 앱 APK 내려받기",
+        "description": "게시된 최신 APK(`application/vnd.android.package-archive`).",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "APK 파일",
+            "content": {
+              "application/vnd.android.package-archive": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "게시된 빌드 없음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "no_release"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/car/requests": {
+      "post": {
+        "tags": [
+          "차량 앱"
+        ],
+        "summary": "가족에게 부탁하기",
+        "description": "\"오늘은 다른 방법으로 가기\"에서 `가족에게 부탁`을 눌렀을 때 부른다. 연결된 가족 폰에 뜨고, 답은 `/api/car/me`의 `request`로 돌아온다. 운전자마다 가장 최근 부탁 하나만 둔다.",
+        "security": [
+          {
+            "carToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "place"
+                ],
+                "properties": {
+                  "place": {
+                    "type": "string",
+                    "maxLength": 20
+                  }
+                }
+              },
+              "example": {
+                "place": "병원"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "보냄",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyRequest"
+                },
+                "example": {
+                  "requestId": "req_3f9a1c2b7d10",
+                  "place": "병원",
+                  "createdAt": 1794321531724,
+                  "answer": null,
+                  "answeredBy": null,
+                  "answeredAt": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "place_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "place_required"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/family/drivers/{driverId}/answer": {
+      "post": {
+        "tags": [
+          "가족 폰"
+        ],
+        "summary": "부탁에 답하기",
+        "description": "태우러 가기(`pickup`)나 택시를 대신 불러 드리기(`taxi`). 먼저 답한 가족이 맡고, 같은 사람은 답을 바꿀 수 있다. 택시 호출 자체는 가족이 자기 앱으로 한다.",
+        "security": [
+          {
+            "familyToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/driverId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "requestId",
+                  "answer"
+                ],
+                "properties": {
+                  "requestId": {
+                    "type": "string"
+                  },
+                  "answer": {
+                    "type": "string",
+                    "enum": [
+                      "pickup",
+                      "taxi"
+                    ]
+                  }
+                }
+              },
+              "example": {
+                "requestId": "req_3f9a1c2b7d10",
+                "answer": "pickup"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "답함",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyRequest"
+                },
+                "example": {
+                  "requestId": "req_3f9a1c2b7d10",
+                  "place": "병원",
+                  "createdAt": 1794321531724,
+                  "answer": "pickup",
+                  "answeredBy": "김민수",
+                  "answeredAt": 1794321600000
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_answer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "invalid_answer"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "not_linked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "not_linked"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "no_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "no_request"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "already_answered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "already_answered"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1478,6 +2105,46 @@
               "point": "중앙대로 합류"
             }
           ]
+        }
+      },
+      "FamilyRequest": {
+        "type": "object",
+        "description": "가족에게 부탁. 목적지 이름만 담고 위치는 담지 않는다. 12시간 동안 보인다.",
+        "properties": {
+          "requestId": {
+            "type": "string"
+          },
+          "place": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "createdAt": {
+            "type": "integer"
+          },
+          "answer": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "pickup",
+              "taxi",
+              null
+            ],
+            "description": "pickup 태우러 가기, taxi 택시를 대신 불러 드리기"
+          },
+          "answeredBy": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "answeredAt": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
         }
       }
     }
