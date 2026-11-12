@@ -11,12 +11,10 @@
 - [이전 기획 · 어디대?](archive/eodidae/PLAYBOOK.MD) · 목적지에 맞는 주차 구역 안내와 주차 위치 기록
 - [이전 기획 · TANMAN.KM](archive/tanman.km/PLAYBOOK.MD) · 주행거리 기반 동승 비용 정산
 
-## 드라이브 와쳐 웹 MVP
+## 소개 페이지와 웹 프로토타입
 
-도심과 고속도로의 합성 주행 기록으로 개인 기준선, 연속 초과 감지, 감지 근거를 시연합니다.
-
-- [공개 시연](https://drive.olvend.com/) · [소스](legacy/drive-watcher/)
-- [웹 MVP 플레이북](legacy/drive-watcher/PLAYBOOK.MD)
+- [drive.olvend.com](https://drive.olvend.com/) · 앱 소개, 실제 앱 화면, APK 받기. 소스와 배포 방법은 [site/](site/README.md)
+- [판단 엔진 연구 시연](https://drive.olvend.com/engine-demo.html) · 합성 주행 기록으로 개인 기준선, 연속 초과 감지, 감지 근거를 보여 주는 웹 프로토타입. [소스](legacy/drive-watcher/) · [플레이북](legacy/drive-watcher/PLAYBOOK.MD)
 
 ## 구성
 

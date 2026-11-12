@@ -337,10 +337,10 @@ DriveWatch는 "어르신 앱"이 아닙니다. **본인의 평소와 비교하�
 - **차량 앱**: GitHub 저장소의 `app/`(Kotlin, Jetpack Compose). 실행 방법과 시연 순서는 저장소의 `README.md`와 `docs/mvp-test-guide.md`에 있습니다.
 - **가족 폰 화면**: https://drive.olvend.com/family/ (가입 → 코드로 연결 → 주간 요약 → 월별 기록)
 - **REST API 명세**: https://drive.olvend.com/api/docs (차량 앱과 폰 화면이 쓰는 주소)
-- **웹 프로토타입**: https://drive.olvend.com/
-  - 판단 엔진: 2분 구간 판정을 자동 재생하거나 직접 운전해 볼 수 있고, Pleos SDK 예시 신호와 공개 실측 CAN 데이터(comma2k19)를 넣어 볼 수 있습니다
-  - 차량 화면 시안: 내비 → 주차 → 평소와 달라요 → 어느 구간이었나요?, 전체·분할 화면, 주간 카드 12주
-  - 개인 경향 모델(연구용): 여러 운전 습관이 함께 움직이는 방식을 운전자별로 배워 오늘과 비교합니다. 합성 데이터로 검증했고 차량 앱 판정에는 쓰지 않습니다
+- **소개 페이지**: https://drive.olvend.com/ (앱 소개, 실제 앱 화면, 차량 앱 APK 받기)
+- **웹 프로토타입**
+  - 판단 엔진(https://drive.olvend.com/engine-demo.html): 2분 구간 판정을 자동 재생하거나 직접 운전해 볼 수 있고, Pleos SDK 예시 신호와 공개 실측 CAN 데이터(comma2k19)를 넣어 볼 수 있습니다
+  - 개인 경향 모델(연구용, https://drive.olvend.com/profile-demo.html): 여러 운전 습관이 함께 움직이는 방식을 운전자별로 배워 오늘과 비교합니다. 합성 데이터로 검증했고 차량 앱 판정에는 쓰지 않습니다
 - **시연 영상**: [[영상 링크 기입]]
 - **GitHub 저장소**: https://github.com/kcc920926-droid/parkhere · 제출 APK `apk/M92_DriveWatch_release.apk`
 - **화면 시안**: `M92_DriveWatch_화면시안.pdf`(첨부, 저장소 `submission/`에도 있음). 차량 앱 14개 화면(등록, 동의, 약속, 가족 연결, 홈, 길 고르기, 주행, 도착, 밤 안내, 다른 방법으로 가기, 주간 카드, 평소 비교, 월별 기록, 운전 졸업)과 가족 폰 6개 화면(누가 열었나요, 링크 보내기, 가입, 목록과 부탁, 주간 요약, 월별 기록)을 에뮬레이터와 브라우저에서 찍은 실제 화면입니다
