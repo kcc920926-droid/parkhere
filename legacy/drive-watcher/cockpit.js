@@ -405,7 +405,7 @@
             hardBrakes: next.frame.values.hardBrakes,
           });
           get("trip-handoff").hidden = false;
-          get("course-handoff-status").textContent = `${tripWindows.length}개 완료 구간을 센터 화면으로 보낼 수 있어요.`;
+          get("course-handoff-status").textContent = `${tripWindows.length}개 구간을 마쳤어요.`;
         }
         const { card, count } = windowCards[readings.length];
         const value = result.readings[0].value;
