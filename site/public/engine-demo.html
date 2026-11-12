@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#F4F1EA">
+  <title>판단 엔진 · DriveWatch</title>
+  <meta name="description" content="한 번은 넘기고, 두 번 이어지면 적어 둡니다. DriveWatch 판단 엔진을 브라우저에서 그대로 돌려 보는 연구용 웹 프로토타입.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://drive.olvend.com/engine-demo.html">
+  <meta property="og:title" content="판단 엔진 · DriveWatch">
+  <meta property="og:description" content="한 번은 넘기고, 두 번 이어지면 적어 둡니다. 주행 하나를 구간으로 나눠 본인의 평소와 비교하는 판단 엔진.">
+  <meta property="og:image" content="https://drive.olvend.com/assets/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&display=swap">
+  <link rel="stylesheet" href="home.css">
+  <link rel="stylesheet" href="engine.css">
+</head>
+<body class="engine-page">
+  <a class="skip" href="#main">본문으로 건너뛰기</a>
+
+  <header class="nav" id="nav">
+    <a class="brand" href="./" aria-label="DriveWatch 처음으로">
+      <img src="assets/favicon.svg" alt="" width="28" height="28">
+      <span>DriveWatch</span>
+    </a>
+    <nav class="nav-links" aria-label="바로 가기">
+      <a href="#run">같은 길, 두 번</a>
+      <a href="#baseline">기준</a>
+      <a href="#real">실제 신호</a>
+      <a href="#limits">어디까지</a>
+    </nav>
+    <a class="nav-cta" href="./">← 처음으로</a>
+  </header>
+
+  <main id="main">
+
+    <!-- 1. 한눈에 -->
+    <section class="e-hero" aria-labelledby="e-title">
+      <div class="wrap e-hero-grid">
+        <div>
+          <p class="kicker">판단 엔진 · 연구용 웹 프로토타입</p>
+          <h1 id="e-title" class="e-title">한 번은 넘기고,<br>두 번 이어지면<br>적어 둬요.</h1>
+          <p class="hero-lead">주간 카드가 몇 주에 걸친 변화를 본다면, 이 엔진은 <b>주행 하나 안에서</b> 어느 구간이 평소와 달랐는지 찾아요. 이 페이지는 실제 판정 코드를 브라우저에서 그대로 돌려요.</p>
+          <ul class="e-facts">
+            <li>주행을 2분 구간으로 나눠, 같은 종류의 길에서 쌓인 내 기록과 비교해요.</li>
+            <li>차량 앱에는 아직 넣지 않았어요. 웹과 Kotlin 모듈로 따로 만들어 같은 결과가 나오는지 검증했어요.</li>
+          </ul>
+        </div>
+
+        <figure class="glance" aria-label="같은 길을 두 번 달린 기록. 평소 같은 날은 4–6분에 강한 제동 4회가 한 번 나왔지만 넘깁니다. 달라진 날은 6–8분 4회, 8–10분 5회로 두 구간 이어져 기록합니다.">
+          <div class="glance-row" data-glance="regular">
+            <p class="glance-label">평소 같은 날</p>
+            <ol class="cells">
+              <li>1</li><li>0</li><li class="hit"><span>4</span><svg class="ring" viewBox="0 0 60 60" aria-hidden="true"><path d="M30 6 C 48 5, 56 18, 54 32 S 40 56, 26 54 S 4 42, 6 27 S 20 5, 34 7"/></svg></li><li>1</li><li>1</li><li>0</li>
+            </ol>
+            <p class="note"><span class="hand">한 번 → 넘김</span></p>
+          </div>
+          <div class="glance-row" data-glance="changed">
+            <p class="glance-label">달라진 날</p>
+            <ol class="cells">
+              <li>1</li><li>0</li><li>1</li><li class="hit two"><span>4</span></li><li class="hit two"><span>5</span></li><li>1</li>
+              <svg class="under" viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8 C 50 4, 110 11, 197 6"/><path d="M8 12 C 70 9, 130 13, 192 10"/></svg>
+            </ol>
+            <p class="note"><span class="hand red">두 번 이어짐 → 기록</span></p>
+          </div>
+          <figcaption>도심 생활도로, 2분 구간마다 강한 제동 횟수 · 평소 상한 3회</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 2. 같은 길, 두 번 -->
+    <section class="run" id="run" aria-labelledby="run-title">
+      <div class="wrap">
+        <header class="sec-head">
+          <h2 id="run-title" class="display">같은 길,<br>두 번 달려 봤어요.</h2>
+          <p>평소 같은 날과 달라진 날의 기록을 엔진에 차례로 넣어요. 엔진은 구간마다 본인의 평소 상한과 비교하고, 같은 신호가 <b>두 구간 연속</b> 넘을 때만 변화로 적어요.</p>
+        </header>
+
+        <div class="run-controls" role="group" aria-label="재생 선택">
+          <div class="seg" role="tablist" aria-label="길">
+            <button type="button" role="tab" data-scene="city" aria-selected="true">도심 생활도로<small>제동과 조향</small></button>
+            <button type="button" role="tab" data-scene="highway" aria-selected="false">고속도로<small>쉬지 않고 운전한 시간</small></button>
+          </div>
+          <div class="seg" role="tablist" aria-label="기록">
+            <button type="button" role="tab" data-variant="regular" aria-selected="false">평소 같은 날</button>
+            <button type="button" role="tab" data-variant="changed" aria-selected="true">달라진 날</button>
+          </div>
+          <button type="button" class="replay-btn" data-replay>↻ 처음부터</button>
+        </div>
+
+        <div class="run-panel">
+          <div class="run-stage">
+            <div class="car-stage small" data-car="run" data-status="learning" aria-hidden="true"></div>
+            <p class="run-state" data-run-state data-k="learning">준비</p>
+            <p class="run-clock" data-run-clock>출발 전</p>
+          </div>
+          <div class="run-board">
+            <div class="metrics" data-metrics></div>
+            <p class="run-summary" data-run-summary aria-live="polite">재생하면 2분 구간을 하나씩 엔진에 넣어요.</p>
+          </div>
+        </div>
+        <p class="fine">합성한 주행 기록이에요. 구간 나누기, 평소 상한, 두 구간 연속 판정은 실제 엔진 코드(engine.js) 그대로예요.</p>
+      </div>
+    </section>
+
+    <!-- 3. 기준 -->
+    <section class="baseline" id="baseline" aria-labelledby="base-title">
+      <div class="wrap">
+        <header class="sec-head">
+          <h2 id="base-title" class="display">기준은 남이 아니라,<br>내 지난 주행.</h2>
+          <p>모두에게 같은 잣대를 대지 않아요. 같은 종류의 길에서 쌓인 본인 기록의 가운데 값에 여유를 더해 ‘평소 상한’을 잡아요. 기록이 다섯 번 쌓이기 전에는 비교하지 않아요.</p>
+        </header>
+        <div class="formula" data-formula></div>
+        <p class="fine">들쭉날쭉한 사람은 여유를 더 넉넉하게 잡아요. 여유는 정해 둔 최소 폭과 ‘가운데 값에서 벗어난 정도의 3배’ 가운데 큰 쪽이에요. 최소 폭(강한 제동·조향 2회, 시간 8분)은 가정값이에요.</p>
+      </div>
+    </section>
+
+    <!-- 4. 실제 신호 -->
+    <section class="real" id="real" aria-labelledby="real-title">
+      <div class="wrap">
+        <header class="sec-head on-dark">
+          <h2 id="real-title" class="display">실제 차 신호로도<br>돌려 봤어요.</h2>
+          <p>합성 기록만이 아니에요. 공개된 실측 주행 기록과 Pleos 에뮬레이터의 차량 신호에도 같은 규칙을 그대로 썼어요.</p>
+        </header>
+        <div class="real-grid">
+          <article class="real-card" data-can>
+            <p class="tag">공개 실측 CAN · comma2k19</p>
+            <h3>실제 주행 1분, 아무 일도 없었어요.</h3>
+            <p>실제 차에서 기록한 속도와 조향각을 GitHub의 공개 원본에서 바로 받아 와요. 5초 구간으로 나누고, 앞 25초를 이 주행의 기준으로 써요.</p>
+            <svg class="can-trace" viewBox="0 0 400 90" data-can-trace aria-hidden="true" hidden></svg>
+            <ol class="can-cells" data-can-cells hidden></ol>
+            <p class="can-result" data-can-result aria-live="polite">아직 불러오지 않았어요.</p>
+            <button type="button" class="btn-dark" data-can-load>원본 불러와서 돌리기</button>
+            <p class="fine on-dark">원본 배열 4개(약 80KB)를 raw.githubusercontent.com에서 받아요. 이 기록에는 기어 신호가 없어 속도로 주행 여부를 판단해요.</p>
+          </article>
+          <article class="real-card">
+            <p class="tag ok">Pleos Connect 에뮬레이터 v2.1.0에서 확인</p>
+            <h3>다섯 번째 구간에서 감지했어요.</h3>
+            <p>에뮬레이터에서 차속과 브레이크 신호를 실제로 받아 같은 주행을 재생했어요. 엔진은 구간마다 강한 제동을 이렇게 셌어요.</p>
+            <ol class="emu-cells">
+              <li><b>1</b><small>0–8초</small></li><li><b>0</b><small>8–16초</small></li><li><b>1</b><small>16–24초</small></li><li class="over"><b>4</b><small>24–32초</small></li><li class="over hit"><b>5</b><small>32–40초</small></li><li><b>1</b><small>40–48초</small></li>
+            </ol>
+            <p class="can-result">평소 상한을 넘은 구간이 두 번 이어진 32–40초에 변화로 적었어요.</p>
+            <p class="fine on-dark">시연 모드라 구간이 8초예요. 실차에서 확인한 것은 아니에요.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 어디까지 -->
+    <section class="status" id="limits" aria-labelledby="lim-title">
+      <div class="wrap">
+        <header class="sec-head">
+          <h2 id="lim-title" class="display">검증한 것과<br>아직인 것.</h2>
+          <p>이 엔진은 주간 카드 판정과 별개로 만든 연구용이에요. 차량 앱에 붙이기 전에 무엇을 확인했는지 적어 둬요.</p>
+        </header>
+        <div class="status-cols">
+          <div>
+            <h3><i class="dot ok"></i>확인했어요</h3>
+            <ul>
+              <li>웹과 Kotlin 모듈에 같은 입력을 넣으면 같은 결과가 나와요(테스트)</li>
+              <li>에뮬레이터에서 같은 주행을 재생하면 같은 시점에 감지해요</li>
+              <li>평소 기록과 한 번 튄 기록에서는 감지하지 않아요</li>
+            </ul>
+          </div>
+          <div>
+            <h3><i class="dot demo"></i>가정값이에요</h3>
+            <ul>
+              <li>여유 폭(제동·조향 2회, 시간 8분)과 기록 다섯 번</li>
+              <li>강한 제동 기준 4m/s²</li>
+              <li>이 페이지의 도심·고속도로 기록(합성)</li>
+            </ul>
+          </div>
+          <div>
+            <h3><i class="dot next"></i>아직이에요</h3>
+            <ul>
+              <li>차량 앱의 주간 카드에 구간 근거로 붙이기(2차 발표 전)</li>
+              <li>실차 신호의 주기와 단위, 빠지는 구간 확인</li>
+              <li>같은 운전자의 여러 날 기록으로 오탐·미탐 재기</li>
+            </ul>
+          </div>
+        </div>
+        <a class="lab-link" href="engine-lab.html">
+          <span>직접 운전해 보기</span>
+          <small>키보드로 가상 도로를 달리고, Pleos SDK 예시 신호를 재생해 보는 실험 화면이에요. 데스크톱에서 보기 좋아요.</small>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-grid">
+      <p><b>DriveWatch</b> · 팀 M92 · 현대자동차그룹 차량용 앱 개발 공모전 출품작</p>
+      <p>판단 엔진은 연구용 웹 프로토타입이에요. 차량 앱의 주간 판정(본인의 8주 평소 대비 변화)과는 따로 동작해요.</p>
+      <p><a href="./">DriveWatch 처음으로</a> · <a href="profile-demo.html">개인 경향 모델(연구)</a> · <a href="PLAYBOOK.MD">웹 프로토타입 플레이북</a></p>
+    </div>
+  </footer>
+
+  <script src="engine.js" defer></script>
+  <script src="replays.js" defer></script>
+  <script src="can-source.js" defer></script>
+  <script src="car.js" defer></script>
+  <script src="engine-story.js" defer></script>
+</body>
+</html>
