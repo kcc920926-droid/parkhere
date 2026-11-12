@@ -68,4 +68,42 @@ class EngineTest {
         assertEquals("몇 주째 평소와 다른 모습이 이어지고 있어요", nextStep(p, analyze(trips)).title)
         assertEquals("지난 12주 동안 평소대로 잘 운전하고 계세요".substring(0, 3), nextStep(Profile("박영호", Demo.seed()), analyze(Demo.seed())).title.substring(0, 3))
     }
+
+    private fun older(trips: List<Trip>) = trips.map { it.copy(weekAgo = it.weekAgo + 1) }
+
+    /** Monday morning: this week has no drives yet, so last week's judgement stands instead of "안정". */
+    @Test fun newWeekWithoutDrivesKeepsLastJudgement() {
+        var trips = Demo.seed()
+        repeat(4) { trips = older(trips) + Demo.strugglingWeek() }
+        val r = analyze(older(trips))
+        assertEquals(State.TALK, r.state)
+        val m = r.changed.single()
+        assertEquals(1, m.judged)
+        assertEquals("익숙한 길 재탐색 · 평소 0.2회/10km → 최근 1.0회/10km · 4주 연속", m.evidenceLine())
+    }
+
+    /** A change that goes on for months must not become the new normal. */
+    @Test fun longChangeStaysOutOfTheBaseline() {
+        var trips = Demo.seed()
+        repeat(12) { trips = older(trips) + Demo.strugglingWeek() }
+        val r = analyze(trips)
+        assertEquals(State.TALK, r.state)
+        assertEquals(12, r.changed.single().worseStreak)
+        assertEquals("익숙한 길 재탐색 · 평소 0.2회/10km → 이번 주 1.0회/10km · 12주 연속", r.changed.single().evidenceLine())
+    }
+
+    /** One worse week followed by a usual one is noise: it stays in the baseline and the state stays stable. */
+    @Test fun aSingleWorseWeekIsNoise() {
+        val trips = history(mapOf(3 to week(3, reroutes = 4)))
+        val m = analyze(trips).metrics.first { it.metric == Metric.REROUTE }
+        assertEquals(State.STABLE, analyze(trips).state)
+        assertEquals(0, m.worseStreak)
+        assertEquals((7 * 0.25 + 1.0) / 8, m.baseline!!, 1e-9) // weeks 8..1, including the noisy week 3
+    }
+
+    /** A week with too little driving in the middle breaks the streak. */
+    @Test fun aMissingWeekInTheMiddleBreaksTheStreak() {
+        val trips = history(mapOf(0 to week(0, reroutes = 4), 2 to week(2, reroutes = 4))).filter { it.weekAgo != 1 }
+        assertEquals(State.STABLE, analyze(trips).state)
+    }
 }

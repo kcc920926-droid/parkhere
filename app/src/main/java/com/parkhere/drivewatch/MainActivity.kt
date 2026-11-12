@@ -477,7 +477,7 @@ private fun Arrived() {
         }
         d.banner?.let { line ->
             val c = r?.changed?.firstOrNull()
-            Banner("🔊", line, c?.let { "${it.metric.label} · 평소 ${it.metric.display(it.baseline!!)} → 이번 주 ${it.metric.display(it.weekly.first()!!)} · ${it.worseStreak}주 연속" }, if (c != null) Warn else Accent)
+            Banner("🔊", line, c?.evidenceLine(), if (c != null) Warn else Accent)
         }
         Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             if (cand != null) Column(
@@ -534,7 +534,7 @@ private fun WeeklyCard(r: Report) {
             ) {
                 Text(w.headline, color = Color.White, fontSize = 19.sp, fontWeight = FontWeight.Bold)
                 w.evidence.forEach { m ->
-                    Text("${m.metric.label} · 평소 ${m.metric.display(m.baseline!!)} → 이번 주 ${m.metric.display(m.weekly.first()!!)} · ${m.worseStreak}주 연속", color = tone, fontSize = 13.sp)
+                    Text(m.evidenceLine(), color = tone, fontSize = 13.sp)
                 }
                 Spacer(Modifier.weight(1f))
                 if (r.state == State.TALK) Text("가족과 이야기해 보실래요?", color = Color.White, fontSize = 16.sp)
@@ -669,7 +669,8 @@ private fun MetricTile(m: MetricReport, modifier: Modifier) {
         val max = m.weekly.filterNotNull().maxOrNull()?.takeIf { it > 0 } ?: 1.0
         Row(Modifier.fillMaxWidth().height(70.dp), verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
             m.weekly.reversed().forEachIndexed { i, v ->
-                val recentWorse = i >= m.weekly.size - m.worseStreak
+                val week = m.weekly.lastIndex - i // 0 = this week
+                val recentWorse = week >= m.judged && week < m.judged + m.worseStreak
                 // Signal is a miss rate internally; show compliance so taller = better there.
                 val h = if (m.metric == Metric.SIGNAL) (100 - (v ?: 0.0)) / 100 else (v ?: 0.0) / max
                 Box(Modifier.weight(1f).fillMaxHeight(h.toFloat().coerceIn(0.04f, 1f))

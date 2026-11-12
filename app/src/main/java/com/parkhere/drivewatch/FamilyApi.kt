@@ -54,7 +54,7 @@ object FamilyApi {
             evidence.put(JSONObject()
                 .put("label", m.metric.label)
                 .put("unit", when (m.metric) { Metric.REROUTE -> "회/10km"; Metric.SIGNAL -> "%"; Metric.BRAKE -> "회/100km" })
-                .put("typical", v(m.baseline)).put("value", v(m.weekly.first()))
+                .put("typical", v(m.baseline)).put("value", v(m.latest))
                 .put("weeks", m.worseStreak))
         }
         val body = JSONObject().put("week", week).put("status", w.state.key()).put("headline", w.headline)

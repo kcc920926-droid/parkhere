@@ -54,31 +54,45 @@ data class MetricReport(
     val weekly: List<Double?>, // index 0 = this week, oldest last
     val baseline: Double?,
     val worseStreak: Int,
-)
+) {
+    /** Index in [weekly] of the newest week with enough driving to judge, or -1. The streak ends there. */
+    val judged: Int get() = weekly.indexOfFirst { it != null }
+
+    /** Rate of that week. Null only when no recent week could be judged. */
+    val latest: Double? get() = weekly.getOrNull(judged)
+
+    /** One line of evidence for a changed metric, as the cards show it. */
+    fun evidenceLine(): String {
+        val b = baseline ?: return metric.label
+        val v = latest ?: return metric.label
+        return "${metric.label} · 평소 ${metric.display(b)} → ${if (judged == 0) "이번 주" else "최근"} ${metric.display(v)} · ${worseStreak}주 연속"
+    }
+}
 
 data class Report(val state: State, val metrics: List<MetricReport>, val nightDrivesThisWeek: Int) {
     val changed: List<MetricReport> get() = metrics.filter { it.worseStreak >= 2 }
 }
 
+const val BASELINE_WEEKS = 8
+const val MIN_BASELINE_WEEKS = 4
+
 /**
- * Baseline = average of the 8 weeks before the latest 4 (weeks 4..11).
- * A week is "worse" when its rate is >= 1.5x baseline and at least `floor` above it.
+ * Weeks are judged oldest first. Baseline = average of the last 8 weeks that were not part of a change
+ * (at least 4 needed). A week is "worse" when its rate is >= 1.5x baseline and at least `floor` above it.
+ * - Two or more worse weeks in a row are a change and stay out of later baselines, so a change that
+ *   goes on for months does not become the new normal. A single worse week is noise and stays in.
+ * - A week without enough driving breaks the streak, except at the newest end: while this week has too
+ *   little driving to judge, the last judged week's result stands.
  * WATCH: one metric worse 2 weeks running. TALK: two such metrics, or one for 4 weeks.
  */
 fun analyze(trips: List<Trip>, weeks: Int = 12): Report {
-    val byWeek = (0 until weeks).map { w -> trips.filter { it.weekAgo == w } }
+    val oldest = trips.maxOfOrNull { it.weekAgo } ?: 0
+    val byWeek = (0..maxOf(oldest, weeks - 1)).map { w -> trips.filter { it.weekAgo == w } }
     val nightNow = byWeek[0].count { it.night }
-    if (trips.maxOfOrNull { it.weekAgo } ?: 0 < weeks - 1) {
-        return Report(State.LEARNING, Metric.entries.map { m -> MetricReport(m, byWeek.map(m::rate), null, 0) }, nightNow)
+    if (oldest < weeks - 1) {
+        return Report(State.LEARNING, Metric.entries.map { m -> MetricReport(m, byWeek.take(weeks).map(m::rate), null, 0) }, nightNow)
     }
-    val reports = Metric.entries.map { m ->
-        val weekly = byWeek.map(m::rate)
-        val base = weekly.drop(4).filterNotNull().takeIf { it.size >= 4 }?.average()
-        val streak = if (base == null) 0 else weekly.take(4).takeWhile { r ->
-            r != null && r >= base * 1.5 && r - base >= m.floor
-        }.size
-        MetricReport(m, weekly, base, streak)
-    }
+    val reports = Metric.entries.map { m -> judge(m, byWeek.map(m::rate), weeks) }
     val worse = reports.filter { it.worseStreak >= 2 }
     val state = when {
         worse.size >= 2 || reports.any { it.worseStreak >= 4 } -> State.TALK
@@ -86,4 +100,26 @@ fun analyze(trips: List<Trip>, weeks: Int = 12): Report {
         else -> State.STABLE
     }
     return Report(state, reports, nightNow)
+}
+
+/** rates: index 0 = this week, oldest last (may be longer than the `weeks` shown). */
+private fun judge(m: Metric, rates: List<Double?>, weeks: Int): MetricReport {
+    val shown = rates.take(weeks)
+    val newest = shown.indexOfFirst { it != null }
+    if (newest < 0) return MetricReport(m, shown, null, 0)
+    val normal = mutableListOf<Double>()  // weeks that count as "usual", oldest first
+    val pending = mutableListOf<Double>() // the current run of worse weeks
+    var base: Double? = null
+    for (w in rates.lastIndex downTo newest) {
+        base = normal.takeLast(BASELINE_WEEKS).takeIf { it.size >= MIN_BASELINE_WEEKS }?.average()
+        val r = rates[w]
+        if (r != null && base != null && r >= base * 1.5 && r - base >= m.floor) {
+            pending += r
+            continue
+        }
+        if (pending.size < 2) normal += pending
+        pending.clear()
+        if (r != null) normal += r
+    }
+    return MetricReport(m, shown, base, pending.size)
 }
