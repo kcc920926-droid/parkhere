@@ -32,8 +32,25 @@ object FamilyApi {
         }
     }
 
-    fun registerDriver(name: String, scope: String, done: (String?) -> Unit) =
-        call("POST", "/api/car/drivers", null, JSONObject().put("name", name).put("shareScope", scope)) { done(it?.optString("carToken")) }
+    /** A server driver: new, or the same one this car's driver had before (reused). backup = the choice kept on the server. */
+    data class Registered(val token: String, val reused: Boolean, val backup: Boolean?)
+
+    /**
+     * Registers a driver of this car. With a car key the server hands back the existing driver for the same
+     * local driver or name, so family links survive a reinstall. Logged with why, so a duplicate can be traced.
+     */
+    fun registerDriver(name: String, scope: String, reason: String, profileId: String, carKey: String?, done: (Registered?) -> Unit) {
+        val body = JSONObject().put("name", name).put("shareScope", scope).put("profileId", profileId)
+        carKey?.let { body.put("carKey", it) }
+        call("POST", "/api/car/drivers", null, body) { j ->
+            val r = j?.optString("carToken")?.takeIf { it.isNotEmpty() }?.let { Registered(it, j.optBoolean("reused"), if (j.isNull("backup")) null else j.optBoolean("backup")) }
+            android.util.Log.i("DriveWatch", "registerDriver reason=$reason profile=${profileId.take(8)} carKey=${carKey != null} -> ${when { r == null -> "failed"; r.reused -> "reused"; else -> "new" }}")
+            done(r)
+        }
+    }
+
+    fun setShareScope(token: String, scope: String, done: (Boolean) -> Unit) =
+        call("PUT", "/api/car/share-scope", token, JSONObject().put("shareScope", scope)) { done(it != null) }
 
     fun invite(token: String, done: (String?) -> Unit) =
         call("POST", "/api/car/invites", token, JSONObject()) { done(it?.optString("code")) }
@@ -62,6 +79,39 @@ object FamilyApi {
             .put("changes", JSONArray(w.changes)).put("evidence", evidence)
         call("POST", "/api/car/summaries", token, body) { done(it != null) }
     }
+
+    /** Result of texting the invite link: sent, or not sent because the server is in demo mode, or an error code. */
+    data class SmsResult(val sent: Boolean, val dryRun: Boolean, val to: String?, val error: String?)
+
+    /** Texts the phone page link for [code] to the child's number. The server keeps neither the number nor the text. */
+    fun sendInviteSms(token: String, code: String, phone: String, consent: Boolean, done: (SmsResult) -> Unit) {
+        thread {
+            val result = runCatching {
+                val c = URL("$BASE/api/car/invites/sms").openConnection() as HttpURLConnection
+                c.requestMethod = "POST"
+                c.connectTimeout = 8000; c.readTimeout = 12000
+                c.setRequestProperty("Content-Type", "application/json")
+                c.setRequestProperty("Authorization", "Bearer $token")
+                c.doOutput = true
+                c.outputStream.use { it.write(JSONObject().put("code", code).put("phone", phone).put("consent", consent).toString().toByteArray()) }
+                val ok = c.responseCode in 200..299
+                val body = JSONObject(((if (ok) c.inputStream else c.errorStream) ?: return@runCatching SmsResult(false, false, null, "network")).bufferedReader().readText())
+                if (ok) SmsResult(body.optBoolean("sent"), body.optString("mode") == "dry-run", body.optString("to"), null)
+                else SmsResult(false, false, null, body.optString("error", "server_error"))
+            }.getOrElse { SmsResult(false, false, null, "network") }
+            main.post { done(result) }
+        }
+    }
+
+    /**
+     * 시연용: plays the child's side on the same server so the demo does not need a second phone.
+     * Signs up a family member named "$name (시연용)" and enters [code], exactly as the phone page would.
+     */
+    fun demoChildLinks(code: String, name: String, relation: String, done: (Boolean) -> Unit) =
+        call("POST", "/api/family/members", null, JSONObject().put("name", "$name (시연용)")) { m ->
+            val token = m?.optString("token")?.takeIf { it.isNotEmpty() } ?: return@call done(false)
+            call("POST", "/api/family/links", token, JSONObject().put("code", code).put("relation", relation)) { done(it != null) }
+        }
 
     // ---- 주행 기록 보관 (운전자가 허락한 경우만, family-server 0.2.0) ----
 

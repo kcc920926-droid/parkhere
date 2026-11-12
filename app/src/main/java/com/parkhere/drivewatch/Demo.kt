@@ -18,21 +18,21 @@ object Demo {
         val trips = mutableListOf<Trip>()
         for (w in 1..11) {
             val reroutes = if (w == 1 && changing) 3 else baseReroutes[w]
-            trips += Trip(w, 10.0, familiar = true, night = false, reroutes = reroutes, turnsGuided = 7, signalsUsed = 7, hardBrakes = 0, place = "성당")
-            trips += Trip(w, 10.0, familiar = true, night = false, reroutes = 0, turnsGuided = 6, signalsUsed = 6, hardBrakes = if (w % 2 == 0) 1 else 0, place = "병원")
-            trips += Trip(w, 10.0, familiar = true, night = false, reroutes = 0, turnsGuided = 7, signalsUsed = 6, hardBrakes = 0, place = "마트")
-            trips += Trip(w, 15.0, familiar = false, night = false, reroutes = 1, turnsGuided = 5, signalsUsed = 5, hardBrakes = 0)
+            trips += Trip(w, 10.0, familiar = true, night = false, reroutes = reroutes, turnsGuided = 7, signalsUsed = 7, hardBrakes = 0, place = "성당", demo = true)
+            trips += Trip(w, 10.0, familiar = true, night = false, reroutes = 0, turnsGuided = 6, signalsUsed = 6, hardBrakes = if (w % 2 == 0) 1 else 0, place = "병원", demo = true)
+            trips += Trip(w, 10.0, familiar = true, night = false, reroutes = 0, turnsGuided = 7, signalsUsed = 6, hardBrakes = 0, place = "마트", demo = true)
+            trips += Trip(w, 15.0, familiar = false, night = false, reroutes = 1, turnsGuided = 5, signalsUsed = 5, hardBrakes = 0, demo = true)
         }
-        trips += Trip(0, 10.0, familiar = true, night = false, reroutes = 0, turnsGuided = 7, signalsUsed = 7, hardBrakes = 0, place = "마트")
-        trips += Trip(0, 10.0, familiar = true, night = false, reroutes = 0, turnsGuided = 6, signalsUsed = 6, hardBrakes = 0, place = "성당")
+        trips += Trip(0, 10.0, familiar = true, night = false, reroutes = 0, turnsGuided = 7, signalsUsed = 7, hardBrakes = 0, place = "마트", demo = true)
+        trips += Trip(0, 10.0, familiar = true, night = false, reroutes = 0, turnsGuided = 6, signalsUsed = 6, hardBrakes = 0, place = "성당", demo = true)
         return trips
     }
 
     /** One synthetic week where the 성당 route keeps re-routing (used by "4주 뒤로"). */
     fun strugglingWeek(): List<Trip> = listOf(
-        Trip(0, 10.0, familiar = true, night = false, reroutes = 1, turnsGuided = 7, signalsUsed = 7, hardBrakes = 0, place = "성당"),
-        Trip(0, 10.0, familiar = true, night = false, reroutes = 1, turnsGuided = 6, signalsUsed = 6, hardBrakes = 0, place = "성당"),
-        Trip(0, 10.0, familiar = true, night = false, reroutes = 1, turnsGuided = 7, signalsUsed = 7, hardBrakes = 0, place = "마트"),
+        Trip(0, 10.0, familiar = true, night = false, reroutes = 1, turnsGuided = 7, signalsUsed = 7, hardBrakes = 0, place = "성당", demo = true),
+        Trip(0, 10.0, familiar = true, night = false, reroutes = 1, turnsGuided = 6, signalsUsed = 6, hardBrakes = 0, place = "성당", demo = true),
+        Trip(0, 10.0, familiar = true, night = false, reroutes = 1, turnsGuided = 7, signalsUsed = 7, hardBrakes = 0, place = "마트", demo = true),
     )
 
     /** Scripted navigation for one drive. Seconds are from the moment the gear goes to D. */

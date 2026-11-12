@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="pleos.car.permission.CAR_DRIVE" />
     <uses-permission android:name="pleos.car.permission.CAR_LIGHTS" />
+    <!-- VIN for the car key (CarKey.kt); only a hash of it leaves the car. Both are normal-level Pleos permissions. -->
+    <uses-permission android:name="pleos.car.permission.CAR_INFO" />
+    <uses-permission android:name="pleos.car.permission.PRIVATE_CAR_INFO" />
     <uses-permission android:name="pleos.car.permission.TTS_SERVICE" />
     <uses-permission android:name="android.car.permission.CAR_SPEED" />
 

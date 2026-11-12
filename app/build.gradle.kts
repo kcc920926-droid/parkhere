@@ -27,6 +27,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures { compose = true; buildConfig = true }
+    // 시연 시나리오: the family server's demo/ folder is also the app's offline copy (drives/, histories/).
+    sourceSets["main"].assets.srcDir("../family-server/demo")
     useLibrary("android.car") // AAOS Car API for vehicle speed (not in Pleos Vehicle SDK 2.3.2)
 }
 
@@ -38,7 +40,9 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("ai.pleos.playground:Vehicle:2.3.2")
     implementation("ai.pleos.playground:TextToSpeech:3.3.1")
+    implementation("com.google.zxing:core:3.5.3") // QR code for the family invite (encoding only, no camera)
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20240303") // real JSON parsing for scenario tests (android.jar has stubs)
 }
 
 kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_17) } }
