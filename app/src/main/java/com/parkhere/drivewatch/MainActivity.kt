@@ -464,11 +464,13 @@ private fun Invite(speak: (String) -> Unit) {
                 else if (failed) Text("연결할 수 없어요", color = Color(0xFF131417), fontSize = 15.sp)
                 else AbangLoader(96.dp)
             }
-            Text("폰 카메라로 찍으면 바로 열려요", color = Color(0xFF131417), fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Text("자녀분 폰으로 찍어 주세요", color = Color(0xFF131417), fontSize = 15.sp, fontWeight = FontWeight.Bold)
         }
         Column(Modifier.widthIn(max = 460.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text("자녀분 폰과 연결해요", color = Ink, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-            Text("QR을 찍거나, 폰 브라우저에서 ${FamilyApi.FAMILY_PAGE}를 열고 이 코드를 넣으면 돼요.", color = Dim, fontSize = 14.sp)
+            Text("자녀분 폰으로 QR을 찍거나, 폰 브라우저에서 ${FamilyApi.FAMILY_PAGE}를 열고 이 코드를 넣으면 돼요.", color = Dim, fontSize = 14.sp)
+            // Parents often scan it with their own phone; the page then offers to send the link on to the child.
+            Text("부모님 폰으로 찍으셨다면, 열린 화면에서 자녀분께 바로 보낼 수 있어요.", color = Dim, fontSize = 14.sp)
             Text(code?.chunked(3)?.joinToString(" ") ?: if (failed) "연결할 수 없어요" else "코드 만드는 중…",
                 color = Ink, fontSize = 44.sp, fontWeight = FontWeight.Bold, letterSpacing = 6.sp)
             Text("10분 동안 유효 · 한 번만 쓸 수 있어요 · 연결을 기다리는 중…", color = Dim, fontSize = 13.sp)

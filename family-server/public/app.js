@@ -82,6 +82,42 @@
     window.scrollTo(0, 0);
   }
 
+  /* 차 화면의 QR은 부모님이 자기 폰으로 찍기도 한다. 그때 부모님이 자기 차의 '가족'으로 가입하지 않도록
+     먼저 누가 열었는지 묻고, 부모님이면 같은 링크를 자녀에게 보내게 한다(문자 비용 없이 카카오톡·문자 공유). */
+  const invitedCode = pendingCode;
+  const inviteLink = () => `${location.origin}/family/?code=${invitedCode}`;
+
+  function who() {
+    return [
+      h("h1", {}, "가족 연결 링크예요"),
+      h("p", { class: "muted" }, "이 링크를 연 분은 누구세요?"),
+      h("div", { class: "spacer" }),
+      h("button", { class: "btn primary big", onclick: () => show(join) }, "가족이에요", h("small", {}, "부모님 운전 요약을 받을게요")),
+      h("button", { class: "btn big", onclick: () => show(forDriver) }, "제가 운전하는 사람이에요", h("small", {}, "자녀에게 이 링크를 보낼게요")),
+    ];
+  }
+
+  function forDriver() {
+    const note = h("p", { class: "muted", role: "status" }, "자녀분이 링크를 열면 바로 연결돼요. 10분 안에 보내 주세요.");
+    const send = async () => {
+      const url = inviteLink();
+      const data = { title: "DriveWatch 가족 연결", text: "내 차 운전 요약을 같이 봐 줘. 10분 안에 눌러 줘.", url };
+      try {
+        if (navigator.share) { await navigator.share(data); note.textContent = "보냈어요. 자녀분이 열면 차 화면이 '연결됐어요'로 바뀌어요."; return; }
+      } catch (problem) { if (problem?.name === "AbortError") return; }
+      try { await navigator.clipboard.writeText(url); note.textContent = "링크를 복사했어요. 카카오톡이나 문자에 붙여 넣어 자녀분께 보내 주세요."; }
+      catch { note.textContent = `이 주소를 자녀분께 보내 주세요: ${url}`; }
+    };
+    return [
+      h("h1", {}, "자녀분께 이 링크를 보내 주세요"),
+      note,
+      h("div", { class: "spacer" }),
+      h("button", { class: "btn primary big", onclick: send }, "카카오톡·문자로 보내기"),
+      h("p", { class: "muted" }, "또는 자녀분 폰으로 차 화면의 QR을 찍어도 돼요."),
+      h("button", { class: "link", onclick: () => show(who) }, icon("arrow_left"), "처음으로"),
+    ];
+  }
+
   /* P1 가입 */
   function join() {
     const name = h("input", { name: "name", autocomplete: "name", maxlength: 20, autofocus: true });
@@ -295,5 +331,5 @@
     return [title, body];
   }
 
-  show(!session ? join : session.linked && !pendingCode ? home : connect);
+  show(!session ? (pendingCode ? who : join) : session.linked && !pendingCode ? home : connect);
 })();
