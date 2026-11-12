@@ -290,7 +290,7 @@ private fun DemoPanel() {
             s.update { it.copy(sentWeek = s.week(), ackedBy = emptyList()) }
         }, DemoButton)
         Spacer(Modifier.weight(1f))
-        Text("${s.week()} 주 · 자녀 폰: ${FamilyApi.FAMILY_PAGE} · v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", color = Demo_, fontSize = 12.sp)
+        Text("${s.week()} 주 · 가족 폰: ${FamilyApi.FAMILY_PAGE} · v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", color = Demo_, fontSize = 12.sp)
         Button("처음부터", { s.reset() }, DemoButton, icon = Ic.RESET)
     }
 }
@@ -336,8 +336,13 @@ private fun Consent(speak: (String) -> Unit) {
         Text("DriveWatch가 기록하는 것", color = Ink, fontSize = 22.sp, fontWeight = FontWeight.Bold)
         Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Tile(Modifier.weight(1f).fillMaxHeight()) {
-                IconLabel(Ic.CHECK, "기록해요", Ok, 17.sp, FontWeight.Bold)
-                listOf("익숙한 길에서 길 안내를 다시 받은 횟수", "회전할 때 깜빡이", "급제동", "밤 운전").forEach { Text(it, color = Ink, fontSize = 15.sp) }
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    IconLabel(Ic.CHECK, "기록해요", Ok, 17.sp, FontWeight.Bold)
+                    PackTag(ELDER_PACK)
+                }
+                ELDER_PACK.signals.forEach { Text(it, color = Ink, fontSize = 15.sp) }
+                Spacer(Modifier.weight(1f))
+                Text("나이가 아니라 내 평소와 비교해요", color = Dim, fontSize = 13.sp)
             }
             Tile(Modifier.weight(1f).fillMaxHeight()) {
                 IconLabel(Ic.CLOSE, "기록하지 않아요", Danger, 17.sp, FontWeight.Bold)
@@ -489,14 +494,14 @@ private fun Invite(speak: (String) -> Unit) {
                 else if (failed) Text("연결할 수 없어요", color = Color(0xFF131417), fontSize = 15.sp)
                 else ClockCarLoader(96.dp)
             }
-            Text("자녀분 폰으로 찍어 주세요", color = Color(0xFF131417), fontSize = 15.sp, fontWeight = FontWeight.Bold)
-            if (withPhone) Text("자녀 번호가 담겼어요 · 부모님 폰으로 찍으면\n받는 사람이 채워진 문자가 열려요", color = Color(0xFF44464E), fontSize = 12.sp, textAlign = TextAlign.Center)
+            Text("가족분 폰으로 찍어 주세요", color = Color(0xFF131417), fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            if (withPhone) Text("가족 번호가 담겼어요 · 운전하시는 분 폰으로 찍으면\n받는 사람이 채워진 문자가 열려요", color = Color(0xFF44464E), fontSize = 12.sp, textAlign = TextAlign.Center)
         }
         Column(Modifier.widthIn(max = 460.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text("자녀분 폰과 연결해요", color = Ink, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-            Text("자녀분 폰으로 QR을 찍거나, 폰 브라우저에서 ${FamilyApi.FAMILY_PAGE}를 열고 이 코드를 넣으면 돼요.", color = Dim, fontSize = 14.sp)
+            Text("가족분 폰과 연결해요", color = Ink, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text("가족분 폰으로 QR을 찍거나, 폰 브라우저에서 ${FamilyApi.FAMILY_PAGE}를 열고 이 코드를 넣으면 돼요.", color = Dim, fontSize = 14.sp)
             // Parents often scan it with their own phone; the page then offers to send the link on to the child.
-            Text("부모님 폰으로 찍으셨다면, 열린 화면에서 자녀분께 바로 보낼 수 있어요.", color = Dim, fontSize = 14.sp)
+            Text("직접 찍으셨다면, 열린 화면에서 가족분께 바로 보낼 수 있어요.", color = Dim, fontSize = 14.sp)
             Text(code?.chunked(3)?.joinToString(" ") ?: if (failed) "연결할 수 없어요" else "코드 만드는 중…",
                 color = Ink, fontSize = 44.sp, fontWeight = FontWeight.Bold, letterSpacing = 6.sp)
             Text("10분 동안 유효 · 한 번만 쓸 수 있어요 · 연결을 기다리는 중…", color = Dim, fontSize = 13.sp)
@@ -506,7 +511,7 @@ private fun Invite(speak: (String) -> Unit) {
             }
             // Or text the link to the child's phone. The number is used for this one message and not kept.
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Box(Modifier.weight(1f)) { Field("자녀 휴대폰 번호", phone, { phone = it.filter { ch -> ch.isDigit() || ch == '-' }.take(13); sms = Phase.IDLE; smsNote = null; picked = null }, number = true) }
+                Box(Modifier.weight(1f)) { Field("가족 휴대폰 번호", phone, { phone = it.filter { ch -> ch.isDigit() || ch == '-' }.take(13); sms = Phase.IDLE; smsNote = null; picked = null }, number = true) }
                 // The car's contacts (synced from the parent's phone over Bluetooth). The system picker hands back only
                 // the one number chosen, so the app needs no permission to read the address book.
                 if (canPickContact) Button("연락처", { pickContact.launch(Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)) }, Raised, icon = Ic.PERSON)
@@ -537,8 +542,8 @@ private fun Invite(speak: (String) -> Unit) {
             // what is collected, why, how long it is kept, and that refusing has no penalty (QR and code still work).
             ConsentBox(
                 agreed, { agreed = it },
-                "[필수] 자녀 휴대폰 번호 수집·이용에 동의해요",
-                "항목 휴대폰 번호 · 목적 연결 링크 문자 1통 · 보관 저장하지 않고 보낸 뒤 바로 지움 · 번호 주인(자녀)이 동의한 경우에만 체크해 주세요. 동의하지 않아도 QR이나 코드로 연결할 수 있어요.",
+                "[필수] 가족 휴대폰 번호 수집·이용에 동의해요",
+                "항목 휴대폰 번호 · 목적 연결 링크 문자 1통 · 보관 저장하지 않고 보낸 뒤 바로 지움 · 번호 주인(가족)이 동의한 경우에만 체크해 주세요. 동의하지 않아도 QR이나 코드로 연결할 수 있어요.",
             )
             picked?.let { Text("연락처에서 고름 · $it", color = Dim, fontSize = 13.sp) }
             smsNote?.let { note ->
@@ -626,7 +631,7 @@ private fun Home(r: Report, speak: (String) -> Unit) {
                     else -> "${p.family.joinToString()} 님과 연결됨"
                 }
                 SmallCard("가족", family, Modifier.weight(1f), bodyIcon = Ic.THUMBS_UP.takeIf { p.ackedBy.isNotEmpty() && p.family.isNotEmpty() }, onClick = { s.screen = Screen.INVITE }.takeIf { p.family.isEmpty() })
-                SmallCard("이번 주 카드", if (p.sentWeek == s.week()) "보냈어요" else "부모님이 먼저 봐요", Modifier.weight(1f)) { s.screen = Screen.WEEKLY }
+                SmallCard("이번 주 카드", if (p.sentWeek == s.week()) "보냈어요" else "내가 먼저 봐요", Modifier.weight(1f)) { s.screen = Screen.WEEKLY }
             }
         }
     }
@@ -877,7 +882,10 @@ private fun Detail(r: Report) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             BackButton { s.screen = Screen.HOME }
-            Text("${p.name} 님의 운전 · 이번 주 vs 평소(8주)", color = Dim, fontSize = 15.sp, modifier = Modifier.weight(1f))
+            Text("${p.name} 님의 운전 · 이번 주 vs 평소(8주)", color = Dim, fontSize = 15.sp)
+            Spacer(Modifier.width(8.dp))
+            PackTag(ELDER_PACK)
+            Spacer(Modifier.weight(1f))
             Chip("월별 기록", selected = false, icon = Ic.CALENDAR) { s.screen = Screen.MONTHLY }
             Spacer(Modifier.width(8.dp))
             StateChip(r.state, weeksRecorded(p))
@@ -1095,6 +1103,12 @@ private fun SmallCard(title: String, body: String, modifier: Modifier, bodyIcon:
 @Composable
 private fun Tile(modifier: Modifier, content: @Composable ColumnScope.() -> Unit) =
     Column(modifier.background(Panel, RoundedCornerShape(12.dp)).padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp), content = content)
+
+/** Names the watched set ("어르신 팩"): a quiet sign that the same engine can take other kinds of drivers. */
+@Composable
+private fun PackTag(pack: Pack) =
+    Text(pack.label, color = Dim, fontSize = 12.sp, fontWeight = FontWeight.Bold,
+        modifier = Modifier.border(1.dp, Dim.copy(alpha = 0.4f), RoundedCornerShape(99.dp)).padding(horizontal = 8.dp, vertical = 2.dp))
 
 @Composable
 private fun StateChip(s: State, weeks: Int) {

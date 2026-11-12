@@ -11,6 +11,15 @@ import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 
 /** Promises a driver can choose (C3). Only the first two change app behaviour in the MVP. */
+/**
+ * What the engine watches and which promises it offers, as one named set. The engine itself compares each driver
+ * with their own usual weeks, not with an age group, so another kind of driver (new, returning after a long break,
+ * long-haul) is another pack on the same engine. Only 어르신 팩 exists today; the UI names it so that is visible.
+ */
+data class Pack(val label: String, val signals: List<String>)
+
+val ELDER_PACK = Pack("어르신 팩", listOf("익숙한 길에서 길 안내를 다시 받은 횟수", "회전할 때 깜빡이", "급제동", "밤 운전"))
+
 val PROMISES = listOf(
     Ic.MOON to "해 지면 운전 안 하기",
     Ic.PIN to "표시한 구간 피하기",
