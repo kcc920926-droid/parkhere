@@ -139,7 +139,11 @@
 @media (max-width: 520px) { .can-cells { grid-template-columns: repeat(6, minmax(0, 1fr)); } .emu-cells { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
 /* 5. 어디까지 */
-.lab-link { display: flex; flex-direction: column; gap: 4px; margin-top: 40px; padding: 22px 24px; border-radius: 20px; background: var(--ink); color: var(--paper); text-decoration: none; max-width: 640px; transition: transform .2s var(--ease); }
+.lab-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 40px; }
+.lab-link { display: flex; flex-direction: column; gap: 4px; padding: 22px 24px; border-radius: 20px; background: var(--ink); color: var(--paper); text-decoration: none; transition: transform .2s var(--ease); }
+.lab-link.light { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
+.lab-link.light small { color: var(--ink-2); }
+@media (max-width: 760px) { .lab-links { grid-template-columns: 1fr; } }
 .lab-link:hover { transform: translateY(-2px); }
 .lab-link span { font-size: 19px; font-weight: 800; }
 .lab-link span::after { content: " →"; }

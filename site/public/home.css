@@ -362,7 +362,7 @@ section { position: relative; }
 .end-link span { font-size: 18px; font-weight: 800; }
 .end-link span::after { content: " →"; }
 .end-link small { font-size: 14px; line-height: 1.5; color: rgba(255, 255, 255, .78); }
-.end-link.primary { background: #fff; color: var(--ink); border-color: #fff; }
+.end-link.primary { grid-column: 1 / -1; background: #fff; color: var(--ink); border-color: #fff; }
 .end-link.primary small { color: var(--ink-2); }
 .end-car { max-width: 420px; margin: 0 auto; }
 @media (max-width: 860px) {
