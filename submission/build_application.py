@@ -13,7 +13,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 TEMPLATE = HERE / "contest-application-consent.docx"
 SOURCE = HERE / "application.md"
-OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / "DriveWatch_접수양식.docx"
+OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / "M92_DriveWatch_접수양식.docx"
 
 BOX_TAGS = ["app_summary", "planning_background", "vehicle_scenario", "key_features",
             "pleos_plan", "reference_files", "reference_link", "shortform_link"]
