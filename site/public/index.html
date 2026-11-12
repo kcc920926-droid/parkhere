@@ -58,6 +58,7 @@
               <small data-apk-meta>Pleos 에뮬레이터용 APK</small>
             </a>
             <a class="btn btn-quiet" href="/family/">가족 폰 화면 열기 <span aria-hidden="true">→</span></a>
+            <a class="btn btn-quiet film-link" href="#film" data-film-link><i aria-hidden="true"></i>영상 보기 <small>2:43</small></a>
           </div>
         </div>
 
@@ -70,6 +71,24 @@
             창문이 계기판이에요. 바늘 위치와 칸 색, 표정이 함께 바뀌어서 색을 구분하기 어려워도 읽을 수 있어요.
           </figcaption>
         </figure>
+      </div>
+    </section>
+
+    <!-- 1-1. 영상 -->
+    <section class="film" id="film" aria-labelledby="film-title">
+      <div class="wrap">
+        <div class="film-head">
+          <h2 id="film-title" class="film-title">2분 43초로 보는 DriveWatch</h2>
+          <p>왜 필요한지, 앱이 무엇을 하는지, 실제 앱으로 따라가는 한 달, 스스로 지키는 약속까지 담았어요. 내레이션과 자막이 있어요.</p>
+        </div>
+        <div class="film-frame">
+          <video controls preload="none" playsinline poster="assets/film-poster.webp" width="1920" height="1080" data-film>
+            <source src="assets/drivewatch-film.mp4" type="video/mp4">
+            <a href="assets/drivewatch-film.mp4">영상 파일 열기</a>
+          </video>
+          <button type="button" class="film-play" data-film-play aria-label="영상 재생, 2분 43초"><span></span></button>
+        </div>
+        <p class="fine">앱 화면은 Pleos Connect 에뮬레이터에서 찍은 실제 화면이에요. 내비 안내와 과거 기록은 시연용이고, 영상에서도 그렇게 말해요.</p>
       </div>
     </section>
 
