@@ -209,7 +209,7 @@
         const note = !driver.latest ? "아직 요약이 없어요" : driver.latest.acked ? "확인함" : "요약 도착";
         return h("button", { class: "card", onclick: () => show(summary, driver.driverId) },
           h("span", { class: "label" }, `${driver.relation} · ${driver.name}`),
-          h("span", {}, status ? h("span", { class: `state ${status.chip}` }, status.label) : "", status ? " · " : "", note));
+          h("span", { class: "with-car" }, status ? [clockCar(driver.latest.status, 28), h("span", { class: `state ${status.chip}` }, status.label), " · "] : "", note));
       }));
     };
     refresh();
@@ -271,7 +271,7 @@
         catch { ack.disabled = false; }
       });
       body.replaceChildren(
-        h("span", { class: `chip ${status.chip}` }, chipText),
+        h("div", { class: "status-head" }, clockCar(item.status, 64), h("span", { class: `chip ${status.chip}` }, chipText)),
         ...cards,
         h("p", { class: "muted" }, `${dayOf(item.sentAt)}에 ${data.relation}가 보낸 요약이에요`),
         h("button", { class: "link", onclick: () => show(monthly, driverId) }, icon("calendar"), "월별 기록 보기", icon("chevron_right")),
@@ -314,7 +314,7 @@
         const [, m, d] = w.week.split("-").map(Number);
         return h("div", { class: "card" },
           h("span", { class: "label" }, `${m}/${d} 주 · `, w.acked ? [icon("check"), "확인함"] : "아직 확인 안 함"),
-          h("span", {}, h("span", { class: `state ${status.chip}` }, status.label), w.headline ? ` · ${w.headline}` : ""),
+          h("span", { class: "with-car" }, clockCar(w.status, 28), h("span", { class: `state ${status.chip}` }, status.label), w.headline ? ` · ${w.headline}` : ""),
           w.avoided ? h("span", { class: "muted" }, `피한 구간 · ${w.avoided}`) : null);
       });
       body.replaceChildren(

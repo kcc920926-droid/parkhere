@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 아방이 전경. 원본은 app/design/brand/abang-icon.svg. 안전 영역(가운데 66dp) 안에 들도록 0.75배. -->
+<!-- 시계 차 전경. 원본은 app/design/brand/clockcar-icon.svg. 120 격자의 차를 0.62배로 줄여 안전 영역(가운데 66dp) 안에 둔다. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
-    <group android:pivotX="0" android:pivotY="0" android:translateX="13.5" android:translateY="13" android:scaleX="0.75" android:scaleY="0.75">
-        <path android:pathData="M33,80 h6 a3,3 0 0 1 3,3 v4 a3,3 0 0 1 -3,3 h-6 a3,3 0 0 1 -3,-3 v-4 a3,3 0 0 1 3,-3 z" android:fillColor="#FF131417" />
-        <path android:pathData="M69,80 h6 a3,3 0 0 1 3,3 v4 a3,3 0 0 1 -3,3 h-6 a3,3 0 0 1 -3,-3 v-4 a3,3 0 0 1 3,-3 z" android:fillColor="#FF131417" />
-        <path android:pathData="M34,46 Q36,30 54,30 Q72,30 74,46 Z" android:fillColor="#FF0064FF" />
-        <path android:pathData="M40,44 Q42,35 54,35 Q66,35 68,44 Z" android:fillColor="#FFCFE2FF" />
-        <path android:pathData="M38,44 h32 a16,16 0 0 1 16,16 v8 a16,16 0 0 1 -16,16 h-32 a16,16 0 0 1 -16,-16 v-8 a16,16 0 0 1 16,-16 z" android:fillColor="#FF0064FF" />
-        <path android:pathData="M31,60 a9,9 0 1 0 18,0 a9,9 0 1 0 -18,0 z" android:fillColor="#FFFFFFFF" />
-        <path android:pathData="M59,60 a9,9 0 1 0 18,0 a9,9 0 1 0 -18,0 z" android:fillColor="#FFFFFFFF" />
-        <path android:pathData="M36.5,61 a4.5,4.5 0 1 0 9.0,0 a4.5,4.5 0 1 0 -9.0,0 z" android:fillColor="#FF131417" />
-        <path android:pathData="M64.5,61 a4.5,4.5 0 1 0 9.0,0 a4.5,4.5 0 1 0 -9.0,0 z" android:fillColor="#FF131417" />
-        <path android:pathData="M41.1,59.5 a1.4,1.4 0 1 0 2.8,0 a1.4,1.4 0 1 0 -2.8,0 z" android:fillColor="#FFFFFFFF" />
-        <path android:pathData="M69.1,59.5 a1.4,1.4 0 1 0 2.8,0 a1.4,1.4 0 1 0 -2.8,0 z" android:fillColor="#FFFFFFFF" />
-        <path android:pathData="M47,73 Q54,78 61,73" android:fillColor="#00000000" android:strokeColor="#FF131417" android:strokeWidth="2.5" android:strokeLineCap="round" />
-        <path android:pathData="M23.3,70 a3.2,3.2 0 1 0 6.4,0 a3.2,3.2 0 1 0 -6.4,0 z" android:fillColor="#FFFF9A1F" />
-        <path android:pathData="M78.3,70 a3.2,3.2 0 1 0 6.4,0 a3.2,3.2 0 1 0 -6.4,0 z" android:fillColor="#FFFFD9A8" />
+    <group android:pivotX="0" android:pivotY="0" android:translateX="16.8" android:translateY="16.2" android:scaleX="0.62" android:scaleY="0.62">
+        <path android:pathData="M20,84 Q13,84 13,76 Q13,61 28,58 L34,57 Q38,30 60,28 Q82,28 88,56 L94,57 Q107,60 107,74 Q107,84 100,84 Z" android:fillColor="#FFFFFFFF" />
+        <path android:pathData="M26,84 a10,10 0 1 0 20,0 a10,10 0 1 0 -20,0 z" android:fillColor="#FFFFFFFF" android:strokeColor="#FF6B5CF5" android:strokeWidth="4" />
+        <path android:pathData="M74,84 a10,10 0 1 0 20,0 a10,10 0 1 0 -20,0 z" android:fillColor="#FFFFFFFF" android:strokeColor="#FF6B5CF5" android:strokeWidth="4" />
+        <path android:pathData="M40,57 Q42,38 60,37 Q78,38 80,57 Z" android:fillColor="#FF6B5CF5" />
+        <path android:pathData="M60,54 V42.5 M60,54 L68.5,49" android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="3.6" android:strokeLineCap="round" />
+        <path android:pathData="M94.8,67 a4.2,4.2 0 1 0 8.4,0 a4.2,4.2 0 1 0 -8.4,0 z" android:fillColor="#FF2A2350" />
+        <path android:pathData="M99,65.8 a1.3,1.3 0 1 0 2.6,0 a1.3,1.3 0 1 0 -2.6,0 z" android:fillColor="#FFFFFFFF" />
+        <path android:pathData="M95,75 Q99,78.5 103,75" android:fillColor="#00000000" android:strokeColor="#FF2A2350" android:strokeWidth="2" android:strokeLineCap="round" />
     </group>
 </vector>

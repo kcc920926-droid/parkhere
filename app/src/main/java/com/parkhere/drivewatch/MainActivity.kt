@@ -487,7 +487,7 @@ private fun Invite(speak: (String) -> Unit) {
             Box(Modifier.size(220.dp), contentAlignment = Alignment.Center) {
                 if (qr != null) androidx.compose.foundation.Image(qr, "가족 연결 QR 코드", Modifier.fillMaxSize())
                 else if (failed) Text("연결할 수 없어요", color = Color(0xFF131417), fontSize = 15.sp)
-                else AbangLoader(96.dp)
+                else ClockCarLoader(96.dp)
             }
             Text("자녀분 폰으로 찍어 주세요", color = Color(0xFF131417), fontSize = 15.sp, fontWeight = FontWeight.Bold)
             if (withPhone) Text("자녀 번호가 담겼어요 · 부모님 폰으로 찍으면\n받는 사람이 채워진 문자가 열려요", color = Color(0xFF44464E), fontSize = 12.sp, textAlign = TextAlign.Center)
@@ -812,7 +812,10 @@ private fun WeeklyCard(r: Report) {
                 Modifier.weight(1f).fillMaxHeight().background(tone.copy(alpha = 0.12f), RoundedCornerShape(12.dp)).border(1.dp, tone, RoundedCornerShape(12.dp)).padding(14.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Text(w.headline, color = Ink, fontSize = 19.sp, fontWeight = FontWeight.Bold)
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    ClockCar(r.state, 64.dp)
+                    Text(w.headline, color = Ink, fontSize = 19.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                }
                 w.evidence.forEach { m ->
                     Text(m.evidenceLine(), color = tone, fontSize = 13.sp)
                 }
@@ -1097,8 +1100,12 @@ private fun Tile(modifier: Modifier, content: @Composable ColumnScope.() -> Unit
 private fun StateChip(s: State, weeks: Int) {
     val c = stateFill(s)
     val sub = if (s == State.LEARNING) "$weeks/12주" else "${weeks}주째 기록"
-    Text("${s.label} · $sub", color = OnChip, fontWeight = FontWeight.Bold, fontSize = 13.sp,
-        modifier = Modifier.background(c, RoundedCornerShape(99.dp)).padding(horizontal = 12.dp, vertical = 5.dp))
+    // The character's gauge first, then the words: the label stays the reading, the needle and face back it up.
+    Row(Modifier.background(c, RoundedCornerShape(99.dp)).padding(start = 4.dp, end = 12.dp, top = 3.dp, bottom = 3.dp),
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        ClockCar(s, 30.dp, description = null)
+        Text("${s.label} · $sub", color = OnChip, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+    }
 }
 
 /** Smallest thing a finger should have to hit on the car display (on the 1000 dp canvas, about 80 px on Pleos). */
@@ -1173,7 +1180,7 @@ private fun MorphButton(label: String, phase: Phase, doneLabel: String, onClick:
             }, label = "morph") { ph ->
                 when (ph) {
                     Phase.IDLE -> Text(label, color = if (enabled) OnPrimary else Dim, fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center, maxLines = 1, softWrap = false)
-                    Phase.BUSY -> AbangLoader(40.dp)
+                    Phase.BUSY -> ClockCarLoader(40.dp)
                     Phase.DONE -> IconLabel(Ic.CHECK, doneLabel, Ink, 16.sp, FontWeight.Bold, iconTint = Ok)
                 }
             }

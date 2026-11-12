@@ -45,7 +45,10 @@ button.card { border: 0; font: inherit; color: inherit; text-align: left; cursor
 .card strong { font-size: 18px; }
 .banner { background: var(--tint); border-radius: 14px; padding: 12px 16px; }
 .chip { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 12px; font-size: 14px; font-weight: 600; background: var(--neutral-bg); color: var(--muted); }
-.chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+/* 시계 차 캐릭터(clockcar.js): 바늘 위치·칸 색·표정이 상태 글자를 함께 받쳐 준다. */
+.clockcar { flex: none; border-radius: 26%; }
+.with-car { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.status-head { display: flex; align-items: center; gap: 12px; }
 .chip.stable { background: var(--stable-bg); color: var(--stable); }
 .chip.observe { background: var(--observe-bg); color: var(--observe); }
 .chip.talk { background: var(--talk-bg); color: var(--talk); }
