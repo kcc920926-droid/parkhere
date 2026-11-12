@@ -100,6 +100,16 @@ node tools/car-sim.js me                      # 가족이 확인했는지
 
 SOLAPI는 키마다 허용한 IP에서만 발송을 받는다. 이 Mac에서 보내려면 이 Mac의 공인 IP를 키에 등록해야 한다. 키와 발신번호는 LaunchAgent plist의 `EnvironmentVariables`에 넣고 저장소에는 올리지 않는다.
 
+## 차량 앱 새 버전 게시 (0.7.0)
+
+차량 앱은 켜질 때 `GET /api/app/latest`를 보고, 자기보다 `versionCode`가 크면 작업표시줄 옆에 "새 버전" 표시와 내려받기 QR(`GET /api/app/download`)을 띄운다. 앱이 스스로 설치하지는 않는다.
+
+```sh
+APP_DIR=~/.local/share/drive-watcher/family/app tools/publish-apk.sh ../app/build/outputs/apk/release/app-release.apk "바뀐 점 한 줄"
+```
+
+`APP_DIR`에 `DriveWatch.apk`와 `latest.json`이 생긴다. 서버의 LaunchAgent에도 같은 `APP_DIR`을 준다(게시만 할 때는 재시작이 필요 없다). 앱의 `versionCode`는 커밋 수라서, 새 커밋에서 빌드한 APK가 항상 더 새 버전이다. 팀이 같은 앱 위에 덮어 설치하려면 release를 팀 공용 키(`~/.drivewatch/signing.properties`)로 서명해야 한다.
+
 ## 배포
 
 `drive.olvend.com`은 이 Mac에서 Cloudflare 터널로 나간다. 터널은 `/api/`와 `/family/`로 시작하는 주소만 이 서버(`127.0.0.1:8770`)로 보내고, 나머지는 웹 MVP의 정적 서버(`127.0.0.1:8769`)로 보낸다.
