@@ -154,3 +154,16 @@ test("the family monthly view lists every week the driver sent, newest first, wi
   assert.ok(list.summaries.every((s) => s.evidence.length === 0 && s.evidenceShared === false)); // status only
   assert.equal((await call("GET", `/api/family/drivers/${car.driverId}/summaries`, { token: stranger.token })).status, 403);
 }));
+
+test("demo scenarios are listed and served without a login, and unknown ones are 404", () => withServer(async (call) => {
+  const list = (await call("GET", "/api/demo/scenarios")).data;
+  assert.equal(list.drives.length, 6);
+  assert.deepEqual(list.histories.map((h) => h.id).sort(), ["steady", "talk", "watch"]);
+  const drive = (await call("GET", "/api/demo/drives/hospital-fast")).data;
+  assert.equal(drive.place, "병원");
+  assert.deepEqual(drive.events.filter((e) => e.gear).map((e) => e.gear), ["D", "P"]);
+  assert.ok(drive.events.every((e, i, all) => i === 0 || all[i - 1].at <= e.at), "events are in time order");
+  const history = (await call("GET", "/api/demo/histories/talk")).data;
+  assert.equal(history.expect, "대화 권장");
+  assert.equal((await call("GET", "/api/demo/drives/nope")).status, 404);
+}));

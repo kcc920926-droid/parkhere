@@ -65,15 +65,33 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
 
   return {
     /* ---- 차량 앱 ---- */
-    registerDriver({ name, shareScope } = {}) {
+    /* 같은 차(carKey)의 같은 운전자가 다시 등록하면 새로 만들지 않고 그 운전자를 돌려준다:
+       같은 앱 안의 운전자(profileId)이거나, 앱을 다시 설치해 profileId가 바뀌었어도 이름이 같으면.
+       그래야 재설치나 동의 화면을 다시 거쳐도 가족 연결과 보관 기록이 이어진다.
+       carKey는 차량 앱이 차대번호(없으면 기기 ID)를 해시한 값이다. 차대번호 자체는 받지 않는다. */
+    registerDriver({ name, shareScope, carKey, profileId } = {}) {
+      const driverName = text(name, 20) || fail("name_required");
+      const key = typeof carKey === "string" && /^[0-9a-f]{32,64}$/.test(carKey) ? carKey : null;
+      const local = text(profileId, 40) || null;
+      if (key) {
+        const same = Object.values(state.drivers).filter((driver) => driver.carKey === key);
+        const found = same.find((driver) => local && driver.profileId === local) ?? same.find((driver) => driver.name === driverName);
+        if (found) {
+          if (local) found.profileId = local;
+          if (SCOPES.includes(shareScope)) found.shareScope = shareScope;
+          save();
+          return { driverId: found.driverId, carToken: found.carToken, shareScope: found.shareScope, reused: true, backup: found.backup ?? null };
+        }
+      }
       if (Object.keys(state.drivers).length >= maxDrivers) fail("capacity_reached", 503);
       const driver = {
-        driverId: id("drv"), carToken: token(), name: text(name, 20) || fail("name_required"),
+        driverId: id("drv"), carToken: token(), name: driverName,
         shareScope: SCOPES.includes(shareScope) ? shareScope : "status", summaries: {},
+        ...(key ? { carKey: key } : {}), ...(local ? { profileId: local } : {}),
       };
       state.drivers[driver.driverId] = driver;
       save();
-      return { driverId: driver.driverId, carToken: driver.carToken, shareScope: driver.shareScope };
+      return { driverId: driver.driverId, carToken: driver.carToken, shareScope: driver.shareScope, reused: false, backup: null };
     },
     driverByToken: (value) => byToken("drivers", "carToken", value),
 
@@ -94,6 +112,14 @@ function createStore({ now = () => Date.now(), file = null, maxDrivers = MAX_DRI
       state.invites[code] = { driverId: driver.driverId, expiresAt: now() + INVITE_MS };
       save();
       return { code, expiresAt: state.invites[code].expiresAt };
+    },
+
+    /* 문자로 보낼 초대: 이 운전자가 띄운, 아직 유효한 코드만. */
+    activeInvite(driver, code) {
+      const key = text(String(code ?? ""), 12).replace(/\D/g, "");
+      const invite = state.invites[key];
+      if (!invite || invite.driverId !== driver.driverId || invite.expiresAt <= now()) fail("invalid_code", 404);
+      return { code: key, expiresAt: invite.expiresAt };
     },
 
     saveSummary(driver, body = {}) {

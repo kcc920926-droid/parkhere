@@ -1,6 +1,6 @@
 {
   "name": "drivewatch-family-server",
-  "version": "0.1.0",
+  "version": "0.6.0",
   "private": true,
   "description": "DriveWatch 가족 요약 서버와 자녀 폰 웹 화면 (시연용)",
   "scripts": {

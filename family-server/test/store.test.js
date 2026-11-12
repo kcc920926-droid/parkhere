@@ -102,3 +102,22 @@ test("bad summaries are rejected", () => {
   assert.throws(() => store.saveSummary(driver, summary({ week: "11/09" })), { code: "invalid_week" });
   assert.throws(() => store.saveSummary(driver, summary({ status: "danger" })), { code: "invalid_status" });
 });
+
+test("the same driver of the same car gets the same server driver back, so family links survive", () => {
+  const store = createStore();
+  const key = "a".repeat(32);
+  const first = store.registerDriver({ name: "김정숙", carKey: key, profileId: "p1" });
+  assert.equal(first.reused, false);
+  const again = store.registerDriver({ name: "김정숙", carKey: key, profileId: "p1", shareScope: "evidence" });
+  assert.deepEqual([again.driverId, again.carToken, again.reused, again.shareScope], [first.driverId, first.carToken, true, "evidence"]);
+  // Reinstalled app: new local id, same car and name.
+  const reinstalled = store.registerDriver({ name: "김정숙", carKey: key, profileId: "p2" });
+  assert.equal(reinstalled.driverId, first.driverId);
+  // Another driver in the same car, and the same name in another car, are different drivers.
+  assert.notEqual(store.registerDriver({ name: "박영호", carKey: key, profileId: "p3" }).driverId, first.driverId);
+  assert.notEqual(store.registerDriver({ name: "김정숙", carKey: "b".repeat(32), profileId: "p1" }).driverId, first.driverId);
+  // Without a car key nothing is matched (older apps).
+  assert.notEqual(store.registerDriver({ name: "김정숙" }).driverId, first.driverId);
+  // A malformed key is ignored rather than trusted.
+  assert.equal(store.registerDriver({ name: "김정숙", carKey: "VIN-KMH12345" }).reused, false);
+});

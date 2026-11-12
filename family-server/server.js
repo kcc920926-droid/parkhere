@@ -5,6 +5,8 @@ const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 const { createStore, StoreError } = require("./store.js");
+const { createSender, mobile, mask, inviteText } = require("./sms.js");
+const { loadDemo } = require("./demo.js");
 
 const PUBLIC = path.join(__dirname, "public");
 const SPEC = path.join(__dirname, "openapi.json");
@@ -18,11 +20,23 @@ const ROUTES = [
   ["GET", "/api/car/me", "car", (store, who) => store.carView(who)],
   ["PUT", "/api/car/share-scope", "car", (store, who, body) => store.setShareScope(who, body.shareScope)],
   ["POST", "/api/car/invites", "car", (store, who) => store.createInvite(who)],
+  ["POST", "/api/car/invites/sms", "car", async (store, who, body, params, { sms, publicBase }) => {
+    // The number belongs to the child: the car must show that it was given with consent for this one message.
+    if (body.consent !== true) throw new StoreError("consent_required", 400);
+    const { code } = store.activeInvite(who, body.code);
+    const to = mobile(body.phone) ?? (() => { throw new StoreError("invalid_phone", 400); })();
+    const result = await sms.send(to, inviteText(who.name, `${publicBase}/family/?code=${code}`));
+    if (result.failed) throw new StoreError("sms_failed", 502);
+    return { sent: result.sent, mode: result.mode, to: mask(to) }; // the number itself is never stored
+  }],
   ["POST", "/api/car/summaries", "car", (store, who, body) => store.saveSummary(who, body)],
   ["GET", "/api/car/backup", "car", (store, who) => store.backupView(who)],
   ["PUT", "/api/car/backup", "car", (store, who, body) => store.setBackup(who, body.enabled)],
   ["POST", "/api/car/trips", "car", (store, who, body) => store.saveTrip(who, body)],
   ["PUT", "/api/car/profile", "car", (store, who, body) => store.saveProfile(who, body)],
+  ["GET", "/api/demo/scenarios", "none", (store, who, body, params, { demo }) => demo.list()],
+  ["GET", "/api/demo/drives/{scenarioId}", "none", (store, who, body, [id], { demo }) => demo.drive(id)],
+  ["GET", "/api/demo/histories/{scenarioId}", "none", (store, who, body, [id], { demo }) => demo.history(id)],
   ["POST", "/api/family/members", "none", (store, who, body) => store.registerMember(body)],
   ["POST", "/api/family/links", "family", (store, who, body) => store.link(who, body)],
   ["GET", "/api/family/overview", "family", (store, who) => ({ name: who.name, drivers: store.overview(who) })],
@@ -37,6 +51,8 @@ const ROUTES = [
 /* 한 주소(IP)가 정해진 시간 안에 보낼 수 있는 요청 수. 공개 주소에서 코드 맞히기와 무한 등록을 막는다. */
 const LIMITS = {
   register: { max: 10, windowMs: 60 * MINUTE, routes: ["/api/car/drivers", "/api/family/members"] },
+  /* 문자는 돈이 들고 남에게 스팸이 될 수 있어서 한 주소에서 한 시간에 5통까지. */
+  sms: { max: 5, windowMs: 60 * MINUTE, routes: ["/api/car/invites/sms"] },
   link: { max: 10, windowMs: 10 * MINUTE, routes: ["/api/family/links"] },
   write: { max: 120, windowMs: MINUTE, routes: null },
 };
@@ -76,7 +92,7 @@ function readJson(request) {
   });
 }
 
-function createApp(store = createStore(), { limits = LIMITS, now = () => Date.now(), trustProxy = false } = {}) {
+function createApp(store = createStore(), { limits = LIMITS, now = () => Date.now(), trustProxy = false, sms = createSender(), publicBase = "https://drive.olvend.com", demo = loadDemo() } = {}) {
   const limit = createLimiter(limits, now);
   const bearer = (request) => (request.headers.authorization ?? "").replace(/^Bearer\s+/i, "");
   const identify = { none: () => null, car: (request) => store.driverByToken(bearer(request)), family: (request) => store.memberByToken(bearer(request)) };
@@ -123,7 +139,7 @@ function createApp(store = createStore(), { limits = LIMITS, now = () => Date.no
       const who = identify[route.auth](request);
       if (route.auth !== "none" && !who) throw new StoreError("unauthorized", 401);
       const body = request.method === "GET" ? {} : await readJson(request);
-      send(response, 200, await route.handler(store, who, body, route.pattern.exec(pathname).slice(1)));
+      send(response, 200, await route.handler(store, who, body, route.pattern.exec(pathname).slice(1), { sms, publicBase, demo }));
     } catch (error) {
       if (error instanceof StoreError) return send(response, error.status ?? 400, { error: error.code });
       if (error instanceof URIError) return send(response, 400, { error: "bad_request" });
@@ -138,8 +154,11 @@ if (require.main === module) {
   const host = process.env.HOST ?? "127.0.0.1";
   const file = process.env.STORE_FILE ?? path.join(__dirname, "data", "store.json");
   const trustProxy = process.env.TRUST_PROXY === "1";
-  createApp(createStore({ file }), { trustProxy }).listen(port, host, () => {
+  const sms = createSender(process.env);
+  const publicBase = (process.env.PUBLIC_BASE ?? "https://drive.olvend.com").replace(/\/$/, "");
+  createApp(createStore({ file }), { trustProxy, sms, publicBase }).listen(port, host, () => {
     console.log(`DriveWatch 가족 요약 서버: http://${host}:${port}/family/  명세: /api/docs  (기록 파일: ${file})`);
+    console.log(`초대 문자: ${sms.mode === "dry-run" ? "보내지 않음(시연 모드, SMS_PROVIDER=solapi와 키를 넣으면 발송)" : "SOLAPI로 발송"} · 링크 ${publicBase}/family/`);
   });
 }
 

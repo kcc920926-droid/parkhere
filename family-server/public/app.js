@@ -58,6 +58,20 @@
     for (const child of children.flat()) if (child != null && child !== false) node.append(child);
     return node;
   }
+  /* Icons from the car app's set (icons.js, generated from app/design/icons). Drawn in the text colour. */
+  function icon(name) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("class", "icon");
+    svg.setAttribute("aria-hidden", "true");
+    for (const [d, filled] of window.DW_ICONS?.[name] ?? []) {
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", d);
+      if (filled) path.setAttribute("fill", "currentColor");
+      svg.append(path);
+    }
+    return svg;
+  }
   const card = (label, body, extra = "") => h("div", { class: `card ${extra}` }, h("span", { class: "label" }, label), body);
   const dayOf = (ms) => new Date(ms).toLocaleDateString("ko-KR", { month: "long", day: "numeric" });
 
@@ -127,8 +141,8 @@
     return [
       h("div", { class: "center" },
         h("h1", {}, `${link.relation}(${link.name}) 차와`, h("br"), "연결됐어요"),
-        h("p", { class: "muted" }, "매주 금요일에 운전 요약이 와요."),
-        h("p", { class: "muted" }, "처음 2주는 평소 운전을 배우는 기간이에요."),
+        h("p", { class: "muted" }, "부모님이 차에서 주간 요약을 보내면 여기로 와요."),
+        h("p", { class: "muted" }, "처음 12주는 평소 운전을 알아가는 기간이에요."),
         h("p", { class: "muted" }, `${link.relation}가 보내기로 한 것만 보여요.`)),
       h("div", { class: "spacer" }),
       h("button", { class: "btn primary", autofocus: true, onclick: () => show(home) }, "시작하기"),
@@ -166,13 +180,13 @@
   /* P5 주간 요약 */
   function summary(driverId) {
     const body = h("div", { style: "display:contents" });
-    const title = h("button", { class: "back", onclick: () => show(home) }, "← 가족 운전");
+    const title = h("button", { class: "back", onclick: () => show(home) }, icon("arrow_left"), "가족 운전");
     let shownKey = "";
     const render = (data) => {
-      title.textContent = `← ${data.relation} 운전 · 이번 주`;
+      title.replaceChildren(icon("arrow_left"), `${data.relation} 운전 · 이번 주`);
       const item = data.summary;
       if (!item) {
-        body.replaceChildren(h("p", { class: "muted" }, "아직 도착한 요약이 없어요. 요약은 매주 금요일에 와요."));
+        body.replaceChildren(h("p", { class: "muted" }, "아직 도착한 요약이 없어요. 부모님이 차에서 보내면 여기에 와요."));
         return;
       }
       const status = STATUS[item.status];
@@ -205,7 +219,7 @@
       }
       if (item.promise) cards.push(card("약속", h("span", {}, item.promise)));
       if (item.avoided) cards.push(card("피한 구간", h("span", {}, item.avoided)));
-      const ack = h("button", { class: "btn primary", disabled: item.acked }, item.acked ? "확인했어요 ✓" : "확인했어요");
+      const ack = h("button", { class: "btn primary", disabled: item.acked }, item.acked ? [icon("check"), "확인했어요"] : "확인했어요");
       ack.addEventListener("click", async () => {
         ack.disabled = true;
         try { await api("POST", `/api/family/drivers/${driverId}/ack`, { week: item.week }); shownKey = ""; refresh(); }
@@ -215,7 +229,7 @@
         h("span", { class: `chip ${status.chip}` }, chipText),
         ...cards,
         h("p", { class: "muted" }, `${dayOf(item.sentAt)}에 ${data.relation}가 보낸 요약이에요`),
-        h("button", { class: "link", onclick: () => show(monthly, driverId) }, "📅 월별 기록 보기 ›"),
+        h("button", { class: "link", onclick: () => show(monthly, driverId) }, icon("calendar"), "월별 기록 보기", icon("chevron_right")),
         h("div", { class: "spacer" }),
         h("div", { class: "row" }, h("a", { class: "btn", href: "tel:" }, "전화하기"), ack));
     };
@@ -233,7 +247,7 @@
   /* 월별 기록: 부모님이 보낸 주간 요약을 달별로 모은다. 주행 하나하나의 기록은 받지 않는다. */
   function monthly(driverId) {
     const body = h("div", { style: "display:contents" });
-    const title = h("button", { class: "back", onclick: () => show(summary, driverId) }, "← 월별 기록");
+    const title = h("button", { class: "back", onclick: () => show(summary, driverId) }, icon("arrow_left"), "월별 기록");
     let months = [];
     let index = 0;
     let relation = "";
@@ -247,14 +261,14 @@
       const flow = weeks.slice().reverse().map((w) => STATUS[w.status]?.label ?? w.status)
         .filter((name, i, all) => i === 0 || all[i - 1] !== name);
       const nav = h("div", { class: "row month" },
-        h("button", { class: "btn", disabled: index >= months.length - 1, onclick: () => { index++; render(); } }, "◀"),
+        h("button", { class: "btn", disabled: index >= months.length - 1, onclick: () => { index++; render(); } }, icon("chevron_left")),
         h("strong", { class: "month-title" }, label(key)),
-        h("button", { class: "btn", disabled: index === 0, onclick: () => { index--; render(); } }, "▶"));
+        h("button", { class: "btn", disabled: index === 0, onclick: () => { index--; render(); } }, icon("chevron_right")));
       const rows = weeks.map((w) => {
         const status = STATUS[w.status] ?? { chip: "", label: w.status };
         const [, m, d] = w.week.split("-").map(Number);
         return h("div", { class: "card" },
-          h("span", { class: "label" }, `${m}/${d} 주 · ${w.acked ? "확인함 ✓" : "아직 확인 안 함"}`),
+          h("span", { class: "label" }, `${m}/${d} 주 · `, w.acked ? [icon("check"), "확인함"] : "아직 확인 안 함"),
           h("span", {}, h("span", { class: `state ${status.chip}` }, status.label), w.headline ? ` · ${w.headline}` : ""),
           w.avoided ? h("span", { class: "muted" }, `피한 구간 · ${w.avoided}`) : null);
       });
@@ -268,7 +282,7 @@
       let data;
       try { data = await api("GET", `/api/family/drivers/${driverId}/summaries`); } catch { return; }
       relation = data.relation;
-      title.textContent = `← ${data.relation} 운전 · 월별 기록`;
+      title.replaceChildren(icon("arrow_left"), `${data.relation} 운전 · 월별 기록`);
       const byMonth = new Map();
       for (const item of data.summaries) {
         const key = item.week.slice(0, 7);

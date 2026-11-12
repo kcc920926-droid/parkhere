@@ -87,6 +87,19 @@ node tools/car-sim.js me                      # 가족이 확인했는지
 
 공개 서버를 상대로 돌리려면 `FAMILY_SERVER=https://drive.olvend.com`을 앞에 붙인다. 공개 서버에 남긴 기록은 지우는 주소가 없으니, 시연 직전이 아니면 로컬에서 한다.
 
+## 초대 링크 문자 (0.4.0)
+
+차 화면의 초대 코드 링크(`/family/?code=코드`)를 자녀 휴대폰 번호로 보낸다(`POST /api/car/invites/sms`). 번호는 보내는 데만 쓰고 기록 파일에 저장하지 않는다. 로그에는 가운데를 가린 번호(`010-****-5678`)만 남는다. 한 주소에서 한 시간에 5통까지 보낼 수 있다.
+
+| 환경 변수 | 뜻 |
+| --- | --- |
+| `SMS_PROVIDER=solapi` | 실제로 보낸다. 없으면 보내지 않고 `mode: "dry-run"`으로 답하는 시연 모드 |
+| `SOLAPI_API_KEY`, `SOLAPI_API_SECRET` | [SOLAPI](https://solapi.com/developers/api/authentication-api-key) 키. `message:send` 권한이 있어야 한다 |
+| `SMS_FROM` | SOLAPI에 미리 등록한 발신번호 |
+| `PUBLIC_BASE` | 문자에 넣을 주소. 기본값 `https://drive.olvend.com` |
+
+SOLAPI는 키마다 허용한 IP에서만 발송을 받는다. 이 Mac에서 보내려면 이 Mac의 공인 IP를 키에 등록해야 한다. 키와 발신번호는 LaunchAgent plist의 `EnvironmentVariables`에 넣고 저장소에는 올리지 않는다.
+
 ## 배포
 
 `drive.olvend.com`은 이 Mac에서 Cloudflare 터널로 나간다. 터널은 `/api/`와 `/family/`로 시작하는 주소만 이 서버(`127.0.0.1:8770`)로 보내고, 나머지는 웹 MVP의 정적 서버(`127.0.0.1:8769`)로 보낸다.
