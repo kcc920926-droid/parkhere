@@ -28,7 +28,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Dp
@@ -463,7 +462,7 @@ private fun Invite(speak: (String) -> Unit) {
             Box(Modifier.size(220.dp), contentAlignment = Alignment.Center) {
                 if (qr != null) androidx.compose.foundation.Image(qr, "가족 연결 QR 코드", Modifier.fillMaxSize())
                 else if (failed) Text("연결할 수 없어요", color = Color(0xFF131417), fontSize = 15.sp)
-                else CircularProgressIndicator(Modifier.size(32.dp), color = Color(0xFF44464E), strokeWidth = 3.dp)
+                else AbangLoader(96.dp)
             }
             Text("폰 카메라로 찍으면 바로 열려요", color = Color(0xFF131417), fontSize = 14.sp, fontWeight = FontWeight.Bold)
         }
@@ -1142,7 +1141,7 @@ private fun MorphButton(label: String, phase: Phase, doneLabel: String, onClick:
             }, label = "morph") { ph ->
                 when (ph) {
                     Phase.IDLE -> Text(label, color = if (enabled) OnPrimary else Dim, fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center, maxLines = 1, softWrap = false)
-                    Phase.BUSY -> CircularProgressIndicator(Modifier.size(22.dp), color = OnPrimary, strokeWidth = 3.dp)
+                    Phase.BUSY -> AbangLoader(40.dp)
                     Phase.DONE -> IconLabel(Ic.CHECK, doneLabel, Ink, 16.sp, FontWeight.Bold, iconTint = Ok)
                 }
             }
