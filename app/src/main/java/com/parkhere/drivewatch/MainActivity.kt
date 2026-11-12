@@ -6,6 +6,10 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.content.Intent
+import android.provider.ContactsContract
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -430,6 +434,22 @@ private fun Invite(speak: (String) -> Unit) {
     var smsDryRun by remember(s.cur) { mutableStateOf(false) }
     var smsNote by remember(s.cur) { mutableStateOf<String?>(null) }
     var agreed by remember(s.cur) { mutableStateOf(false) }
+    var picked by remember(s.cur) { mutableStateOf<String?>(null) } // name of the contact the number came from
+    val canPickContact = remember {
+        Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI).resolveActivity(ctx.packageManager) != null
+    }
+    val pickContact = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val uri = result.data?.data ?: return@rememberLauncherForActivityResult
+        runCatching {
+            ctx.contentResolver.query(uri, arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME), null, null, null)?.use { c ->
+                if (c.moveToFirst()) {
+                    phone = c.getString(0).orEmpty().filter { ch -> ch.isDigit() || ch == '-' }.replace(Regex("^\\+?82-?"), "0").take(13)
+                    picked = c.getString(1)
+                    sms = Phase.IDLE; smsNote = null
+                }
+            }
+        }
+    }
     val co = rememberCoroutineScope()
     LaunchedEffect(p.id) {
         val id = p.id
@@ -458,13 +478,19 @@ private fun Invite(speak: (String) -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             val c = code
-            val qr = remember(c) { c?.let { qrBitmap(inviteLink(it)) } }
+            // With consent, the child's number rides in the QR after '#' (never sent to the server), so a parent who
+            // scans it with their own phone gets a text to the child with the recipient already filled in.
+            val digits = phone.filter(Char::isDigit)
+            val withPhone = agreed && Regex("^01[016789]\\d{7,8}$").matches(digits)
+            val qrText = c?.let { inviteLink(it) + if (withPhone) "#to=$digits" else "" }
+            val qr = remember(qrText) { qrText?.let { qrBitmap(it) } }
             Box(Modifier.size(220.dp), contentAlignment = Alignment.Center) {
                 if (qr != null) androidx.compose.foundation.Image(qr, "가족 연결 QR 코드", Modifier.fillMaxSize())
                 else if (failed) Text("연결할 수 없어요", color = Color(0xFF131417), fontSize = 15.sp)
                 else AbangLoader(96.dp)
             }
             Text("자녀분 폰으로 찍어 주세요", color = Color(0xFF131417), fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            if (withPhone) Text("자녀 번호가 담겼어요 · 부모님 폰으로 찍으면\n받는 사람이 채워진 문자가 열려요", color = Color(0xFF44464E), fontSize = 12.sp, textAlign = TextAlign.Center)
         }
         Column(Modifier.widthIn(max = 460.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text("자녀분 폰과 연결해요", color = Ink, fontSize = 22.sp, fontWeight = FontWeight.Bold)
@@ -480,7 +506,10 @@ private fun Invite(speak: (String) -> Unit) {
             }
             // Or text the link to the child's phone. The number is used for this one message and not kept.
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Box(Modifier.weight(1f)) { Field("자녀 휴대폰 번호", phone, { phone = it.filter { ch -> ch.isDigit() || ch == '-' }.take(13); sms = Phase.IDLE; smsNote = null }, number = true) }
+                Box(Modifier.weight(1f)) { Field("자녀 휴대폰 번호", phone, { phone = it.filter { ch -> ch.isDigit() || ch == '-' }.take(13); sms = Phase.IDLE; smsNote = null; picked = null }, number = true) }
+                // The car's contacts (synced from the parent's phone over Bluetooth). The system picker hands back only
+                // the one number chosen, so the app needs no permission to read the address book.
+                if (canPickContact) Button("연락처", { pickContact.launch(Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)) }, Raised, icon = Ic.PERSON)
                 MorphButton("문자로 링크 보내기", sms, if (smsDryRun) "시연 모드" else "보냈어요", enabled = agreed && phone.count(Char::isDigit) >= 10, onClick = {
                     val c = code ?: return@MorphButton
                     val token = p.carToken ?: return@MorphButton
@@ -499,7 +528,7 @@ private fun Invite(speak: (String) -> Unit) {
                                 else -> "보내지 못했어요. 인터넷 연결을 확인해 주세요"
                             }
                             // Do not keep the number on screen or in memory; the next message needs a fresh consent.
-                            if (r.error == null) { phone = ""; agreed = false }
+                            if (r.error == null) { phone = ""; agreed = false; picked = null }
                         }
                     }
                 })
@@ -511,6 +540,7 @@ private fun Invite(speak: (String) -> Unit) {
                 "[필수] 자녀 휴대폰 번호 수집·이용에 동의해요",
                 "항목 휴대폰 번호 · 목적 연결 링크 문자 1통 · 보관 저장하지 않고 보낸 뒤 바로 지움 · 번호 주인(자녀)이 동의한 경우에만 체크해 주세요. 동의하지 않아도 QR이나 코드로 연결할 수 있어요.",
             )
+            picked?.let { Text("연락처에서 고름 · $it", color = Dim, fontSize = 13.sp) }
             smsNote?.let { note ->
                 Text(note, color = when { sms == Phase.DONE && smsDryRun -> Demo_; sms == Phase.DONE -> Ok; else -> Talk }, fontSize = 13.sp)
             }

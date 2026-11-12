@@ -28,6 +28,9 @@
 
   /* 차 화면의 QR로 들어오면 코드가 주소에 붙어 온다. 읽은 뒤 주소에서 지운다. */
   const query = new URLSearchParams(location.search);
+  /* 차 화면에서 동의를 받고 넣은 자녀 번호는 주소의 # 뒤(#to=)에 온다. # 뒤는 서버로 가지 않아
+     번호가 서버·터널 로그에 남지 않는다. 국내 휴대폰 번호 형식만 쓰고, 읽은 뒤 주소에서 지운다. */
+  const childPhone = ((new URLSearchParams(location.hash.slice(1)).get("to") || "").replace(/\D/g, "").match(/^01[016789]\d{7,8}$/) || [""])[0];
   let pendingCode = (query.get("code") || "").replace(/\D/g, "").slice(0, 6);
   if (query.has("code")) history.replaceState(null, "", location.pathname);
 
@@ -102,7 +105,8 @@
     const message = "내 차 운전 요약을 같이 봐 줘. 10분 안에 눌러 줘.";
     /* sms: 링크는 폰의 문자 앱을 본문이 채워진 채로 연다(받는 사람은 부모님이 고른다). 서버 문자 비용도,
        번호 수집도 없다. '?&body='는 iPhone과 안드로이드 모두에서 본문을 채우는 형태다. */
-    const smsHref = `sms:?&body=${encodeURIComponent(`${message} ${inviteLink()}`)}`;
+    const smsHref = `sms:${childPhone}?&body=${encodeURIComponent(`${message} ${inviteLink()}`)}`;
+    const shown = childPhone && `${childPhone.slice(0, 3)}-${childPhone.slice(3, -4)}-${childPhone.slice(-4)}`;
     const send = async () => {
       const url = inviteLink();
       const data = { title: "DriveWatch 가족 연결", text: message, url };
@@ -116,7 +120,7 @@
       h("h1", {}, "자녀분께 이 링크를 보내 주세요"),
       note,
       h("div", { class: "spacer" }),
-      h("a", { class: "btn primary big", href: smsHref, onclick: () => { note.textContent = "문자 앱에서 자녀분을 골라 보내 주세요. 자녀분이 열면 차 화면이 '연결됐어요'로 바뀌어요."; } }, "문자로 보내기", h("small", {}, "문자 앱이 링크를 채워서 열려요")),
+      h("a", { class: "btn primary big", href: smsHref, onclick: () => { note.textContent = "문자 앱에서 자녀분을 골라 보내 주세요. 자녀분이 열면 차 화면이 '연결됐어요'로 바뀌어요."; } }, "문자로 보내기", h("small", {}, childPhone ? `${shown}에게 보낼 문자가 채워져서 열려요` : "문자 앱이 링크를 채워서 열려요")),
       h("button", { class: "btn big", onclick: send }, "카카오톡 등으로 보내기", h("small", {}, "보낼 앱을 골라요")),
       h("p", { class: "muted" }, "또는 자녀분 폰으로 차 화면의 QR을 찍어도 돼요."),
       h("button", { class: "link", onclick: () => show(who) }, icon("arrow_left"), "처음으로"),

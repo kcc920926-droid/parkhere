@@ -15,6 +15,11 @@
 
     <queries>
         <intent><action android:name="android.intent.action.TTS_SERVICE" /></intent>
+        <!-- The contact picker on the invite screen (only the chosen number comes back; no READ_CONTACTS). -->
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <data android:mimeType="vnd.android.cursor.dir/phone_v2" />
+        </intent>
     </queries>
 
     <application
