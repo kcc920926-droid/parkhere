@@ -2,7 +2,7 @@
 
 작성 winter1 · 2026-11-08 · 상태: **팀 확정안**
 
-바탕 문서: [drive-watch.md](drive-watch.md)(심층 검토), [driving-helper-idea-dump.md](driving-helper-idea-dump.md)(생활길·안전 연계·Pleos 신호 확인표), [integrated-driving-coach-market.md](integrated-driving-coach-market.md)(시장 분석), [judging-criteria.md](judging-criteria.md)(심사 기준). 이 문서는 접수양식(DOCX)으로 옮길 원본이며, 심사 4항목 순서에 맞춰 구성했다.
+바탕 문서: [drive-watch.md](../archive/opinions/drive-watch.md)(심층 검토), [driving-helper-idea-dump.md](../archive/opinions/driving-helper-idea-dump.md)(생활길·안전 연계·Pleos 신호 확인표), [integrated-driving-coach-market.md](../archive/opinions/integrated-driving-coach-market.md)(시장 분석), [judging-criteria.md](judging-criteria.md)(심사 기준). 이 문서는 접수양식(DOCX)으로 옮길 원본이며, 심사 4항목 순서에 맞춰 구성했다.
 
 ---
 
@@ -133,7 +133,7 @@
 
 ### 2.7 시작과 졸업
 
-- **시작**: 자녀가 폰에서 초대 → 부모님이 **차에서 직접 동의**(큰 글씨·음성 설명, 언제든 철회) → 약속 선택(0개도 가능) → 14일 학습.
+- **시작**: 부모님이 **차에서 직접 동의**(큰 글씨·음성 설명, 언제든 철회) → 약속 선택(0개도 가능) → 차 화면에 초대 코드를 띄우고 자녀가 폰에서 입력 → 14일 학습. 코드를 띄우는 사람이 부모님이라 연결 자체가 부모님의 동의다.
 - **졸업**: 면허 반납을 결정하면 지자체 반납 인센티브 안내, 생활길 목적지(병원·마트·성당) 기준으로 DRT·택시 호출·가족 일정 연결. 현대차그룹 모빌리티 서비스로 이어지는 지점이다.
 
 ### 2.8 차량 안전 기능 연계 (확장, 수신 확인 시)
@@ -159,7 +159,7 @@
 
 | 순간 | 차량 상태 | 앱 동작 | 화면 |
 | --- | --- | --- | --- |
-| 시동 | P단 | 운전자 확인(시트), 약속과 상황 대조(일몰·비) | 한 문장 + "다른 방법으로 가기" |
+| 시동 | P단 | 운전자 프로필 선택(시트 위치로 자동 선택은 확장), 약속과 상황 대조(일몰·비) | 한 문장 + "다른 방법으로 가기" |
 | 목적지 설정 | P단 | 생활길이면 빠른 길/편한 길 비교, 선택하면 내비 경로 변경 | 두 길 카드 |
 | 주행 | D단 | **화면 쓰지 않음.** 지표 기록. 생활길에서 재탐색 반복 시 짧은 음성 *"천천히 가도 돼요"* | 없음 |
 | 도착 | P단 | 기록 저장, 칭찬 한 줄, 불편했던 곳 표시 | 구간 목록 |
@@ -266,7 +266,7 @@ Vehicle State와 NaviHelper는 **별도 SDK 신청 없이 사용 가능**으로 
 
 1. **본인 동의가 먼저**: 자녀가 몰래 켤 수 없다. 차에서 부모님이 직접 동의하고 언제든 끈다.
 2. **부모님이 먼저 본다**: 자녀에게는 허락한 요약만.
-3. **위치 추적 아님**: 실시간 위치·경로를 자녀에게 보내지 않는다. 생활길 구간은 부모님 차에만 저장한다.
+3. **위치 추적 아님**: 실시간 위치·경로를 자녀에게 보내지 않는다. 주행 기록과 생활길 구간은 부모님 차에 둔다. **부모님이 허락할 때만** 주행 횟수 요약(회전 안내·깜빡이·재탐색·급제동, 거리, 목적지 이름)과 표시한 구간을 서버에 보관해, 앱을 다시 설치해도 평소 기록이 이어지게 한다. 위치·경로·시각은 보관하지 않고, 가족은 이 기록을 볼 수 없으며, 보관을 끄면 서버에서 바로 지운다.
 4. **막지 않는다**: 출발을 막거나 차량을 제어하지 않는다. 차량 안전 기능의 개입은 차량 시스템이 맡는다.
 5. **칭찬이 기본값**, 경고는 추세가 있을 때만.
 6. **음주 여부를 판정·저장하지 않는다**: "다른 방법으로 가기"는 이유를 묻지 않는다.
@@ -279,7 +279,7 @@ Vehicle State와 NaviHelper는 **별도 SDK 신청 없이 사용 가능**으로 
 
 Virtual Console로 시각·기어·방향지시등·주행을 입력한다. 시연용 값은 화면에 표기한다.
 
-1. **자녀 폰**: 엄마 초대 → 차에서 엄마가 동의, "해 지면 운전 안 하기" 선택.
+1. **차 → 자녀 폰**: 엄마가 차에서 동의하고 "해 지면 운전 안 하기"를 고른 뒤 초대 코드를 띄우면, 아들이 폰에 입력해 연결.
 2. **병원 가는 길(D단)**: 회전 안내에서 방향지시등 미사용 → 기록. 중앙대로 합류 근처 재탐색 2회 → *"천천히 가도 돼요."*
 3. **병원 도착(P단)**: *"중앙대로 합류 전후로 길 안내를 다시 받았어요. 표시해 둘까요?"* → 표시.
 4. **다음 주 출발, 목적지 병원**: 빠른 길 24분 / 편한 길 28분 비교 → 편한 길 선택 → 내비 경로 변경.
@@ -333,7 +333,7 @@ Virtual Console로 시각·기어·방향지시등·주행을 입력한다. 시�
 - [ORIX 출시 발표](https://www.orix.co.jp/grp/company/newsroom/newsrelease/161208_ORIXG.html) · [くるまのニュース – ORIX 高齢者の運転見守り](https://kuruma-news.jp/post/61126)
 - [Life360 Driving Safety](https://intl.life360.com/driving-safety) · [현대차 블루링크 안전 운전 습관](https://www.hyundai.com/kr/ko/digital-customer-support/app/myhyundai/bluelink/bluelink-vehicle-care/safe-driving-habits)
 - [티맵 즐겨찾는 경로](https://www.tmapmobility.com/story/microtip/detail/131) · [티맵 모의주행](https://www.tmapmobility.com/story/microtip/detail/138)
-- 더 많은 사례: [drive-watch.md 9절](drive-watch.md), [integrated-driving-coach-market.md 2절](integrated-driving-coach-market.md)
+- 더 많은 사례: [drive-watch.md 9절](../archive/opinions/drive-watch.md), [integrated-driving-coach-market.md 2절](../archive/opinions/integrated-driving-coach-market.md)
 
 **차량 안전 기능**
 - [현대차 PMSA 설명서](https://ownersmanual.hyundai.com/full_webhelp/NH2/2026/ko_KR/driver_assistance_pmsa.html) · [현대차 DSW 설명서](https://ownersmanual.hyundai.com/full_webhelp/QZ/2026/ko_KR/id8df144211b6.html)

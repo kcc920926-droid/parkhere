@@ -48,4 +48,4 @@
 - [ ] 인터뷰: 고령 운전자 부모를 둔 자녀 3명 + 고령 운전자 2명
 - [ ] PMSA·DSW 이벤트를 서드파티 앱이 읽을 수 있는지 Pleos에 문의
 - [ ] DriveWatch 이름 중복 확인 (앱 마켓, KIPRIS)
-- [ ] [drive-watch.md](../opinions/drive-watch.md)의 고령 사고 비중 "약 20%" → 23.7%
+- [ ] [drive-watch.md](../archive/opinions/drive-watch.md)의 고령 사고 비중 "약 20%" → 23.7%

@@ -113,3 +113,44 @@ test("one address cannot keep registering or guessing codes", async () => {
     assert.equal((await guess()).status, 429);
   } finally { await new Promise((resolve) => server.close(resolve)); }
 });
+
+test("trips are kept only while the driver allows backup, never shown to family, and deleted when backup is turned off", () => withServer(async (call) => {
+  const car = (await call("POST", "/api/car/drivers", { body: { name: "김정숙" } })).data;
+  const trip = { week: "2026-11-09", place: "병원", km: 10, night: false, reroutes: 2, turns: 3, signals: 2, hardBrakes: 1 };
+
+  assert.equal((await call("POST", "/api/car/trips", { token: car.carToken, body: trip })).status, 403);
+  assert.deepEqual((await call("GET", "/api/car/backup", { token: car.carToken })).data, { enabled: false, profile: null, trips: [] });
+
+  assert.deepEqual((await call("PUT", "/api/car/backup", { token: car.carToken, body: { enabled: true } })).data, { enabled: true, trips: 0 });
+  assert.deepEqual((await call("POST", "/api/car/trips", { token: car.carToken, body: { ...trip, latitude: 37.5, route: "x" } })).data, { stored: 1 });
+  await call("PUT", "/api/car/profile", { token: car.carToken, body: { promises: [0, 1, 1, 99], marked: [{ place: "병원", point: "중앙대로 합류" }] } });
+
+  const restored = (await call("GET", "/api/car/backup", { token: car.carToken })).data;
+  assert.deepEqual(restored.trips, [trip]); // extra fields such as location are dropped
+  assert.deepEqual(restored.profile, { promises: [0, 1], marked: [{ place: "병원", point: "중앙대로 합류" }] });
+
+  assert.equal((await call("POST", "/api/car/trips", { token: car.carToken, body: { ...trip, signals: 4 } })).status, 400);
+  assert.equal((await call("POST", "/api/car/trips", { token: car.carToken, body: { ...trip, week: "soon" } })).status, 400);
+  assert.equal((await call("GET", "/api/car/backup")).status, 401);
+
+  const child = (await call("POST", "/api/family/members", { body: { name: "김민수" } })).data;
+  assert.equal((await call("GET", "/api/car/backup", { token: child.token })).status, 401);
+
+  assert.deepEqual((await call("PUT", "/api/car/backup", { token: car.carToken, body: { enabled: false } })).data, { enabled: false, trips: 0 });
+  assert.deepEqual((await call("GET", "/api/car/backup", { token: car.carToken })).data, { enabled: false, profile: null, trips: [] });
+}));
+
+test("the family monthly view lists every week the driver sent, newest first, with the same sharing rule", () => withServer(async (call) => {
+  const car = (await call("POST", "/api/car/drivers", { body: { name: "김정숙", shareScope: "status" } })).data;
+  const invite = (await call("POST", "/api/car/invites", { token: car.carToken })).data;
+  const child = (await call("POST", "/api/family/members", { body: { name: "김민수" } })).data;
+  const stranger = (await call("POST", "/api/family/members", { body: { name: "남" } })).data;
+  await call("POST", "/api/family/links", { token: child.token, body: { code: invite.code, relation: "엄마" } });
+  for (const [week, status] of [["2026-11-02", "stable"], ["2026-11-16", "observe"], ["2026-11-09", "stable"]]) {
+    await call("POST", "/api/car/summaries", { token: car.carToken, body: { week, status, evidence: [{ label: "재탐색", unit: "회/10km", typical: 0.2, value: 0.7, weeks: 2 }] } });
+  }
+  const list = (await call("GET", `/api/family/drivers/${car.driverId}/summaries`, { token: child.token })).data;
+  assert.deepEqual(list.summaries.map((s) => [s.week, s.status]), [["2026-11-16", "observe"], ["2026-11-09", "stable"], ["2026-11-02", "stable"]]);
+  assert.ok(list.summaries.every((s) => s.evidence.length === 0 && s.evidenceShared === false)); // status only
+  assert.equal((await call("GET", `/api/family/drivers/${car.driverId}/summaries`, { token: stranger.token })).status, 403);
+}));
