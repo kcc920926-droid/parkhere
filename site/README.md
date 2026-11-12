@@ -1,12 +1,15 @@
 # drive.olvend.com 첫 페이지
 
-DriveWatch 소개 페이지입니다. 앱 소개, 실제 앱 화면, 차량 앱 APK 받기를 한 장에 담았습니다.
+DriveWatch 소개 페이지와 판단 엔진 페이지입니다.
 
-- `public/`: 페이지 원본(`index.html`, `home.css`, `home.js`)과 그림(`assets/`).
+- `public/index.html`(`home.css`, `home.js`): 첫 페이지. 앱 소개, 실제 앱 화면, 차량 앱 APK 받기.
+- `public/engine-demo.html`(`engine.css`, `engine-story.js`): 판단 엔진 페이지. `legacy/drive-watcher`의 실제 판정 코드(`engine.js`)에 합성 기록(`replays.js`)과 공개 실측 CAN(`can-source.js`)을 넣어 보여 줍니다. 옛 판단 엔진 화면은 `engine-lab.html`(직접 운전해 보기)로 남깁니다.
+- `public/car.js`: 두 페이지가 같이 쓰는 시계 차 그리기.
+- `public/assets/`: 그림.
   - 앱 화면 그림은 `submission/screens/`의 PNG를 WebP로 바꾼 것입니다: `cwebp -q 80 -m 6 <png> -o assets/<이름>.webp`
   - 공유 미리보기 `assets/og.png`(1200×630)는 `tools/og.html`을 1200×630 크기로 찍어서 만듭니다.
 - `origin.cjs`: 정적 서버입니다. 시작할 때 배포본을 한 번 읽어 메모리에서 내주고, `assets/` 아래 그림과 글꼴도 내줍니다.
-- `tools/prepare-release.sh`: 배포본을 만듭니다. 첫 페이지에 `legacy/drive-watcher`의 판단 엔진 시연(`engine-demo.html`)과 개인 경향 모델(`profile-demo.html`)을 함께 묶습니다. 옛 첫 페이지와 Pleos 화면 미리보기(`console.html`)는 넣지 않습니다. 페이지가 가리키는 파일이 빠지면 배포본을 만들지 않습니다.
+- `tools/prepare-release.sh`: 배포본을 만듭니다. `public/`에 `legacy/drive-watcher`의 엔진 코드, 개인 경향 모델(`profile-demo.html`), 옛 판단 엔진 화면(`engine-lab.html`로 이름을 바꿈)을 함께 묶습니다. 옛 첫 페이지와 Pleos 화면 미리보기(`console.html`)는 넣지 않습니다. 페이지가 가리키는 파일이 빠지면 배포본을 만들지 않습니다.
 
 ## 디자인 메모
 
@@ -19,6 +22,13 @@ DriveWatch 소개 페이지입니다. 앱 소개, 실제 앱 화면, 차량 앱 
 
 ```sh
 python3 -m http.server 8776 --bind 127.0.0.1 --directory site/public
+```
+
+판단 엔진 페이지는 `legacy/drive-watcher`의 스크립트가 필요해서, 배포본을 만들어 띄워 보는 편이 쉽습니다.
+
+```sh
+release="$(DRIVEWATCH_SITE_DEPLOY=/tmp/dw-site site/tools/prepare-release.sh)"   # /tmp/dw-site/releases 폴더가 있어야 함
+node site/origin.cjs "$release/site" 8777
 ```
 
 `/api/`, `/family/`는 가족 서버 주소라 미리 보기에서는 열리지 않습니다. APK 버전 표시는 `/api/app/latest`를 읽지 못하면 기본 문구로 남습니다.
