@@ -167,3 +167,24 @@ test("demo scenarios are listed and served without a login, and unknown ones are
   assert.equal(history.expect, "대화 권장");
   assert.equal((await call("GET", "/api/demo/drives/nope")).status, 404);
 }));
+
+test("the latest app build is described and downloadable, and missing builds are 404", async () => {
+  const os = require("node:os");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "dw-app-"));
+  const { loadRelease } = require("../release.js");
+  const none = createApp(createStore(), { release: loadRelease(null) });
+  await new Promise((resolve) => none.listen(0, "127.0.0.1", resolve));
+  assert.equal((await fetch(`http://127.0.0.1:${none.address().port}/api/app/latest`)).status, 404);
+  none.close();
+  fs.writeFileSync(path.join(dir, "latest.json"), JSON.stringify({ versionCode: 7, versionName: "0.2.0+abc1234", commit: "abc1234", notes: "QR", sha256: "x", size: 3 }));
+  fs.writeFileSync(path.join(dir, "DriveWatch.apk"), "APK");
+  const server = createApp(createStore(), { release: loadRelease(dir), publicBase: "https://drive.example" });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const latest = await (await fetch(`${base}/api/app/latest`)).json();
+  assert.deepEqual([latest.versionCode, latest.download], [7, "https://drive.example/api/app/download"]);
+  const apk = await fetch(`${base}/api/app/download`);
+  assert.equal(apk.headers.get("content-type"), "application/vnd.android.package-archive");
+  assert.equal(await apk.text(), "APK");
+  server.close();
+});

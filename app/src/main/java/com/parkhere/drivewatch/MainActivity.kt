@@ -125,6 +125,12 @@ private fun App(speak: (String) -> Unit) {
     val report = remember(p.trips) { analyze(p.trips) }
     var demoOpen by remember { mutableStateOf(false) }
 
+    // A newer build for this car? Only a notice with a download QR; the app never installs itself
+    // (a car app changing under the driver is not acceptable, and real releases go through the app market).
+    LaunchedEffect(Unit) {
+        FamilyApi.latestApp { r -> if (r != null && r.versionCode > BuildConfig.VERSION_CODE) s.update = r }
+    }
+
     // Keep the family card current: who linked, who acknowledged.
     LaunchedEffect(s.cur, p.carToken, s.screen) {
         val token = p.carToken ?: return@LaunchedEffect
@@ -181,6 +187,9 @@ private fun App(speak: (String) -> Unit) {
                     }
                 }
                 androidx.compose.animation.AnimatedVisibility(s.askBackup, enter = fadeIn(tween(Motion.ms(Motion.SCREEN_MS))) + scaleIn(tween(Motion.ms(Motion.SCREEN_MS)), initialScale = 0.96f), exit = fadeOut(tween(Motion.ms(Motion.SCREEN_MS)))) { BackupPrompt() }
+                androidx.compose.animation.AnimatedVisibility(s.showUpdate && s.update != null, enter = fadeIn(tween(Motion.ms(Motion.SCREEN_MS))), exit = fadeOut(tween(Motion.ms(Motion.SCREEN_MS)))) {
+                    s.update?.let { UpdatePrompt(it) }
+                }
             }
         }
     }
@@ -228,6 +237,12 @@ private fun TopBar(locked: Boolean, demoOpen: Boolean, onDemo: () -> Unit) {
         else Chip("+ 운전자 추가", selected = false) { s.addDriver() }
         Spacer(Modifier.weight(1f))
         Text(s.vehicleNote, color = Dim, fontSize = 12.sp)
+        s.update?.let { u ->
+            if (!locked) IconLabel(
+                Ic.CHEVRON_UP, "새 버전 ${u.versionName.substringBefore('+')}", Accent, 12.sp, FontWeight.Bold,
+                Modifier.clip(RoundedCornerShape(8.dp)).border(1.dp, Accent, RoundedCornerShape(8.dp)).clickable { s.showUpdate = true }.padding(horizontal = 10.dp, vertical = 5.dp),
+            )
+        }
         if (!locked) Row(
             Modifier.clip(RoundedCornerShape(8.dp)).border(1.dp, DemoBorder, RoundedCornerShape(8.dp)).clickable(onClick = onDemo).padding(horizontal = 10.dp, vertical = 5.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -272,7 +287,7 @@ private fun DemoPanel() {
             s.update { it.copy(sentWeek = s.week(), ackedBy = emptyList()) }
         }, DemoButton)
         Spacer(Modifier.weight(1f))
-        Text("${s.week()} 주 · 자녀 폰: ${FamilyApi.FAMILY_PAGE}", color = Demo_, fontSize = 12.sp)
+        Text("${s.week()} 주 · 자녀 폰: ${FamilyApi.FAMILY_PAGE} · v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", color = Demo_, fontSize = 12.sp)
         Button("처음부터", { s.reset() }, DemoButton, icon = Ic.RESET)
     }
 }
@@ -863,6 +878,31 @@ private fun Detail(r: Report) {
                     },
                     Raised,
                 )
+            }
+        }
+    }
+}
+
+/** A newer build is on the family server: what changed and a QR to download it on a laptop or phone. */
+@Composable
+private fun UpdatePrompt(u: FamilyApi.AppRelease) {
+    val s = AppState
+    Box(Modifier.fillMaxSize().background(Color(0xCC000000)).clickable(enabled = false) {}, contentAlignment = Alignment.Center) {
+        Row(
+            Modifier.fillMaxWidth(0.66f).background(Panel, RoundedCornerShape(16.dp)).border(1.dp, Accent, RoundedCornerShape(16.dp)).padding(24.dp),
+            horizontalArrangement = Arrangement.spacedBy(24.dp), verticalAlignment = Alignment.CenterVertically,
+        ) {
+            val qr = remember(u.download) { qrBitmap(u.download) }
+            Box(Modifier.clip(RoundedCornerShape(12.dp)).background(Color.White).padding(10.dp)) {
+                androidx.compose.foundation.Image(qr, "새 버전 내려받기 QR", Modifier.size(170.dp))
+            }
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("새 버전 ${u.versionName.substringBefore('+')}이 있어요", color = Ink, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                if (u.notes.isNotBlank()) Text(u.notes, color = Ink, fontSize = 15.sp)
+                Text("지금 버전 ${BuildConfig.VERSION_NAME} · 새 버전 ${u.versionName}", color = Dim, fontSize = 13.sp)
+                Text("노트북이나 폰으로 QR을 찍어 받은 뒤 설치해 주세요. 차 앱이 스스로 설치하지는 않아요.", color = Dim, fontSize = 13.sp)
+                Text(u.download, color = Dim, fontSize = 12.sp)
+                Button("닫기", { s.showUpdate = false }, Raised, Modifier.width(160.dp))
             }
         }
     }

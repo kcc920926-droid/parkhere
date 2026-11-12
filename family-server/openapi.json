@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DriveWatch 가족 요약 API",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "description": "차량 앱이 주간 요약을 보내고, 연결된 가족이 폰 웹 화면에서 읽는다. 시연용이다.\n\n- 초대 코드는 운전자가 차에서 띄운다. 6자리, 10분, 한 번만 쓸 수 있다.\n- 운전자가 `status`(상태만)를 고르면 숫자 근거는 저장하지도, 내보내지도 않는다.\n- 위치와 경로는 받지 않는다. 요약에서 정해진 항목만 저장한다.\n- 요청과 응답은 JSON이다. 본문은 16KB까지다."
   },
   "servers": [
@@ -1530,6 +1530,87 @@
                 },
                 "example": {
                   "error": "no_scenario"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/app/latest": {
+      "get": {
+        "tags": [
+          "차량 앱"
+        ],
+        "summary": "차량 앱 최신 빌드 정보",
+        "description": "차량 앱이 켜질 때 확인한다. `versionCode`가 자기보다 크면 시연 패널 옆에 새 버전 알림과 내려받기 QR을 띄운다. 앱이 스스로 설치하지는 않는다.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "최신 빌드",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "versionCode": 42,
+                  "versionName": "0.2.0",
+                  "commit": "895ecc4",
+                  "notes": "초대 화면에 QR",
+                  "sha256": "f569…",
+                  "size": 44470282,
+                  "publishedAt": "2026-11-12T05:00:00Z",
+                  "download": "https://drive.olvend.com/api/app/download"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "게시된 빌드 없음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "no_release"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/app/download": {
+      "get": {
+        "tags": [
+          "차량 앱"
+        ],
+        "summary": "차량 앱 APK 내려받기",
+        "description": "게시된 최신 APK(`application/vnd.android.package-archive`).",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "APK 파일",
+            "content": {
+              "application/vnd.android.package-archive": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "게시된 빌드 없음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "no_release"
                 }
               }
             }

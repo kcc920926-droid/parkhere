@@ -74,6 +74,9 @@ object AppState {
     var askBackup by mutableStateOf(false)
     /** Which history scenario the demo panel last applied (Scenarios.HISTORIES). */
     var historyId by mutableStateOf("steady")
+    /** A newer build on the family server, if any (checked once per launch), and whether its prompt is open. */
+    var update by mutableStateOf<FamilyApi.AppRelease?>(null)
+    var showUpdate by mutableStateOf(false)
 
     val profile get() = profiles[cur]
     fun update(i: Int = cur, f: (Profile) -> Profile) {

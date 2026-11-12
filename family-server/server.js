@@ -7,12 +7,15 @@ const path = require("node:path");
 const { createStore, StoreError } = require("./store.js");
 const { createSender, mobile, mask, inviteText } = require("./sms.js");
 const { loadDemo } = require("./demo.js");
+const { loadRelease, APK } = require("./release.js");
 
 const PUBLIC = path.join(__dirname, "public");
 const SPEC = path.join(__dirname, "openapi.json");
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json; charset=utf-8" };
 const MAX_BODY = 16 * 1024;
 const MINUTE = 60 * 1000;
+/* A handler returns { [FILE]: path } to send a file instead of JSON (the APK download). */
+const FILE = Symbol("file");
 
 /* [방법, 경로, 누가 부르나, 처리] — 경로의 {이름}은 주소에서 값을 꺼낸다. */
 const ROUTES = [
@@ -34,6 +37,8 @@ const ROUTES = [
   ["PUT", "/api/car/backup", "car", (store, who, body) => store.setBackup(who, body.enabled)],
   ["POST", "/api/car/trips", "car", (store, who, body) => store.saveTrip(who, body)],
   ["PUT", "/api/car/profile", "car", (store, who, body) => store.saveProfile(who, body)],
+  ["GET", "/api/app/latest", "none", (store, who, body, params, { release, publicBase }) => ({ ...release.latest(), download: `${publicBase}/api/app/download` })],
+  ["GET", "/api/app/download", "none", (store, who, body, params, { release }) => ({ [FILE]: release.apk() })],
   ["GET", "/api/demo/scenarios", "none", (store, who, body, params, { demo }) => demo.list()],
   ["GET", "/api/demo/drives/{scenarioId}", "none", (store, who, body, [id], { demo }) => demo.drive(id)],
   ["GET", "/api/demo/histories/{scenarioId}", "none", (store, who, body, [id], { demo }) => demo.history(id)],
@@ -92,7 +97,7 @@ function readJson(request) {
   });
 }
 
-function createApp(store = createStore(), { limits = LIMITS, now = () => Date.now(), trustProxy = false, sms = createSender(), publicBase = "https://drive.olvend.com", demo = loadDemo() } = {}) {
+function createApp(store = createStore(), { limits = LIMITS, now = () => Date.now(), trustProxy = false, sms = createSender(), publicBase = "https://drive.olvend.com", demo = loadDemo(), release = loadRelease(null) } = {}) {
   const limit = createLimiter(limits, now);
   const bearer = (request) => (request.headers.authorization ?? "").replace(/^Bearer\s+/i, "");
   const identify = { none: () => null, car: (request) => store.driverByToken(bearer(request)), family: (request) => store.memberByToken(bearer(request)) };
@@ -139,7 +144,12 @@ function createApp(store = createStore(), { limits = LIMITS, now = () => Date.no
       const who = identify[route.auth](request);
       if (route.auth !== "none" && !who) throw new StoreError("unauthorized", 401);
       const body = request.method === "GET" ? {} : await readJson(request);
-      send(response, 200, await route.handler(store, who, body, route.pattern.exec(pathname).slice(1), { sms, publicBase, demo }));
+      const result = await route.handler(store, who, body, route.pattern.exec(pathname).slice(1), { sms, publicBase, demo, release });
+      if (result && result[FILE]) {
+        response.writeHead(200, { "content-type": "application/vnd.android.package-archive", "content-disposition": `attachment; filename="${APK}"`, "cache-control": "no-cache", "content-length": fs.statSync(result[FILE]).size });
+        return fs.createReadStream(result[FILE]).pipe(response);
+      }
+      send(response, 200, result);
     } catch (error) {
       if (error instanceof StoreError) return send(response, error.status ?? 400, { error: error.code });
       if (error instanceof URIError) return send(response, 400, { error: "bad_request" });
@@ -155,8 +165,9 @@ if (require.main === module) {
   const file = process.env.STORE_FILE ?? path.join(__dirname, "data", "store.json");
   const trustProxy = process.env.TRUST_PROXY === "1";
   const sms = createSender(process.env);
+  const release = loadRelease(process.env.APP_DIR ?? null); // tools/publish-apk.sh puts the APK and latest.json here
   const publicBase = (process.env.PUBLIC_BASE ?? "https://drive.olvend.com").replace(/\/$/, "");
-  createApp(createStore({ file }), { trustProxy, sms, publicBase }).listen(port, host, () => {
+  createApp(createStore({ file }), { trustProxy, sms, publicBase, release }).listen(port, host, () => {
     console.log(`DriveWatch 가족 요약 서버: http://${host}:${port}/family/  명세: /api/docs  (기록 파일: ${file})`);
     console.log(`초대 문자: ${sms.mode === "dry-run" ? "보내지 않음(시연 모드, SMS_PROVIDER=solapi와 키를 넣으면 발송)" : "SOLAPI로 발송"} · 링크 ${publicBase}/family/`);
   });

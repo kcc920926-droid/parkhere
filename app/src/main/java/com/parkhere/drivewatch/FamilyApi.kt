@@ -49,6 +49,14 @@ object FamilyApi {
         }
     }
 
+    /** The newest app build the family server offers (tools/publish-apk.sh). */
+    data class AppRelease(val versionCode: Int, val versionName: String, val notes: String, val download: String)
+
+    /** Null when the server has no published build or cannot be reached; the app then says nothing. */
+    fun latestApp(done: (AppRelease?) -> Unit) = call("GET", "/api/app/latest", null, null) { j ->
+        done(j?.takeIf { it.has("versionCode") }?.let { AppRelease(it.getInt("versionCode"), it.optString("versionName"), it.optString("notes"), it.optString("download")) })
+    }
+
     fun setShareScope(token: String, scope: String, done: (Boolean) -> Unit) =
         call("PUT", "/api/car/share-scope", token, JSONObject().put("shareScope", scope)) { done(it != null) }
 
