@@ -405,7 +405,7 @@ DriveWatch는 "어르신 앱"이 아닙니다. **본인의 평소와 비교하�
   - 판단 엔진(https://drive.olvend.com/engine-demo.html): 2분 구간 판정을 자동 재생하거나 직접 운전해 볼 수 있고, Pleos SDK 예시 신호와 공개 실측 CAN 데이터(comma2k19)를 넣어 볼 수 있습니다
   - 개인 경향 모델(연구용, https://drive.olvend.com/profile-demo.html): 여러 운전 습관이 함께 움직이는 방식을 운전자별로 배워 오늘과 비교합니다. 합성 데이터로 검증했고 차량 앱 판정에는 쓰지 않습니다
 - **시연 영상**: [[영상 링크 기입]]
-- **GitHub 저장소**: https://github.com/kcc920926-droid/parkhere · 제출 APK `apk/M92_DriveWatch_release.apk`
+- **GitHub 저장소**: https://github.com/kcc920926-droid/DriveWatch · 제출 APK `apk/M92_DriveWatch_release.apk`
 - **화면 시안**: `M92_DriveWatch_화면시안.pdf`(첨부, 저장소 `submission/`에도 있음). 차량 앱 14개 화면(등록, 동의, 약속, 가족 연결, 홈, 길 고르기, 주행, 도착, 밤 안내, 다른 방법으로 가기, 주간 카드, 평소 비교, 월별 기록, 운전 졸업)과 가족 폰 6개 화면(누가 열었나요, 링크 보내기, 가입, 목록과 부탁, 주간 요약, 월별 기록)을 에뮬레이터와 브라우저에서 찍은 실제 화면입니다
 - **사업 연계 근거**: 셔클, 현대차그룹의 AI 기반 수요응답형 교통 플랫폼(헤럴드경제, 2026-05-14, https://www.heraldk.com/article/2026051400000062362) · 현대 인증중고차 트레이드인 혜택(https://www.hyundai.com/kr/ko/event/event-hyundai-tradein-2025) · 현대차그룹 '교통안전 베테랑 교실'(2016년부터, 다음뉴스 2025-01-27, https://v.daum.net/v/20250127060009228) · ORIX Ever Drive 출시 당시 요금(MONOist, 2017-02-27, https://monoist.itmedia.co.jp/mn/articles/1702/27/news040.html)
 - 차량 앱의 과거 12주 기록과 내비 안내는 시연용이며, 화면에 "시연용"이라고 표시합니다. 차량 신호 수신과 판정은 Pleos 에뮬레이터에서 확인했고, 실차에서는 아직 확인하지 않았습니다. 웹 프로토타입의 주행 기록은 합성 기록과 공개 실측 데이터입니다.
