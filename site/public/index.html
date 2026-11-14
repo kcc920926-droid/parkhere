@@ -128,12 +128,12 @@
             <li class="step" data-step="learning" data-upto="12">
               <span class="step-n">처음 12주</span>
               <h3>먼저 평소를 배워요</h3>
-              <p>이 기간에는 판정하지 않아요. 깜빡이를 켜는지, 늘 가던 길에서 길 안내를 다시 받는지, 급제동이 얼마나 되는지 주마다 쌓아 둬요.</p>
+              <p>이 기간에는 판정하지 않아요. 깜빡이를 켜는지, 늘 가던 길에서 길 안내를 다시 받는지, 급제동이 얼마나 되는지 주마다 쌓아 둬요. 그동안에도 주차하면 오늘 잘한 점과 이번 주 기록은 바로 보여 드려요.</p>
             </li>
             <li class="step" data-step="stable" data-upto="13">
               <span class="step-n">평소대로라면</span>
               <h3>안정</h3>
-              <p>주차하면 칭찬부터 해요. “잘 다녀오셨어요. 오늘 깜빡이 다 잘 켜셨어요.”</p>
+              <p>주차하면 칭찬부터 해요. “잘 다녀오셨어요. 오늘 깜빡이 다 잘 켜셨어요.” 주행이 너무 적거나 신호가 빠진 주는 안정이라고 하지 않고 “이번 주는 비교할 자료가 부족해요”라고 말해요.</p>
             </li>
             <li class="step" data-step="stable" data-upto="15" data-spike>
               <span class="step-n">한 주만 튀면</span>
@@ -189,6 +189,19 @@
           </li>
         </ul>
         <p class="fine">기어, 방향지시등, 브레이크, 차속은 Pleos Connect 에뮬레이터 v2.1.0에서 실제 차량 신호로 받았어요. 실차에서는 아직 확인하지 않았어요.</p>
+
+        <div class="pair">
+          <div class="pair-head">
+            <h3 class="pair-title">안전운전 점수가 있는데<br>왜 또 봐요?</h3>
+            <p>점수는 운전 습관을 모두와 같은 잣대로 요약해요. DriveWatch는 같은 사람이 익숙한 길과 생활 이동에서 예전과 달라졌는지를 봐요. 둘은 서로 다르게 나올 수 있어서, 합치지 않고 나란히 보여 드려요.</p>
+          </div>
+          <ul class="pair-rows">
+            <li class="pair-labels" aria-hidden="true"><span>기존 점수</span><span>평소 대비 변화</span><span>부모님께 전하는 말</span></li>
+            <li><span class="cell"><b class="lbl">기존 점수</b>양호</span><span class="cell"><b class="lbl">평소 대비 변화</b><i class="dot observe"></i>변화가 이어짐</span><span class="cell say">“점수와 별개로, 익숙한 길에서 달라진 점이 있어 같이 봐요.”</span></li>
+            <li><span class="cell"><b class="lbl">기존 점수</b>개선이 필요함</span><span class="cell"><b class="lbl">평소 대비 변화</b><i class="dot stable"></i>변화 없음</span><span class="cell say">“평소와 비슷하지만, 반복되는 운전 습관을 돌아봐요.”</span></li>
+          </ul>
+          <p class="fine">기존 점수는 출처와 기간을 밝힌 참고 카드로만 보여 주고, 변화 판정에는 더하지 않아요. Hyundai Developers 운전습관 API(최근 90일) 연동은 2차 발표 전까지 붙일 계획이고, 쓸 수 있는 조건은 아직 확인 중이에요.</p>
+        </div>
       </div>
     </section>
 
@@ -267,7 +280,7 @@
               <li><span class="strike">지나온 경로</span></li>
               <li><span class="strike">운전한 시각</span></li>
             </ul>
-            <p>서버는 이 셋을 아예 받지 않아요. 부모님이 ‘상태만’을 고르면 숫자로 된 근거도 차 밖으로 나가지 않아요. 이번 주는 안 보내기도 언제든 고를 수 있어요.</p>
+            <p>서버는 이 셋을 아예 받지 않아요. 앞으로 생활길을 구분하려고 위치를 쓰더라도 차 안에서만 쓰고, 위치와 경로는 차 밖으로 나가지 않아요. 부모님이 ‘상태만’을 고르면 숫자로 된 근거도 차 밖으로 나가지 않아요. 이번 주는 안 보내기도 언제든 고를 수 있어요.</p>
           </div>
         </div>
       </div>
@@ -391,10 +404,14 @@
               <li>시동을 걸면 자동으로 시작</li>
               <li>시트 위치로 운전자 확인</li>
               <li>차 안에 기록 저장</li>
+              <li>측정 품질 확인: 자료가 부족한 주는 판정 보류</li>
+              <li>차 안 위치로 생활길 구분, 도착 뒤 이유 묻기</li>
+              <li>안전운전 점수 참고 카드</li>
+              <li>요약 뒤 가족이 함께 할 일</li>
             </ul>
           </div>
         </div>
-        <p class="fine">판정 기준값(평소의 1.5배, 학습 12주 등)과 구독 가격은 가정값이에요. 실차와 실제 사용자로는 아직 검증하지 않았어요.</p>
+        <p class="fine">판정 기준값(평소의 1.5배, 학습 12주 등)과 구독 가격은 가정값이에요. 실차와 실제 사용자로는 아직 검증하지 않았어요. 서로 다른 다섯 가족과 개념을 검증한 뒤, 고령 운전자와 가족 15쌍으로 16주 실증을 하려고 해요.</p>
       </div>
     </section>
 
