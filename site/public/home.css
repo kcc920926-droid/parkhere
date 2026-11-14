@@ -251,6 +251,29 @@ section { position: relative; }
   .ledger li + li { border-top: 1px solid var(--rule); }
 }
 
+/* 4-1. 안전운전 점수와 나란히 */
+.pair { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 28px 56px; margin-top: clamp(56px, 8vw, 96px); padding-top: 40px; border-top: 1px solid var(--rule); }
+.pair-title { font-family: var(--serif); font-weight: 900; font-size: clamp(26px, 3vw, 36px); line-height: 1.3; letter-spacing: -0.035em; margin-bottom: 16px; }
+.pair-head p { color: var(--ink-2); max-width: 30em; }
+.pair-rows { border-top: 2px solid var(--ink); align-self: start; }
+.pair-rows li { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 3fr) minmax(0, 6fr); gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+.pair-labels { font-size: 13px; font-weight: 700; color: var(--ink-3); padding: 12px 0 10px !important; }
+.pair-rows .cell { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 700; }
+.pair-rows .say { display: block; font-family: var(--serif); font-weight: 700; font-size: 18px; line-height: 1.5; color: var(--purple-deep); }
+.pair-rows .lbl { display: none; }
+.dot.stable { background: var(--stable); }
+.dot.observe { background: var(--observe); }
+.pair > .fine { grid-column: 1 / -1; margin-top: 0; }
+@media (max-width: 860px) {
+  .pair { grid-template-columns: 1fr; }
+  .pair-labels { display: none !important; }
+  .pair-rows li { grid-template-columns: 1fr 1fr; gap: 6px 16px; }
+  .pair-rows .lbl { display: block; font-size: 12px; font-weight: 700; color: var(--ink-3); margin-bottom: 2px; }
+  .pair-rows .cell:not(.say) { flex-direction: column; align-items: flex-start; gap: 0; }
+  .pair-rows .cell:not(.say) .dot { display: none; }
+  .pair-rows .say { grid-column: 1 / -1; margin-top: 6px; }
+}
+
 /* 5. 하루 */
 .day { background: var(--night); color: var(--night-ink); padding: clamp(72px, 10vw, 128px) 0 clamp(56px, 8vw, 96px); overflow: hidden; }
 .sec-head.on-dark p { color: var(--night-ink-2); }
