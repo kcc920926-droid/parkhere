@@ -64,7 +64,7 @@ Pleos 에뮬레이터 안의 앱은 이 PC의 서버를 `http://10.0.2.2:8795`�
 
 ## 폰 웹 화면
 
-`public/`에 있습니다. 가입 → 부모님 차와 연결 → 가족 목록 → 주간 요약 순서이고, 4초마다 새로 고칩니다. 푸시 알림은 없습니다. 차 화면의 QR에 `http://서버주소/?code=123456`을 담으면 코드가 미리 채워집니다.
+`public/`에 있습니다. 가입 → 부모님 차와 연결 → 가족 목록 → 주간 요약 순서이고, 4초마다 새로 고칩니다. 푸시 알림은 없습니다. 차 화면의 QR에 `http://서버주소/family/?code=123456`을 담으면 코드가 미리 채워집니다.
 
 화면 문구와 구성은 `opinions/drive-watch-screens.md`의 P1~P5 시안을 따랐습니다. 다른 점은 두 가지입니다. 휴대폰 번호와 인증번호는 받지 않고, 연결할 때 호칭(엄마 / 아빠 / 부모님)을 고릅니다.
 
@@ -77,6 +77,8 @@ node tools/car-sim.js setup 김정숙 evidence   # 초대 코드가 나온다
 node tools/car-sim.js send talk               # stable | observe | talk
 node tools/car-sim.js me                      # 가족이 확인했는지
 ```
+
+차량 앱에서는 이 스크립트 대신 Kotlin 코드를 쓴다. `drivewatch-core`의 [`family/`](../drivewatch-core/README.md#가족-서버-연결)가 같은 API를 부르고, Android에서는 `drivewatch-vehicle`의 `FamilyLink`로 쓴다.
 
 공개 서버를 상대로 돌리려면 `FAMILY_SERVER=https://drive.olvend.com`을 앞에 붙인다. 공개 서버에 남긴 기록은 지우는 주소가 없으니, 시연 직전이 아니면 로컬에서 한다.
 

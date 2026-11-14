@@ -8,6 +8,7 @@ DriveWatch의 판정 로직을 담은 순수 Kotlin 모듈입니다. 웹 MVP(`dr
 | `WeeklyEngine.kt` | `weekly.js` | 주행 요약을 주별로 모아 학습 중 / 자료 부족 / 안정 / 관찰 / 대화 권장을 판정 |
 | `collect/` | 없음 | 차속·브레이크·조향·기어 신호를 구간 요약으로 묶고 판정까지 잇는다 |
 | `card/Cards.kt` | 없음 | 도착 카드와 주간 카드에 쓸 문구를 만든다. 화면은 이 문구를 그리기만 하면 된다 |
+| `family/` | 없음 | 주간 카드를 가족에게 보낼 요약으로 바꾸고, 가족 요약 서버의 차량 쪽 API를 부른다 |
 | `demo/DemoReplays.kt` | `replays.js` | 시연용 도심·고속도로 합성 기록 |
 | `demo/DemoWeeklyHistory.kt` | `weekly-history.js` | 시연용 합성 12주 기록 |
 | `demo/DemoDrive.kt` | 없음 | 시연용 녹화 신호. 구간별 강한 제동이 1·0·1·4·5·1회인 주행 |
@@ -60,6 +61,32 @@ weekly?.strip        // 지난 주들의 상태 띠
 
 구간이 1분보다 짧으면(시연 모드) 문구가 초 단위로 나온다.
 
+## 가족 서버 연결
+
+`family/`는 [가족 요약 서버](../family-server/README.md)의 차량 쪽 API를 부른다. JDK와 Android에 모두 있는 `HttpURLConnection`만 쓰고, JSON도 직접 다뤄서 의존성이 없다.
+
+| 클래스 | 하는 일 |
+| --- | --- |
+| `FamilySummary` | 서버에 보내는 주간 요약. `FamilySummary.from(card)`가 주간 카드를 그대로 옮긴다. 차에서 본 문구와 가족이 받는 문구가 같다 |
+| `FamilyClient` | 등록, 초대 코드, 공유 범위, 요약 보내기, 가족 확인 읽기. 호출 하나가 API 하나다 |
+| `FamilySession` | 등록 정보를 차에 저장하고, 보내지 못한 요약을 남겨 뒀다가 다시 보낸다 |
+
+```kotlin
+val session = FamilySession(FamilyClient(), storage)          // 기본 주소는 https://drive.olvend.com
+session.register("김정숙", ShareScope.STATUS)                  // 처음 한 번. 다시 불러도 서버를 부르지 않는다
+val invite = session.invite()                                  // invite.display = "123 456", 10분 동안 한 번
+session.joinUrl(invite)                                        // QR에 담을 주소
+session.send(FamilySummary.from(weeklyCard, promise = "…"))    // 운전자가 `가족에게 보내기`를 눌렀을 때
+session.view()                                                 // 연결된 가족, 마지막 요약을 확인한 가족
+```
+
+- 모든 호출은 답이 올 때까지 기다린다. Android에서는 [drivewatch-vehicle](../drivewatch-vehicle/README.md)의 `FamilyLink`가 뒤에서 불러 준다.
+- 실패하면 `FamilyError`가 나온다. `code`는 서버의 오류 코드이고, 서버에 닿지 못했으면 `offline`이다.
+- 서버에 닿지 못했거나 서버가 잠시 못 받으면(5xx, 429) 요약을 남겨 둔다. `retryPending()`이 다시 보낸다. 서버가 거절한 요약(4xx)은 남기지 않는다.
+- `unauthorized`가 오면 서버가 이 차를 모른다는 뜻이다. `forget()` 뒤에 다시 등록한다.
+- 요약에는 위치와 경로가 들어갈 자리가 없다. 테스트가 보내는 항목 이름을 확인한다.
+- 같은 주에 다시 보내면 서버가 덮어쓰고 가족의 확인 표시를 지운다. 그래서 자동으로 보내지 않고, 운전자가 누를 때만 보낸다.
+
 ## 테스트
 
 JDK 17 또는 21이 필요합니다. Gradle 8.10.2는 그보다 새 JDK에서 실행되지 않습니다.
@@ -71,12 +98,21 @@ JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradl
 - `TripEngineTest`, `WeeklyEngineTest`: 웹 MVP의 `engine.test.js`, `weekly.test.js`를 옮긴 테스트입니다. 지표 하나가 4주 이어지는 경우는 여기에만 있습니다.
 - `CollectorTest`, `DriveMonitorTest`: 수집기와, 신호에서 도착 결과까지 이어지는 흐름을 확인합니다.
 - `CardsTest`: 카드 문구가 웹 MVP와 기획서의 문구와 같은지 확인합니다.
+- `FamilyTest`: 요약 본문, 요청 주소와 토큰, 오류 구분, 등록 정보 저장, 보내지 못한 요약의 재전송을 확인합니다. 실제 HTTP로 나가는지는 테스트 안에서 띄운 작은 서버로 봅니다.
 - `ParityTest`: 웹 MVP가 낸 결과(`src/test/resources/parity/expected.txt`)와 Kotlin 결과를 한 줄씩 비교합니다. 시연 기록과 고정 시드 난수 기록(구간 300개, 주행 150회)을 씁니다.
 
 웹 MVP의 판정 로직을 고치면 기준 결과를 다시 만듭니다. 난수 순서는 `tools/dump-parity.js`와 `ParityDump.kt`가 같아야 합니다.
 
 ```sh
 node tools/dump-parity.js > src/test/resources/parity/expected.txt
+```
+
+켜져 있는 가족 서버에 실제로 보내 보려면 `familyCheck`를 씁니다. 테스트에는 포함되지 않습니다.
+
+```sh
+(cd ../family-server && npm start)                                   # 다른 터미널에서
+./gradlew familyCheck -Pserver=http://127.0.0.1:8795 -Pwait=30       # 등록 → 코드 → 요약 → 가족 확인 기다리기
+./gradlew familyCheck -Pserver=https://drive.olvend.com -Pping=true  # 공개 서버에 닿는지만 본다. 아무것도 쓰지 않는다
 ```
 
 ## 쓰는 법

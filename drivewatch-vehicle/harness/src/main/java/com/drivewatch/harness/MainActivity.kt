@@ -15,14 +15,23 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import android.util.Log
 import com.drivewatch.core.Observation
 import com.drivewatch.core.Signal
+import com.drivewatch.core.WeeklyEngine
+import com.drivewatch.core.card.Cards
 import com.drivewatch.core.collect.CollectorConfig
 import com.drivewatch.core.collect.TripReport
 import com.drivewatch.core.demo.DemoDrive
 import com.drivewatch.core.demo.DemoReplays
+import com.drivewatch.core.demo.DemoWeeklyHistory
+import com.drivewatch.core.family.FamilyClient
+import com.drivewatch.core.family.FamilySummary
+import com.drivewatch.core.family.ShareScope
 import com.drivewatch.vehicle.DriveCollectorService
+import com.drivewatch.vehicle.FamilyLink
 import com.drivewatch.vehicle.VehicleSignalSource
+import java.time.LocalDate
 import java.util.Locale
 import kotlin.math.roundToInt
 
@@ -30,6 +39,7 @@ import kotlin.math.roundToInt
  * 수집 서비스가 차량 신호를 받아 구간마다 판정하는지 확인하는 화면이다. 제품 화면이 아니다.
  * 시연 모드로 돈다: 구간은 8초이고, 평소 기록은 합성 기록이다.
  * 수집은 [DriveCollectorService]가 하고, 이 화면은 그 상태를 그리기만 한다.
+ * 아래쪽 버튼은 가족 서버 연결([FamilyLink])을 확인한다. 서버 주소는 실행할 때 `--es familyServer 주소`로 바꾼다.
  */
 class MainActivity : Activity() {
     private val config = CollectorConfig.demo()
@@ -41,6 +51,8 @@ class MainActivity : Activity() {
     private lateinit var card: TextView
     private lateinit var windows: TextView
     private lateinit var issues: TextView
+    private lateinit var family: TextView
+    private lateinit var familyLink: FamilyLink
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
@@ -78,10 +90,23 @@ class MainActivity : Activity() {
                 setOnClickListener { service?.useReplay(DemoDrive.events(config.windowMs)) }
             })
         }
+        val server = intent.getStringExtra("familyServer") ?: FamilyClient.PUBLIC_URL
+        familyLink = FamilyLink(this, server)
+        family = text(22f, Color.rgb(203, 213, 225)).apply { text = "가족 서버: $server" }
+        // 지난번에 보내지 못한 요약이 있으면 앱을 열 때 다시 보낸다.
+        if (familyLink.hasPending) familyLink.retryPending { result ->
+            shown(result) { "resent week=${it?.week} status=${it?.status?.key}" }
+        }
+        val familyButtons = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            addView(Button(context).apply { text = "가족 등록·코드"; textSize = 22f; setOnClickListener { inviteFamily() } })
+            addView(Button(context).apply { text = "요약 보내기 (시연용)"; textSize = 22f; setOnClickListener { sendSummary() } })
+            addView(Button(context).apply { text = "가족 확인 보기"; textSize = 22f; setOnClickListener { showFamily() } })
+        }
         val column = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(48, 32, 48, 32)
-            listOf(sourceLabel, buttons, live, card, windows, issues).forEach(::addView)
+            listOf(sourceLabel, buttons, live, card, windows, issues, familyButtons, family).forEach(::addView)
         }
         setContentView(ScrollView(this).apply { setBackgroundColor(Color.rgb(15, 23, 32)); addView(column) })
 
@@ -113,7 +138,36 @@ class MainActivity : Activity() {
 
     override fun onDestroy() {
         runCatching { unbindService(connection) }
+        familyLink.close()
         super.onDestroy()
+    }
+
+    private fun note(line: String) {
+        Log.i(FAMILY_TAG, line)
+        family.text = line
+    }
+
+    private fun <T> shown(result: Result<T>, line: (T) -> String) =
+        note(result.fold(line) { "실패: ${it.message}" })
+
+    /** 처음이면 등록하고, 가족이 폰에 넣을 코드를 띄운다. */
+    private fun inviteFamily() = familyLink.register("시연 운전자", ShareScope.EVIDENCE) { registered ->
+        if (registered.isFailure) return@register shown(registered) { "" }
+        familyLink.invite { result -> shown(result) { "code ${it.code} · 폰에서 열 주소 ${familyLink.joinUrl(it)}" } }
+    }
+
+    /** 합성 12주 기록의 주간 카드를 그대로 보낸다. */
+    private fun sendSummary() {
+        val scene = DemoWeeklyHistory.scenes.first { it.id == "changing" }
+        val trips = DemoWeeklyHistory.tripsFor(scene, DemoWeeklyHistory.firstMondayFor(LocalDate.now()))
+        val weekly = Cards.weekly(WeeklyEngine.assess(trips, context = "city")) ?: return note("주간 카드가 없어요")
+        familyLink.send(FamilySummary.from(weekly)) { result ->
+            shown(result) { "sent week=${it.week} status=${it.status?.key} evidenceStored=${it.evidenceStored}" }
+        }
+    }
+
+    private fun showFamily() = familyLink.view { result ->
+        shown(result) { "family=${it.family} ackedBy=${it.latest?.ackedBy} pending=${familyLink.hasPending}" }
     }
 
     private fun render(state: DriveCollectorService.State) {
@@ -138,6 +192,10 @@ class MainActivity : Activity() {
             "${span(index + 1)} · 강한 제동 ${count(frame.values[Signal.HARD_BRAKES])} · 조향 보정 ${count(frame.values[Signal.STEERING_CORRECTIONS])}$mark"
         }.joinToString("\n")
         issues.text = state.issue ?: ""
+    }
+
+    private companion object {
+        const val FAMILY_TAG = "DWFAMILY"
     }
 
     private fun count(value: Double?) = value?.let { "${it.toInt()}회" } ?: "값 없음"

@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-feature android:name="android.hardware.type.automotive" android:required="false" />
-    <application android:label="DriveWatch 신호 확인">
+    <!-- 확인용 앱만 http 주소를 허용한다. 개발 PC에서 켠 가족 서버(http://10.0.2.2:8795)에 붙어 보기 위해서다. -->
+    <application android:label="DriveWatch 신호 확인" android:usesCleartextTraffic="true">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
