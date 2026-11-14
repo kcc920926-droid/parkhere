@@ -221,6 +221,8 @@ def main():
     # 바로 뒤에 표가 오는 문단에 "다음 문단과 함께"가 걸리면 Word가 칸이나 표 전체를 다음 쪽으로 밀어
     # 제목만 남은 쪽이 생긴다. 표 앞 문단에서만 끄고, 문단 앞 제목은 다음 문단과 붙여 둔다.
     doc = re.sub(r"<w:keepNext/>(?=(?:(?!</w:p>).)*</w:p>\s*<w:tbl>)", "", doc, flags=re.S)
+    # 양식 원본의 6장 제목 문단 표시에 노란 강조가 남아 있어 지운다(글자에 쓴 강조 [[...]]는 그대로).
+    doc = re.sub(r'(<w:pPr>(?:(?!</w:pPr>).)*?)<w:highlight w:val="yellow"/>', r"\1", doc, flags=re.S)
     files["word/document.xml"] = doc.encode("utf8")
     rels = files["word/_rels/document.xml.rels"].decode("utf8")
     extra = "".join(f'<Relationship Id="{rid}" Type="{HYPERLINK_TYPE}" Target="{html.escape(url)}" TargetMode="External"/>'
