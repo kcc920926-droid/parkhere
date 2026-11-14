@@ -213,8 +213,14 @@ def main():
     with zipfile.ZipFile(TEMPLATE) as z:
         files = {i.filename: z.read(i.filename) for i in z.infolist() if not i.filename.endswith("/")}
     doc = files["word/document.xml"].decode("utf8")
+    # 양식의 2~8번 큰 칸은 "행을 페이지에서 나누지 않기"가 켜져 있어, 칸이 통째로 다음 쪽으로 넘어가고
+    # 앞 쪽에는 제목만 남는다. 큰 칸이 쪽을 넘어 이어지도록 이 설정만 끈다(우리가 만드는 작은 표의 행은 그대로 둔다).
+    doc = doc.replace("<w:trPr><w:cantSplit/><w:trHeight", "<w:trPr><w:trHeight")
     doc, named = fill_name(doc, name)
     doc = fill_boxes(doc, boxes)
+    # 바로 뒤에 표가 오는 문단에 "다음 문단과 함께"가 걸리면 Word가 칸이나 표 전체를 다음 쪽으로 밀어
+    # 제목만 남은 쪽이 생긴다. 표 앞 문단에서만 끄고, 문단 앞 제목은 다음 문단과 붙여 둔다.
+    doc = re.sub(r"<w:keepNext/>(?=(?:(?!</w:p>).)*</w:p>\s*<w:tbl>)", "", doc, flags=re.S)
     files["word/document.xml"] = doc.encode("utf8")
     rels = files["word/_rels/document.xml.rels"].decode("utf8")
     extra = "".join(f'<Relationship Id="{rid}" Type="{HYPERLINK_TYPE}" Target="{html.escape(url)}" TargetMode="External"/>'
