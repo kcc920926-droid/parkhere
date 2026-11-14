@@ -80,6 +80,8 @@ def para(content, *, before=0, after=60, ind=None, keep=False, numbered=False, j
     if keep:
         ppr.append("<w:keepNext/>")
     if heading:
+        # 칸 안 문단에 "다음 문단과 함께"를 걸면 Word가 칸(표 행) 전체를 뒤 내용과 붙여 다음 쪽으로 민다.
+        # 그래서 칸 안 제목에는 "줄 나누지 않기"만 두고, 제목이 쪽 끝에 남는지는 렌더로 확인한다.
         ppr.append("<w:keepLines/>")
     if numbered:
         ppr.append('<w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>')
@@ -149,7 +151,7 @@ def render_box(lines):
             out.append(table(block))
             continue
         if stripped.startswith("### "):
-            out.append(para(inline(stripped[4:], bold=True, color=NAVY, sz=21), before=160 if out else 0, after=60, keep=True, heading=True))
+            out.append(para(inline(stripped[4:], bold=True, color=NAVY, sz=21), before=160 if out else 0, after=60, heading=True))
         elif re.match(r"^\s{2,}- ", line):
             out.append(para(inline(stripped[2:]), after=30, ind=720))
         elif stripped.startswith("- "):
@@ -210,6 +212,30 @@ def fill_boxes(doc, boxes):
     return doc
 
 
+def keep_titles_with_boxes(doc):
+    """양식의 장 제목("5. 개발 계획" + 안내문)이 쪽 끝에 남고 칸만 다음 쪽으로 가지 않도록,
+    칸 바로 앞의 장 제목 문단을 칸과 붙인다. 칸이 다음 쪽에서 시작하면 제목도 그 쪽 맨 위로 간다."""
+    out, pos = [], 0
+    for m in re.finditer(r"</w:p>\s*<w:tbl>", doc):
+        start = max(doc.rfind("<w:p ", 0, m.start()), doc.rfind("<w:p>", 0, m.start()))
+        para_xml = doc[start:m.start()]
+        text = "".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", para_xml))
+        if re.match(r"\d\.\s", text) and "<w:keepNext/>" not in para_xml and "<w:pPr>" in para_xml:
+            out.append(doc[pos:start] + para_xml.replace("<w:pPr>", "<w:pPr><w:keepNext/>", 1))
+            pos = m.start()
+    out.append(doc[pos:])
+    return "".join(out)
+
+
+def fix_font_table(xml):
+    """양식의 '맑은 고딕'이 고정폭(modern) 계열로 적혀 있어, 이 글꼴이 없는 뷰어(Mac의 텍스트 편집기,
+    Pages, 미리보기)가 Courier 같은 고정폭 글꼴로 바꿔 그린다. 영문 이름과 산세리프(swiss) 계열로 고친다."""
+    return re.sub(r'(<w:font w:name="맑은 고딕">)(.*?)(</w:font>)',
+                  lambda m: m.group(1) + '<w:altName w:val="Malgun Gothic"/>'
+                  + m.group(2).replace('<w:family w:val="modern"/>', '<w:family w:val="swiss"/>') + m.group(3),
+                  xml, count=1, flags=re.S)
+
+
 def main():
     name, boxes = parse_source()
     with zipfile.ZipFile(TEMPLATE) as z:
@@ -226,7 +252,9 @@ def main():
     doc = re.sub(r"<w:keepNext/>(?!<w:keepLines/>)(?=(?:(?!</w:p>).)*</w:p>\s*<w:tbl>)", "", doc, flags=re.S)
     # 양식 원본의 6장 제목 문단 표시에 노란 강조가 남아 있어 지운다(글자에 쓴 강조 [[...]]는 그대로).
     doc = re.sub(r'(<w:pPr>(?:(?!</w:pPr>).)*?)<w:highlight w:val="yellow"/>', r"\1", doc, flags=re.S)
+    doc = keep_titles_with_boxes(doc)
     files["word/document.xml"] = doc.encode("utf8")
+    files["word/fontTable.xml"] = fix_font_table(files["word/fontTable.xml"].decode("utf8")).encode("utf8")
     rels = files["word/_rels/document.xml.rels"].decode("utf8")
     extra = "".join(f'<Relationship Id="{rid}" Type="{HYPERLINK_TYPE}" Target="{html.escape(url)}" TargetMode="External"/>'
                     for rid, url in links)
